@@ -1,5 +1,7 @@
 # Notes on Code Review 1
 
+A non-exhaustive list of notes from our first code review.
+
 ## Schema
 
 Just because NoSQL is "schemaless" does not mean you can freebird how you store your data. Really think about how your data will be organized in an efficient way. You still need to structure your data but within the confines of a different paradigm.
