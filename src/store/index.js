@@ -29,14 +29,14 @@ export const setCheckin = business => ({
 });
 
 //THUNKS
-export const getBusinesses = (term, location) => async dispatch => {
+export const getBusinesses = (latitude, longitude) => async dispatch => {
 	try {
 		console.log("I AM IN THE THUNK");
 		const { data } = await api.get("/businesses/search", {
 			params: {
 				limit: 20,
-				term: term,
-				location: location
+				latitude,
+				longitude
 			}
 		});
 

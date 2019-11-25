@@ -1,10 +1,10 @@
 export const firebaseConfig = {
-	apiKey: "AIzaSyBflBlHeF--p88za0MXyR9IqOnAkkAMY_U",
-	authDomain: "capstone-e34ff.firebaseapp.com",
-	databaseURL: "https://capstone-e34ff.firebaseio.com",
-	projectId: "capstone-e34ff",
-	storageBucket: "capstone-e34ff.appspot.com",
-	messagingSenderId: "336525247",
-	appId: "1:336525247:web:259ac1e18042a47479130a",
-	measurementId: "G-VRMV8CFLY8"
+	apiKey: "AIzaSyDeshjd9HiHi3NY5mYnA14-35gtWTJvyTg",
+	authDomain: "capstone-96611.firebaseapp.com",
+	databaseURL: "https://capstone-96611.firebaseio.com",
+	projectId: "capstone-96611",
+	storageBucket: "capstone-96611.appspot.com",
+	messagingSenderId: "782217933791",
+	appId: "1:782217933791:web:423b73dbe29842b0100a6a",
+	measurementId: "G-H1S9MN6CDT"
 };
