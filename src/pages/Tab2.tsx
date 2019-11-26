@@ -14,6 +14,7 @@ import {
 import React, { Component } from "react";
 import { Plugins } from "@capacitor/core";
 import db from "../firebase/firebase";
+import "./Tab2.css";
 const { Geolocation } = Plugins;
 
 interface DbData {
@@ -30,9 +31,7 @@ type State = {
 };
 
 class PublicTours extends Component<{}, State> {
-	state = {
-		tours: []
-	};
+	state = { tours: Array<DbData>() };
 
 	componentDidMount() {
 		this.getTours();
@@ -94,8 +93,13 @@ class PublicTours extends Component<{}, State> {
 				<IonContent className="ion-padding">
 					<IonList>
 						{tours.map((tour, idx) => (
-							<IonItem key={idx}>
-								<IonLabel>tour</IonLabel>
+							<IonItem key={idx} onClick={() => {}} className="mainListRow">
+								<IonLabel>{tour.name}</IonLabel>
+								<IonList>
+									{tour.checkpoints.map(checkpoint => (
+										<IonItem>{checkpoint}</IonItem>
+									))}
+								</IonList>
 							</IonItem>
 						))}
 					</IonList>

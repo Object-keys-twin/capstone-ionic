@@ -13,7 +13,7 @@ import { IonReactRouter } from "@ionic/react-router";
 import { apps, flash, send } from "ionicons/icons";
 import Tab1 from "./pages/Tab1";
 import Home from "./pages/Tab2";
-import Tab3 from "./pages/Tab3";
+import CreateStory from "./pages/Tab3";
 import Details from "./pages/Details";
 
 /* Core CSS required for Ionic components to work properly */
@@ -51,7 +51,7 @@ const App: React.FC = () => {
 						<Route path="/tab1" component={Tab1} exact={true} />
 						<Route path="/tab2" component={Home} exact={true} />
 						<Route path="/tab2/details" component={Details} />
-						<Route path="/tab3" component={Tab3} />
+						<Route path="/tab3" component={CreateStory} />
 						<Route
 							path="/"
 							render={() => <Redirect to="/tab1" />}
