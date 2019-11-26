@@ -19,6 +19,9 @@ import { book, build, colorFill, grid } from "ionicons/icons";
 import React from "react";
 import "./Tab1.css";
 
+import { Plugins } from "@capacitor/core";
+const { Geolocation } = Plugins;
+
 const Tab1: React.FC = () => {
 	return (
 		<IonPage>

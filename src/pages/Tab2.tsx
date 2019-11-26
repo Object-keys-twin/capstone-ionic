@@ -6,63 +6,107 @@ import {
 	IonToolbar,
 	IonImg,
 	IonFab,
-	IonFabButton,
-	IonIcon
+	IonInput,
+	IonList,
+	IonItem,
+	IonLabel
 } from "@ionic/react";
 import React, { Component } from "react";
-import { Plugins, CameraResultType } from "@capacitor/core";
-const { Camera } = Plugins;
+import { Plugins } from "@capacitor/core";
+import db from "../firebase/firebase";
+import "./Tab2.css";
+const { Geolocation } = Plugins;
 
-const INITIAL_STATE = {
-	photo: ""
+interface DbData {
+	checkpoints: Array<string>;
+	description: string;
+	name: string;
+	timestamp: object;
+	upvotes: number;
+	user: string;
+}
+
+type State = {
+	tours: Array<DbData>;
 };
-export class Home extends Component {
-	state: any = {};
-	props: any = {};
-	constructor(props: any) {
-		super(props);
-		this.state = { ...INITIAL_STATE };
+
+class PublicTours extends Component<{}, State> {
+	state = { tours: Array<DbData>() };
+
+	componentDidMount() {
+		this.getTours();
 	}
-	async takePicture() {
-		const image = await Camera.getPhoto({
-			quality: 90,
-			allowEditing: false,
-			resultType: CameraResultType.Uri
-		});
-		var imageUrl = image.webPath;
-		// Can be set to the src of an image now
-		this.setState({
-			photo: imageUrl
-		});
-	}
+
+	getTours = () => {
+		db.collection("tours")
+			.get()
+			.then(docs => {
+				docs.forEach(doc => {
+					this.setState({
+						tours: [
+							...this.state.tours,
+							{
+								checkpoints: doc.data().checkpoints,
+								description: doc.data().description,
+								name: doc.data().name,
+								timestamp: doc.data().timestamp,
+								upvotes: doc.data().upvotes,
+								user: doc.data().user
+							}
+						]
+					});
+					//console.log(this.state.tours);
+				});
+			});
+		// .then(docs => (this.setState({tours: docs})))
+	};
+
+	// async getCurrentPosition() {
+	// 	const coordinates = await Geolocation.getCurrentPosition();
+	// 	this.setState({
+	// 		latitude: coordinates.coords.latitude,
+	// 		longitude: coordinates.coords.longitude
+	// 	});
+	// }
+
+	// updateText() {
+	// 	this.setState({ text });
+	// }
 
 	render() {
-		const { photo } = this.state;
+		const { tours } = this.state;
+		console.log(tours);
 		return (
 			<IonPage>
 				<IonHeader>
-					<IonToolbar>
-						<IonTitle>Ionic Blank</IonTitle>
-					</IonToolbar>
+					PUBLIC TOURS
+					{/* <IonToolbar>
+						{this.state.latitude === 0 ? (
+							<IonTitle>Locating...</IonTitle>
+						) : (
+							<IonTitle>
+								Lat: {this.state.latitude}, Long: {this.state.longitude}
+							</IonTitle>
+						)}
+					</IonToolbar> */}
 				</IonHeader>
 				<IonContent className="ion-padding">
-					<IonImg
-						style={{ border: "1px solid black", minHeight: "100px" }}
-						src={photo}
-					></IonImg>
-					<IonFab
-						color="primary"
-						vertical="bottom"
-						horizontal="center"
-						slot="fixed"
-					>
-						<IonFabButton color="primary" onClick={() => this.takePicture()}>
-							<IonIcon name="add" />
-						</IonFabButton>
-					</IonFab>
+					<IonList>
+						{tours.map((tour, idx) => (
+							<IonItem key={idx} onClick={() => {}} className="mainListRow">
+								<IonLabel>{tour.name}</IonLabel>
+								<IonList>
+									{tour.checkpoints.map(checkpoint => (
+										<IonItem>{checkpoint}</IonItem>
+									))}
+								</IonList>
+							</IonItem>
+						))}
+					</IonList>
 				</IonContent>
 			</IonPage>
 		);
 	}
 }
-export default Home;
+
+export default PublicTours;
