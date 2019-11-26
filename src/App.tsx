@@ -12,7 +12,7 @@ import {
 import { IonReactRouter } from "@ionic/react-router";
 import { apps, flash, send } from "ionicons/icons";
 import Tab1 from "./pages/Tab1";
-import Tab2 from "./store/Tab2";
+import Home from "./pages/Tab2";
 import Tab3 from "./pages/Tab3";
 import Details from "./pages/Details";
 
@@ -42,14 +42,14 @@ const App: React.FC = () => {
 	// class App extends Component {
 
 	// render() {
-	FirebaseWrapper.GetInstance().Initialize(firebaseConfig);
+	// FirebaseWrapper.GetInstance().Initialize(firebaseConfig);
 	return (
 		<IonApp>
 			<IonReactRouter>
 				<IonTabs>
 					<IonRouterOutlet>
 						<Route path="/tab1" component={Tab1} exact={true} />
-						<Route path="/tab2" component={Tab2} exact={true} />
+						<Route path="/tab2" component={Home} exact={true} />
 						<Route path="/tab2/details" component={Details} />
 						<Route path="/tab3" component={Tab3} />
 						<Route

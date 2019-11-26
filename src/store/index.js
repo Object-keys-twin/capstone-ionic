@@ -53,6 +53,20 @@ export const getBusinesses = (latitude, longitude) => async dispatch => {
 	}
 };
 
+// export const getUsers = () => async dispatch => {
+// 	try {
+// 		db.collection("users")
+// 			.get()
+// 			.then(querySnapshot => {
+// 				querySnapshot.forEach(doc => {
+// 					console.log(`${doc.id} => ${doc.data()}`);
+// 				});
+// 			});
+// 	} catch (error) {
+// 		console.log("error getting users: ", error);
+// 	}
+// };
+
 const initialState = {
 	businesses: [],
 	checkin: []
