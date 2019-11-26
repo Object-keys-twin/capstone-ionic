@@ -13,8 +13,6 @@ import {
 } from "@ionic/react";
 import React, { Component } from "react";
 import { Plugins } from "@capacitor/core";
-import { getBusinesses } from "../store";
-import { connect } from "react-redux";
 import db from "../firebase/firebase";
 const { Geolocation } = Plugins;
 
@@ -22,7 +20,7 @@ interface DbData {
 	checkpoints: Array<string>;
 	description: string;
 	name: string;
-	// timestamp: object;
+	timestamp: object;
 	upvotes: number;
 	user: string;
 }
@@ -46,11 +44,22 @@ class PublicTours extends Component<{}, State> {
 			.then(docs => {
 				docs.forEach(doc => {
 					this.setState({
-						tours: [...this.state.tours, doc.data()]
+						tours: [
+							...this.state.tours,
+							{
+								checkpoints: doc.data().checkpoints,
+								description: doc.data().description,
+								name: doc.data().name,
+								timestamp: doc.data().timestamp,
+								upvotes: doc.data().upvotes,
+								user: doc.data().user
+							}
+						]
 					});
-					console.log(this.state.tours);
+					//console.log(this.state.tours);
 				});
 			});
+		// .then(docs => (this.setState({tours: docs})))
 	};
 
 	// async getCurrentPosition() {
@@ -67,6 +76,7 @@ class PublicTours extends Component<{}, State> {
 
 	render() {
 		const { tours } = this.state;
+		console.log(tours);
 		return (
 			<IonPage>
 				<IonHeader>
@@ -83,8 +93,8 @@ class PublicTours extends Component<{}, State> {
 				</IonHeader>
 				<IonContent className="ion-padding">
 					<IonList>
-						{tours.map(tour => (
-							<IonItem>
+						{tours.map((tour, idx) => (
+							<IonItem key={idx}>
 								<IonLabel>tour</IonLabel>
 							</IonItem>
 						))}
