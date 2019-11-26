@@ -15,32 +15,15 @@ import { connect } from "react-redux";
 import db from "../firebase/firebase";
 const { Geolocation } = Plugins;
 
-// interface Tours {
-// 	checkpoints: Array<string>;
-// }
-// interface IState {
-// 	tours: [];
-// }
-// type TourState = Tours[];
+type State = {
+	tours: Array<string>;
+};
 
-// const Tab2: React.FC = () => {
-class PublicTours extends Component {
-	// state = {
-	// 	latitude: 0,
-	// 	longitude: 0
-	// };
-
-	// state: IState;
-
-	constructor({}) {
-		super({});
-		this.state = {
+class PublicTours extends Component<{}, State> {
+	async componentDidMount() {
+		await this.setState({
 			tours: []
-		};
-	}
-
-	componentDidMount() {
-		// this.getCurrentPosition();
+		});
 		this.getTours();
 	}
 
@@ -48,8 +31,11 @@ class PublicTours extends Component {
 		db.collection("tours")
 			.get()
 			.then(docs => {
-				docs.forEach(doc => {
-					this.setState({ tours: [...this.state.tours, doc] });
+				docs.forEach(async doc => {
+					await this.setState({
+						tours: [...this.state.tours, doc.id]
+					});
+					console.log(this.state.tours);
 				});
 			});
 	};
