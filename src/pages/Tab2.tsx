@@ -6,7 +6,10 @@ import {
 	IonToolbar,
 	IonImg,
 	IonFab,
-	IonInput
+	IonInput,
+	IonList,
+	IonItem,
+	IonLabel
 } from "@ionic/react";
 import React, { Component } from "react";
 import { Plugins } from "@capacitor/core";
@@ -15,15 +18,25 @@ import { connect } from "react-redux";
 import db from "../firebase/firebase";
 const { Geolocation } = Plugins;
 
+interface DbData {
+	checkpoints: Array<string>;
+	description: string;
+	name: string;
+	// timestamp: object;
+	upvotes: number;
+	user: string;
+}
+
 type State = {
-	tours: Array<string>;
+	tours: Array<DbData>;
 };
 
 class PublicTours extends Component<{}, State> {
-	async componentDidMount() {
-		await this.setState({
-			tours: []
-		});
+	state = {
+		tours: []
+	};
+
+	componentDidMount() {
 		this.getTours();
 	}
 
@@ -31,9 +44,9 @@ class PublicTours extends Component<{}, State> {
 		db.collection("tours")
 			.get()
 			.then(docs => {
-				docs.forEach(async doc => {
-					await this.setState({
-						tours: [...this.state.tours, doc.id]
+				docs.forEach(doc => {
+					this.setState({
+						tours: [...this.state.tours, doc.data()]
 					});
 					console.log(this.state.tours);
 				});
@@ -53,6 +66,7 @@ class PublicTours extends Component<{}, State> {
 	// }
 
 	render() {
+		const { tours } = this.state;
 		return (
 			<IonPage>
 				<IonHeader>
@@ -68,10 +82,13 @@ class PublicTours extends Component<{}, State> {
 					</IonToolbar> */}
 				</IonHeader>
 				<IonContent className="ion-padding">
-					<IonInput
-						placeholder="Enter post"
-						// onIonChange={this.updateText}
-					></IonInput>
+					<IonList>
+						{tours.map(tour => (
+							<IonItem>
+								<IonLabel>tour</IonLabel>
+							</IonItem>
+						))}
+					</IonList>
 				</IonContent>
 			</IonPage>
 		);
