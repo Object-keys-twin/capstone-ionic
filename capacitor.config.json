@@ -1,8 +1,44 @@
 {
-  "appId": "com.example.app",
-  "appName": "Story",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "www",
-  "cordova": {}
+	"appId": "com.company.appname",
+
+	"appName": "Story",
+
+	"webDir": "www",
+
+	"npmClient": "npm",
+
+	"bundledWebRuntime": false,
+
+	"windowsAndroidStudioPath": "C:Program FilesAndroidAndroid Studio\binstudio64.exe",
+
+	"server": {
+		"url": "http://192.168.1.33:8100",
+
+		"hostname": "app",
+
+		"iosScheme": "ionic",
+		"androidScheme": "http",
+
+		"allowNavigation": ["example.org", "*.example.org", "192.0.2.1"]
+	},
+
+	"backgroundColor": "#ffffffff",
+	"android": {
+		"backgroundColor": "#ffffffff",
+
+		"allowMixedContent": true,
+
+		"captureInput": true,
+
+		"webContentsDebuggingEnabled": true
+	},
+	"ios": {
+		"backgroundColor": "#ffffffff",
+
+		"cordovaSwiftVersion": "3.0",
+
+		"minVersion": "11.3",
+
+		"cordovaLinkerFlags": ["-ObjC"]
+	}
 }

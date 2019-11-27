@@ -6,13 +6,16 @@ import {
 	IonTitle,
 	IonContent,
 	IonSearchbar,
-	IonItem
+	IonItem,
+	IonButton,
+	IonModal
 } from "@ionic/react";
 import { Plugins } from "@capacitor/core";
 import { number } from "prop-types";
 import axios from "axios";
+import { SearchbarChangeEventDetail } from "@ionic/core";
 
-const { Geolocation } = Plugins;
+const { Geolocation, Storage } = Plugins;
 
 // const YELP_API_KEY =
 // 	"zbczWecavwX-PEqu2ZY9Nji3l8hmfiBgSBgaOElh8q_XS-izyIPL1IWRiI77e-z6PXvZIWq6WI3oujk8_cui6_2Xs2IP4sksuRv9zow3ynMHGZBWcywWbOPs3XvNXXYx";
@@ -30,52 +33,69 @@ interface BusinessData {
 	imageUrl: string;
 	categories: Array<object>;
 	rating: number;
+	latitude: number;
+	longitude: number;
+	price: string;
 }
 
 type State = {
 	latitude: number;
 	longitude: number;
 	businesses: Array<BusinessData>;
+	search: string;
+	showModal: number;
 };
 
 class CreateStory extends Component<{}, State> {
-	state = { latitude: 0, longitude: 0, businesses: Array<BusinessData>() };
+	state = {
+		latitude: 0,
+		longitude: 0,
+		businesses: Array<BusinessData>(),
+		search: "",
+		showModal: Infinity
+	};
 
 	componentDidMount() {
 		this.getCurrentPosition();
 	}
 
-	async getYelp(latitude: number, longitude: number) {
+	getYelp = async (latitude: number, longitude: number, term?: string) => {
 		const YELP_API_KEY =
 			"zbczWecavwX-PEqu2ZY9Nji3l8hmfiBgSBgaOElh8q_XS-izyIPL1IWRiI77e-z6PXvZIWq6WI3oujk8_cui6_2Xs2IP4sksuRv9zow3ynMHGZBWcywWbOPs3XvNXXYx";
 
 		const api = axios.create({
-			baseURL: "https://api.yelp.com/v3",
+			baseURL: "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3",
 			headers: {
-				Authorization: `Bearer ${YELP_API_KEY}`,
-				"Access-Control-Allow-Origin": "*"
+				Authorization: `Bearer ${YELP_API_KEY}`
 			}
 		});
 		const { data } = await api.get("/businesses/search", {
 			params: {
 				limit: 20,
 				latitude: latitude,
-				longitude: longitude
+				longitude: longitude,
+				term: term
 			}
 		});
 
 		const info = data.businesses.map((business: any) => ({
 			name: business.name,
-			location: business.location,
+			location:
+				business.location.display_address[0] +
+				", " +
+				business.location.display_address[1],
+			latitude: business.coordinates.latitude,
+			longitude: business.coordinates.longitude,
+			price: business.price,
 			imageUrl: business.image_url,
 			categories: business.categories,
 			rating: business.rating
 		}));
 
 		this.setState({ businesses: info });
-	}
+	};
 
-	async getCurrentPosition() {
+	getCurrentPosition = async () => {
 		const coordinates = await Geolocation.getCurrentPosition();
 		this.setState(
 			{
@@ -83,12 +103,32 @@ class CreateStory extends Component<{}, State> {
 				longitude: coordinates.coords.longitude
 			},
 			() => {
+				//CHECK THIS IN A SEC ---> TERM FIELD
 				this.getYelp(this.state.latitude, this.state.longitude);
 			}
 		);
-	}
+	};
 
-	// handleChange(e: HTMLInputElement);
+	handleChange = (e: string) => {
+		this.setState({ search: e });
+	};
+
+	addToStringBean = async (business: object) => {
+		let stringBeanArray = [];
+		const localStorage = await Storage.get({ key: "stringbean" });
+		if (localStorage.value) {
+			stringBeanArray = JSON.parse(localStorage.value);
+		}
+		stringBeanArray.push(business);
+		await Storage.set({
+			key: "stringbean",
+			value: JSON.stringify(stringBeanArray)
+		});
+	};
+
+	//write function to publish story. loops through the checkpoints, checks if they exist in the database. if not, adds it to the database. grabs the checkpoint's firestore ID. holds the checkpoints' firestore IDs in an array.
+	//then build the tour object. use the array of checkpoint firestore IDs.
+
 	render() {
 		console.log("everything", this.state);
 		const { businesses } = this.state;
@@ -97,19 +137,55 @@ class CreateStory extends Component<{}, State> {
 				<IonPage>
 					<IonHeader>
 						<IonToolbar>
-							{!this.state.latitude ? (
-								<IonTitle>Locating...</IonTitle>
-							) : (
-								<IonTitle>
-									Lat: {this.state.latitude}, Long: {this.state.longitude}
-								</IonTitle>
-							)}
+							<IonTitle>Beans</IonTitle>
 						</IonToolbar>
 					</IonHeader>
-					{/* <IonSearchbar onIonChange={}></IonSearchbar> */}
+					<IonSearchbar
+						onIonChange={e =>
+							this.handleChange((e.target as HTMLInputElement).value)
+						}
+					>
+						<IonButton
+							size="small"
+							onClick={() =>
+								this.getYelp(
+									this.state.latitude,
+									this.state.longitude,
+									this.state.search
+								)
+							}
+						>
+							Search
+						</IonButton>
+					</IonSearchbar>
+
 					<IonContent>
-						{businesses.map(business => (
-							<IonContent>{business.name}</IonContent>
+						{businesses.map((business, idx) => (
+							<IonItem key={idx}>
+								<IonItem onClick={() => this.setState({ showModal: idx })}>
+									{business.name} <br></br>
+									{business.location}
+								</IonItem>
+
+								<IonModal isOpen={idx === this.state.showModal}>
+									<h1>{business.name}</h1>
+									<p>{business.location}</p>
+									<IonButton
+										onClick={() => {
+											this.addToStringBean(business);
+										}}
+									>
+										Add To Stringbean
+									</IonButton>
+									<IonButton
+										onClick={() => {
+											this.setState({ showModal: Infinity });
+										}}
+									>
+										Back
+									</IonButton>
+								</IonModal>
+							</IonItem>
 						))}
 					</IonContent>
 				</IonPage>
@@ -120,3 +196,5 @@ class CreateStory extends Component<{}, State> {
 }
 
 export default CreateStory;
+
+// onSubmit?: ((event: React.FormEvent<HTMLIonSearchbarElement>) => void)
