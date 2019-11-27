@@ -27,12 +27,7 @@ interface DbData {
 	upvotes: number;
 	user: string;
 }
-// interface CPData {
-// 	lat: number;
-// 	long: number;
-// 	name: string;
-// 	rating: number;
-// }
+
 type State = {
 	tours: Array<DbData>;
 };
@@ -59,13 +54,11 @@ class PublicTours extends Component<{}, State> {
 							}
 						]
 					});
-					//console.log(this.state.tours);
 				});
 				this.state.tours.forEach((tour, id) => {
 					this.getCheckpoints(tour, id);
 				});
 			});
-		// .then(docs => (this.setState({tours: docs})))
 	};
 	getCheckpoints = async (tour: any, idx: number) => {
 		let checkpointsWithData: any = [];
@@ -82,33 +75,13 @@ class PublicTours extends Component<{}, State> {
 		});
 		this.setState({ tours });
 	};
-	// async getCurrentPosition() {
-	// 	const coordinates = await Geolocation.getCurrentPosition();
-	// 	this.setState({
-	// 		latitude: coordinates.coords.latitude,
-	// 		longitude: coordinates.coords.longitude
-	// 	});
-	// }
-	// updateText() {
-	// 	this.setState({ text });
-	// }
+
 	render() {
 		const { tours } = this.state;
 		console.log(tours);
 		return (
 			<IonPage>
-				<IonHeader>
-					PUBLIC TOURS
-					{/* <IonToolbar>
-						{this.state.latitude === 0 ? (
-							<IonTitle>Locating...</IonTitle>
-						) : (
-							<IonTitle>
-								Lat: {this.state.latitude}, Long: {this.state.longitude}
-							</IonTitle>
-						)}
-					</IonToolbar> */}
-				</IonHeader>
+				<IonHeader>PUBLIC TOURS</IonHeader>
 				<IonContent className="ion-padding">
 					<IonList>
 						{tours.map((tour, idx) => (
