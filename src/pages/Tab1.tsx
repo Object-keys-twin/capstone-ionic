@@ -1,3 +1,12 @@
+
+//eslint-disable 
+
+import * as firebaseui from 'firebaseui'
+import { book, build, colorFill, grid } from "ionicons/icons";
+import db from '../firebase/firebase'
+import React from "react";
+import "./Tab1.css";
+import { Plugins } from "@capacitor/core";
 import {
 	IonCard,
 	IonCardContent,
@@ -15,19 +24,18 @@ import {
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
-import { book, build, colorFill, grid } from "ionicons/icons";
-import React from "react";
-import "./Tab1.css";
-
-import { Plugins } from "@capacitor/core";
+import firebase  from 'firebase';
 const { Geolocation } = Plugins;
 
-const Tab1: React.FC = () => {
+
+const Tab1: React.FC <{user:object}> = (user) => {
+	console.log('user',user)
 	return (
 		<IonPage>
 			<IonHeader>
 				<IonToolbar>
 					<IonTitle>Tab One</IonTitle>
+					{/* <button onClick ={() => db.app.firebase_().auth().signOut()}>Sign Out</button> */}
 				</IonToolbar>
 			</IonHeader>
 			<IonContent>
