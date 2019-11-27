@@ -1,4 +1,10 @@
 .mainListRow {
+	/* border: 1px solid red; */
+	/* --ion-background-color: red; */
 	display: flex;
 	flex-direction: column;
+}
+
+.item {
+	flex: 1;
 }
