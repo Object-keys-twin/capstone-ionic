@@ -9,7 +9,6 @@ import {
 	IonTabButton,
 	IonTabs
 } from "@ionic/react";
-import {History} from 'history'
 import { IonReactRouter } from "@ionic/react-router";
 import { apps, flash, send } from "ionicons/icons";
 import Tab1 from "./pages/Tab1";
@@ -17,7 +16,6 @@ import Login from "./pages/Login";
 import Home from "./pages/Tab2";
 import CreateStory from "./pages/Tab3";
 import Details from "./pages/Details";
-import {withRouter} from 'react-router'
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -37,9 +35,6 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-
-import FirebaseWrapper from "./firebase/firebase";
-import { firebaseConfig } from "./firebase/config";
 import firebase  from 'firebase';
 
 
@@ -50,13 +45,8 @@ type State= {
 	photoURL: string;
 }
 
-interface appHistory {
-	history: History
-}
 class App extends Component <{}, State> {
-	constructor(props:any) {
-		super(props)
-	}
+
 	state= {
 		displayName: '',
 		email:'',
@@ -70,10 +60,8 @@ class App extends Component <{}, State> {
             // This gives you a Google Access Token. You can use it to access the Google API.
             if (result) {
                 var token = result.credential.accessToken;
-                console.log('token', token)
                 // The signed-in user info.
                 var user = result.user;
-				console.log('user', user)
 				this.setState({
 						displayName: user.displayName,
 						email: user.email,
@@ -89,10 +77,11 @@ class App extends Component <{}, State> {
             var errorMessage = error.message;
             console.log(errorMessage)
             // The email of the user's account used.
-            var email = error.email;
+			var email = error.email;
+			console.log(email)
             // The firebase.auth.AuthCredential type that was used.
-            var credential = error.credential;
-            // ...
+			var credential = error.credential;
+			console.log(credential)
           })
         
         } 

@@ -5,11 +5,8 @@ import {
 	IonPage,
 	IonTitle,
 	IonContent,
-	IonSearchbar,
-	IonItem
 } from "@ionic/react";
 import { Plugins } from "@capacitor/core";
-import { number } from "prop-types";
 import axios from "axios";
 
 const { Geolocation } = Plugins;
@@ -90,7 +87,6 @@ class CreateStory extends Component<{}, State> {
 
 	// handleChange(e: HTMLInputElement);
 	render() {
-		console.log("everything", this.state);
 		const { businesses } = this.state;
 		if (businesses.length) {
 			return (

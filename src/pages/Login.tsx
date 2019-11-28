@@ -1,18 +1,7 @@
-import db from '../firebase/firebase'
 import React, { Component } from "react";
 import {
-	IonCard,
-	IonCardContent,
-	IonCardHeader,
-	IonCardSubtitle,
-	IonCardTitle,
 	IonContent,
 	IonHeader,
-	IonIcon,
-	IonItem,
-	IonLabel,
-	IonList,
-	IonListHeader,
 	IonPage,
 	IonTitle,
     IonToolbar,
@@ -24,9 +13,6 @@ import {
 
 
   class Login extends Component <{signIn:()=> void}>  {
-      constructor(props:any) {
-          super(props)
-      }
       render() {
       return (
           <IonPage>

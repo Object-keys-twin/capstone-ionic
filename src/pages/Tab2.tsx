@@ -2,23 +2,15 @@ import {
 	IonContent,
 	IonHeader,
 	IonPage,
-	IonTitle,
-	IonToolbar,
-	IonImg,
-	IonFab,
-	IonInput,
 	IonList,
 	IonItem,
 	IonLabel,
-	IonRow,
 	IonCol,
 	IonGrid
 } from "@ionic/react";
 import React, { Component } from "react";
-import { Plugins } from "@capacitor/core";
 import db from "../firebase/firebase";
 import "./Tab2.css";
-const { Geolocation } = Plugins;
 interface DbData {
 	checkpoints: Array<any>;
 	description: string;
@@ -78,7 +70,6 @@ class PublicTours extends Component<{}, State> {
 
 	render() {
 		const { tours } = this.state;
-		console.log(tours);
 		return (
 			<IonPage>
 				<IonHeader>PUBLIC TOURS</IonHeader>
