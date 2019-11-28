@@ -79,10 +79,6 @@ class App extends Component <{}, State> {
 						email: user.email,
 						photoURL: user.photoURL
 				})
-
-				// this.props.history.push
-      
-
             }
       
             // ...
