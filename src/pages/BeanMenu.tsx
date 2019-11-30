@@ -17,6 +17,7 @@ import {
 import { menuController } from "@ionic/core";
 import { Plugins } from "@capacitor/core";
 import db from "../firebase/firebase";
+import BeanMenuForm from "./BeanMenuForm";
 import { getBusinesses } from "../store";
 const { Storage } = Plugins;
 
@@ -31,12 +32,12 @@ interface BusinessData {
 	longitude: number;
 	price: string;
 }
-type Tour = {
-	checkpoints: Array<string>;
-};
 
 type State = {
 	stringbean: Array<BusinessData>;
+	showAlert: boolean;
+	name: string;
+	description: string;
 };
 
 type Props = {
@@ -44,6 +45,17 @@ type Props = {
 };
 
 export default class BeanMenu extends Component<Props, State> {
+	state = {
+		stringbean: Array<BusinessData>(),
+		showAlert: false,
+		name: "",
+		description: ""
+	};
+
+	toggleAlert = () => {
+		this.setState({ showAlert: !this.state.showAlert });
+	};
+
 	createOrUpdateCheckpoint = async (bean: BusinessData) => {
 		let beanRef = db.collection("checkpoints").doc(bean.id);
 		let getBean = await beanRef.get();
@@ -52,7 +64,11 @@ export default class BeanMenu extends Component<Props, State> {
 		}
 	};
 
-	publishTour = async () => {
+	// handleChange = (event: string) => {
+	// 	this.setState({ [event.target.name]: event.target.value });
+	// };
+
+	publishTour = async (name: string, description: string) => {
 		let checkpoints = Array<string>();
 
 		this.props.stringbean.forEach(async bean => {
@@ -64,7 +80,9 @@ export default class BeanMenu extends Component<Props, State> {
 		});
 
 		let tour = {
-			checkpoints
+			checkpoints,
+			name: name,
+			description: description
 		};
 
 		await db
@@ -93,11 +111,19 @@ export default class BeanMenu extends Component<Props, State> {
 					</IonContent>
 					<IonButton
 						onClick={() => {
-							this.publishTour();
+							// this.publishTour();
+							// this.setState({showAlert:true})
+							this.toggleAlert();
 						}}
 					>
 						Publish Stringbean
 					</IonButton>
+					<BeanMenuForm
+						showAlert={this.state.showAlert}
+						toggleAlert={this.toggleAlert}
+						publishTour={this.publishTour}
+						// handleChange={this.handleChange}
+					/>
 				</IonMenu>
 				<IonHeader>
 					<IonToolbar>
