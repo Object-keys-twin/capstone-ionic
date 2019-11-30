@@ -14,6 +14,7 @@ import { Plugins } from "@capacitor/core";
 import { number } from "prop-types";
 import axios from "axios";
 import { SearchbarChangeEventDetail } from "@ionic/core";
+import BeanMenu from "./BeanMenu";
 
 const { Geolocation, Storage } = Plugins;
 
@@ -28,6 +29,7 @@ const { Geolocation, Storage } = Plugins;
 // });
 
 interface BusinessData {
+	id: string;
 	name: string;
 	location: object;
 	imageUrl: string;
@@ -44,6 +46,7 @@ type State = {
 	businesses: Array<BusinessData>;
 	search: string;
 	showModal: number;
+	stringbean: Array<BusinessData>;
 };
 
 class CreateStory extends Component<{}, State> {
@@ -52,12 +55,35 @@ class CreateStory extends Component<{}, State> {
 		longitude: 0,
 		businesses: Array<BusinessData>(),
 		search: "",
-		showModal: Infinity
+		showModal: Infinity,
+		stringbean: Array<BusinessData>()
 	};
 
 	componentDidMount() {
 		this.getCurrentPosition();
+		this.getStringBeanOnMount();
 	}
+
+	getCurrentPosition = async () => {
+		const coordinates = await Geolocation.getCurrentPosition();
+		this.setState(
+			{
+				latitude: coordinates.coords.latitude,
+				longitude: coordinates.coords.longitude
+			},
+			() => {
+				//CHECK THIS IN A SEC ---> TERM FIELD
+				this.getYelp(this.state.latitude, this.state.longitude);
+			}
+		);
+	};
+
+	getStringBeanOnMount = async () => {
+		const data = await Storage.get({ key: "stringbean" });
+		if (data.value) {
+			this.setState({ stringbean: JSON.parse(data.value) });
+		}
+	};
 
 	getYelp = async (latitude: number, longitude: number, term?: string) => {
 		const YELP_API_KEY =
@@ -79,6 +105,7 @@ class CreateStory extends Component<{}, State> {
 		});
 
 		const info = data.businesses.map((business: any) => ({
+			id: business.id,
 			name: business.name,
 			location:
 				business.location.display_address[0] +
@@ -95,20 +122,6 @@ class CreateStory extends Component<{}, State> {
 		this.setState({ businesses: info });
 	};
 
-	getCurrentPosition = async () => {
-		const coordinates = await Geolocation.getCurrentPosition();
-		this.setState(
-			{
-				latitude: coordinates.coords.latitude,
-				longitude: coordinates.coords.longitude
-			},
-			() => {
-				//CHECK THIS IN A SEC ---> TERM FIELD
-				this.getYelp(this.state.latitude, this.state.longitude);
-			}
-		);
-	};
-
 	handleChange = (e: string) => {
 		this.setState({ search: e });
 	};
@@ -120,10 +133,13 @@ class CreateStory extends Component<{}, State> {
 			stringBeanArray = JSON.parse(localStorage.value);
 		}
 		stringBeanArray.push(business);
+		this.setState({ stringbean: stringBeanArray });
 		await Storage.set({
 			key: "stringbean",
 			value: JSON.stringify(stringBeanArray)
 		});
+		// console.log(await Storage.get({ key: "stringbean" }));
+		console.log(localStorage);
 	};
 
 	//write function to publish story. loops through the checkpoints, checks if they exist in the database. if not, adds it to the database. grabs the checkpoint's firestore ID. holds the checkpoints' firestore IDs in an array.
@@ -132,6 +148,7 @@ class CreateStory extends Component<{}, State> {
 	render() {
 		console.log("everything", this.state);
 		const { businesses } = this.state;
+		// console.log(Storage.get({ key: "stringbean" }));
 		if (businesses.length) {
 			return (
 				<IonPage>
@@ -140,6 +157,7 @@ class CreateStory extends Component<{}, State> {
 							<IonTitle>Beans</IonTitle>
 						</IonToolbar>
 					</IonHeader>
+					<BeanMenu stringbean={this.state.stringbean} />
 					<IonSearchbar
 						onIonChange={e =>
 							this.handleChange((e.target as HTMLInputElement).value)
