@@ -37,6 +37,7 @@ import "./theme/variables.css";
 
 import FirebaseWrapper from "./firebase/firebase";
 import { firebaseConfig } from "./firebase/config";
+import BeanMenu from "./pages/BeanMenu";
 
 const App: React.FC = () => {
 	// class App extends Component {
@@ -52,6 +53,7 @@ const App: React.FC = () => {
 						<Route path="/tab2" component={Home} exact={true} />
 						<Route path="/tab2/details" component={Details} />
 						<Route path="/tab3" component={CreateStory} />
+						<Route path="/tab4" component={BeanMenu} />
 						<Route
 							path="/"
 							render={() => <Redirect to="/tab1" />}
@@ -70,6 +72,10 @@ const App: React.FC = () => {
 						<IonTabButton tab="tab3" href="/tab3">
 							<IonIcon icon={send} />
 							<IonLabel>Tab Three</IonLabel>
+						</IonTabButton>
+						<IonTabButton tab="tab4" href="/tab4">
+							<IonIcon icon={send} />
+							<IonLabel>Tab Four</IonLabel>
 						</IonTabButton>
 					</IonTabBar>
 				</IonTabs>
