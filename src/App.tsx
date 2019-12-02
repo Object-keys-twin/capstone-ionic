@@ -37,6 +37,12 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 import firebase  from 'firebase';
 
+<<<<<<< HEAD
+=======
+import FirebaseWrapper from "./firebase/firebase";
+import { firebaseConfig } from "./firebase/config";
+import BeanMenu from "./pages/BeanMenu";
+>>>>>>> master
 
 
 type State= {
@@ -98,6 +104,7 @@ class App extends Component <{}, State> {
 						<Route path="/tab2" component={Home} exact={true} />
 						<Route path="/tab2/details" component={Details} />
 						<Route path="/tab3" component={CreateStory} />
+						<Route path="/tab4" component={BeanMenu} />
 						<Route
 							path="/"
 							render={() =><Redirect to="/tab2"  />}
@@ -116,6 +123,10 @@ class App extends Component <{}, State> {
 						<IonTabButton tab="tab3" href="/tab3">
 							<IonIcon icon={send} />
 							<IonLabel>Tab Three</IonLabel>
+						</IonTabButton>
+						<IonTabButton tab="tab4" href="/tab4">
+							<IonIcon icon={send} />
+							<IonLabel>Tab Four</IonLabel>
 						</IonTabButton>
 					</IonTabBar>
 				</IonTabs>

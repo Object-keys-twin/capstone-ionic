@@ -81,9 +81,9 @@ class PublicTours extends Component<{}, State> {
 									<IonCol>
 										<IonLabel>{tour.name}</IonLabel>
 										<IonList>
-											{tour.checkpoints.map(checkpoint => {
+											{tour.checkpoints.map((checkpoint, idx) => {
 												if (checkpoint)
-													return <IonItem>{checkpoint.name}</IonItem>;
+													return <IonItem key={idx}>{checkpoint.name}</IonItem>;
 											})}
 										</IonList>
 									</IonCol>
