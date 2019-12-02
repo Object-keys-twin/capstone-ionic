@@ -18,7 +18,7 @@ import React, { Component } from "react";
 import { Plugins } from "@capacitor/core";
 import db from "../firebase/firebase";
 import "./Tab2.css";
-const { Geolocation } = Plugins;
+
 interface DbData {
 	checkpoints: Array<any>;
 	description: string;
