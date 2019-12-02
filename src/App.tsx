@@ -35,7 +35,7 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-import firebase  from 'firebase';
+import firebase, { auth }  from 'firebase';
 
 import FirebaseWrapper from "./firebase/firebase";
 import { firebaseConfig } from "./firebase/config";
@@ -43,23 +43,22 @@ import BeanMenu from "./pages/BeanMenu";
 
 
 type State= {
-	displayName: string;
-	email:string;
-	photoURL: string;
+	email:string | null;
 }
 
 class App extends Component <{}, State> {
 
 	state= {
-		displayName: '',
+		// displayName: '',
 		email:'',
-		photoURL: ''
+		// photoURL: ''
 	}
 
 	signIn = async (): Promise<void>=> {
 		const provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider)
-        .then((result:any) => {
+		firebase.auth().signInWithPopup(provider)
+		// firebase.auth().getRedirectResult()
+		.then((result:any) => {
             // This gives you a Google Access Token. You can use it to access the Google API.
             if (result) {
                 var token = result.credential.accessToken;
@@ -67,9 +66,7 @@ class App extends Component <{}, State> {
 				var user = result.user;
 				console.log(user)
 				this.setState({
-						displayName: user.displayName,
 						email: user.email,
-						photoURL: user.photoURL
 				})
             }
             // ...
@@ -90,19 +87,22 @@ class App extends Component <{}, State> {
         } 
 		
 	render() {
-		let userObj = {};
-		firebase.auth().onAuthStateChanged(function(user) {
+		let userObj:any = '';
+		firebase.auth().onAuthStateChanged((user) =>{
 			if (user) {
-				userObj = user;
+				console.log('user', userObj)
+				this.setState({
+					email: user.email
+			})
 			}
 		})
 		return(
-		userObj?  (
+		this.state.email?  (
 		<IonApp>
 			<IonReactRouter>
 				<IonTabs>
 					<IonRouterOutlet>
-					{/* <Route path="/login" render={(props) => <Login {...props} signIn={this.signIn}/>} exact={true} /> */}
+					<Route path="/login" render={(props) => <Login {...props} signIn={this.signIn}/>} exact={true} />
 						<Route path="/tab1" render={(props) => <Tab1 {...props} user={this.state}/>}exact={true} />
 						<Route path="/tab2" component={Home} exact={true} />
 						<Route path="/tab2/details" component={Details} />
@@ -127,10 +127,6 @@ class App extends Component <{}, State> {
 							<IonIcon icon={send} />
 							<IonLabel>Tab Three</IonLabel>
 						</IonTabButton>
-						{/* <IonTabButton tab="tab4" href="/tab4">
-							<IonIcon icon={send} />
-							<IonLabel>Tab Four</IonLabel>
-						</IonTabButton> */}
 					</IonTabBar>
 				</IonTabs>
 			</IonReactRouter>

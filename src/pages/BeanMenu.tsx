@@ -43,6 +43,7 @@ type State = {
 
 type Props = {
 	stringbean: Array<BusinessData>;
+	user: string
 };
 
 export default class BeanMenu extends Component<Props, State> {
@@ -81,6 +82,7 @@ export default class BeanMenu extends Component<Props, State> {
 		});
 
 		let tour = {
+			user: this.props.user,
 			checkpoints,
 			name: name,
 			description: description,
@@ -98,7 +100,7 @@ export default class BeanMenu extends Component<Props, State> {
 	render() {
 		return (
 			<>
-				<IonMenu side="end" contentId="main" type="push" swipeGesture={true}>
+				<IonMenu side="end" contentId="main" type="overlay" swipeGesture={true}>
 					<IonHeader>
 						<IonToolbar color="primary">
 							<IonTitle>My Beans</IonTitle>

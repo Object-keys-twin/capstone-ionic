@@ -13,6 +13,8 @@ import {
 import { Plugins } from "@capacitor/core";
 import axios from "axios";
 import { SearchbarChangeEventDetail } from "@ionic/core";
+import firebase  from 'firebase';
+
 import BeanMenu from "./BeanMenu";
 
 const { Geolocation, Storage } = Plugins;
@@ -46,6 +48,7 @@ type State = {
 	search: string;
 	showModal: number;
 	stringbean: Array<BusinessData>;
+	user: string
 };
 
 class CreateStory extends Component<{}, State> {
@@ -55,12 +58,22 @@ class CreateStory extends Component<{}, State> {
 		businesses: Array<BusinessData>(),
 		search: "",
 		showModal: Infinity,
-		stringbean: Array<BusinessData>()
+		stringbean: Array<BusinessData>(),
+		user: ''
 	};
 
 	componentDidMount() {
 		this.getCurrentPosition();
 		this.getStringBeanOnMount();
+		firebase.auth().onAuthStateChanged((user) => {
+			if (user) {
+				console.log(user)
+				this.setState({
+					user: user.uid
+				})
+				console.log('state', this.state)
+			}
+		})
 	}
 
 	getCurrentPosition = async () => {
@@ -155,7 +168,10 @@ class CreateStory extends Component<{}, State> {
 							<IonTitle>Beans</IonTitle>
 						</IonToolbar>
 					</IonHeader>
-					<BeanMenu stringbean={this.state.stringbean} />
+					<BeanMenu 
+					stringbean={this.state.stringbean}
+					user= {this.state.user}
+					/>
 					<IonSearchbar
 						onIonChange={e =>
 							this.handleChange((e.target as HTMLInputElement).value)
