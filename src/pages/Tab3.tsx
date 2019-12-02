@@ -5,13 +5,10 @@ import {
 	IonPage,
 	IonTitle,
 	IonContent,
-<<<<<<< HEAD
-=======
 	IonSearchbar,
 	IonItem,
 	IonButton,
 	IonModal
->>>>>>> master
 } from "@ionic/react";
 import { Plugins } from "@capacitor/core";
 import axios from "axios";

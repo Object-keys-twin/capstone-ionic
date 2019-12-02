@@ -37,12 +37,9 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 import firebase  from 'firebase';
 
-<<<<<<< HEAD
-=======
 import FirebaseWrapper from "./firebase/firebase";
 import { firebaseConfig } from "./firebase/config";
 import BeanMenu from "./pages/BeanMenu";
->>>>>>> master
 
 
 type State= {
@@ -67,14 +64,14 @@ class App extends Component <{}, State> {
             if (result) {
                 var token = result.credential.accessToken;
                 // The signed-in user info.
-                var user = result.user;
+				var user = result.user;
+				console.log(user)
 				this.setState({
 						displayName: user.displayName,
 						email: user.email,
 						photoURL: user.photoURL
 				})
             }
-      
             // ...
           }).catch(function(error:any) {
             // Handle Errors here.
@@ -93,8 +90,14 @@ class App extends Component <{}, State> {
         } 
 		
 	render() {
+		let userObj = {};
+		firebase.auth().onAuthStateChanged(function(user) {
+			if (user) {
+				userObj = user;
+			}
+		})
 		return(
-		this.state.displayName?  (
+		userObj?  (
 		<IonApp>
 			<IonReactRouter>
 				<IonTabs>
