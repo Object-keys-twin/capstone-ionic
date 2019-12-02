@@ -18,6 +18,7 @@ import { menuController } from "@ionic/core";
 import { Plugins } from "@capacitor/core";
 import db from "../firebase/firebase";
 import BeanMenuForm from "./BeanMenuForm";
+import firebase from "firebase";
 import { getBusinesses } from "../store";
 const { Storage } = Plugins;
 
@@ -82,7 +83,8 @@ export default class BeanMenu extends Component<Props, State> {
 		let tour = {
 			checkpoints,
 			name: name,
-			description: description
+			description: description,
+			created: firebase.firestore.Timestamp.fromDate(new Date())
 		};
 
 		await db

@@ -15,7 +15,7 @@ interface DbData {
 	checkpoints: Array<any>;
 	description: string;
 	name: string;
-	timestamp: object;
+	created: object;
 	upvotes: number;
 	user: string;
 }
@@ -40,7 +40,7 @@ class PublicTours extends Component<{}, State> {
 								checkpoints: doc.data().checkpoints,
 								description: doc.data().description,
 								name: doc.data().name,
-								timestamp: doc.data().timestamp,
+								created: doc.data().timestamp,
 								upvotes: doc.data().upvotes,
 								user: doc.data().user
 							}
