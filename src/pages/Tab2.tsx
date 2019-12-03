@@ -30,6 +30,10 @@ class PublicTours extends Component<{}, State> {
 	componentDidMount() {
 		this.getTours();
 	}
+
+	componentWillUnmount() {
+		console.log("I UNMOUNTED");
+	}
 	getTours = () => {
 		db.collection("tours")
 			.get()
@@ -71,6 +75,7 @@ class PublicTours extends Component<{}, State> {
 	};
 
 	render() {
+		console.log("in the render");
 		const { tours } = this.state;
 
 		return (
