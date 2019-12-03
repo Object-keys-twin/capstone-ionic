@@ -9,12 +9,16 @@ import {
 	IonTabButton,
 	IonTabs
 } from "@ionic/react";
+import { Plugins } from "@capacitor/core";
 import { IonReactRouter } from "@ionic/react-router";
 import { apps, flash, send } from "ionicons/icons";
+import firebase from 'firebase'
 import Tab1 from "./pages/Tab1";
 import Home from "./pages/Tab2";
 import CreateStory from "./pages/Tab3";
 import Details from "./pages/Details";
+import Login from './pages/Login'
+
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -38,13 +42,92 @@ import "./theme/variables.css";
 import FirebaseWrapper from "./firebase/firebase";
 import { firebaseConfig } from "./firebase/config";
 import BeanMenu from "./pages/BeanMenu";
+import { render } from "react-dom";
+const { Storage } = Plugins;
+type State = {
+	email: string | null
+	user: object | null
+}
+// interface userObj {
+// 	email:string | null
+// }
 
-const App: React.FC = () => {
-	// class App extends Component {
+class App extends Component <{} > {
+	state= {
+		email:'',
+		user: {}
+	}
 
-	// render() {
-	// FirebaseWrapper.GetInstance().Initialize(firebaseConfig);
-	return (
+	handleGoogle = (e?:any) => {
+        //e.preventDefault();
+        var provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider).then((result)=> {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          //var token = result.credential.accessToken;
+          // The signed-in user info.
+          //var user = result.user;
+          console.log('Google login success')
+		  console.log(result.user)
+		  if (result.user) {
+			this.setState({
+				email:result.user.email
+			})
+			// this.addToUser(result.user)
+			Storage.set({
+				key:'user',
+				value: JSON.stringify(result.user)
+			})
+		}
+        //   props.history.push("/tab2")
+          
+
+        }).catch(function(error) {
+          var errorMessage = error.message;
+          alert("Google sign in error: "+ errorMessage);
+        });
+      }
+	componentDidMount () {
+		this.getUser()
+
+	}
+	getUser = async () => {
+		const data = await Storage.get({
+			key: 'user'
+		})
+	
+		console.log('data',data.value)
+		if (data.value) {
+			const user = JSON.parse(data.value)
+		this.setState({
+			email: user.email
+		})
+
+		}
+	}
+// 	addToUser = async (user: object) => {
+// let userObj:object = {}
+// const localStorage = await Storage.get({
+// 	key: 'user'
+// })
+
+// if (localStorage.value) {
+// 	console.log(localStorage.value)
+// 	userObj = JSON.parse(localStorage.value)
+// }
+
+// this.setState({user:user})
+//  await Storage.set({
+// 	 key: 'user',
+// 	 value: JSON.stringify(userObj)
+//  })
+// 	}
+	render(){
+		
+		if (this.state.email){
+		return (
+
+
+		
 		<IonApp>
 			<IonReactRouter>
 				<IonTabs>
@@ -53,10 +136,9 @@ const App: React.FC = () => {
 						<Route path="/tab2" component={Home} exact={true} />
 						<Route path="/tab2/details" component={Details} />
 						<Route path="/tab3" component={CreateStory} />
-						{/* <Route path="/tab4" component={BeanMenu} /> */}
 						<Route
 							path="/"
-							render={() => <Redirect to="/tab1" />}
+							render={() => <Redirect to="/tab2" />}
 							exact={true}
 						/>
 					</IonRouterOutlet>
@@ -80,8 +162,11 @@ const App: React.FC = () => {
 					</IonTabBar>
 				</IonTabs>
 			</IonReactRouter>
-		</IonApp>
-	);
+		</IonApp>)}
+	return (<Login 
+		handleGoogle = {this.handleGoogle}/>)
+	
+	}
 };
 // }
 
