@@ -9,6 +9,7 @@ import {
 	IonTabButton,
 	IonTabs
 } from "@ionic/react";
+import { Plugins } from "@capacitor/core";
 import { IonReactRouter } from "@ionic/react-router";
 import { apps, flash, send } from "ionicons/icons";
 import firebase from 'firebase'
@@ -42,16 +43,19 @@ import FirebaseWrapper from "./firebase/firebase";
 import { firebaseConfig } from "./firebase/config";
 import BeanMenu from "./pages/BeanMenu";
 import { render } from "react-dom";
+const { Storage } = Plugins;
 type State = {
 	email: string | null
+	user: object | null
 }
-interface userObj {
-	email:string | null
-}
+// interface userObj {
+// 	email:string | null
+// }
 
-class App extends Component <{}, State > {
+class App extends Component <{} > {
 	state= {
-		email:''
+		email:'',
+		user: {}
 	}
 
 	handleGoogle = (e?:any) => {
@@ -68,6 +72,11 @@ class App extends Component <{}, State > {
 			this.setState({
 				email:result.user.email
 			})
+			// this.addToUser(result.user)
+			Storage.set({
+				key:'user',
+				value: JSON.stringify(result.user)
+			})
 		}
         //   props.history.push("/tab2")
           
@@ -78,14 +87,47 @@ class App extends Component <{}, State > {
         });
       }
 	componentDidMount () {
-		const user:userObj|null = firebase.auth().currentUser
+		this.getUser()
 
 	}
+	getUser = async () => {
+		const data = await Storage.get({
+			key: 'user'
+		})
+	
+		console.log('data',data.value)
+		if (data.value) {
+			const user = JSON.parse(data.value)
+		this.setState({
+			email: user.email
+		})
+
+		}
+	}
+// 	addToUser = async (user: object) => {
+// let userObj:object = {}
+// const localStorage = await Storage.get({
+// 	key: 'user'
+// })
+
+// if (localStorage.value) {
+// 	console.log(localStorage.value)
+// 	userObj = JSON.parse(localStorage.value)
+// }
+
+// this.setState({user:user})
+//  await Storage.set({
+// 	 key: 'user',
+// 	 value: JSON.stringify(userObj)
+//  })
+// 	}
 	render(){
-	console.log('email',this.state.email)
-	return (
-this.state.email?
-		(
+		
+		if (this.state.email){
+		return (
+
+
+		
 		<IonApp>
 			<IonReactRouter>
 				<IonTabs>
@@ -94,7 +136,6 @@ this.state.email?
 						<Route path="/tab2" component={Home} exact={true} />
 						<Route path="/tab2/details" component={Details} />
 						<Route path="/tab3" component={CreateStory} />
-						{/* <Route path="/tab4" component={BeanMenu} /> */}
 						<Route
 							path="/"
 							render={() => <Redirect to="/tab2" />}
@@ -121,9 +162,10 @@ this.state.email?
 					</IonTabBar>
 				</IonTabs>
 			</IonReactRouter>
-		</IonApp>
-	): (<Login handleGoogle = {this.handleGoogle}/>)
-	)
+		</IonApp>)}
+	return (<Login 
+		handleGoogle = {this.handleGoogle}/>)
+	
 	}
 };
 // }
