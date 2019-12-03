@@ -121,10 +121,10 @@ class App extends Component<{}, State> {
 									<IonIcon icon={send} />
 									<IonLabel>Tab Three</IonLabel>
 								</IonTabButton>
-								<IonTabButton tab="map" href="/map">
+								{/* <IonTabButton tab="map" href="/map">
 									<IonIcon icon={send} />
 									<IonLabel>Map</IonLabel>
-								</IonTabButton>
+								</IonTabButton> */}
 							</IonTabBar>
 						</IonTabs>
 					</IonReactRouter>

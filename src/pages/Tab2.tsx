@@ -9,6 +9,7 @@ import {
 	IonGrid
 } from "@ionic/react";
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import db from "../firebase/firebase";
 import "./Tab2.css";
 
@@ -81,7 +82,16 @@ class PublicTours extends Component<{}, State> {
 							<IonItem key={idx} className="mainListRow">
 								<IonGrid>
 									<IonCol>
-										<IonLabel onClick={() => {}}>{tour.name}</IonLabel>
+										<IonLabel>
+											<Link
+												to={{
+													pathname: "/map",
+													state: { checkpoints: tour.checkpoints }
+												}}
+											>
+												{tour.name}
+											</Link>
+										</IonLabel>
 										<IonList>
 											{tour.checkpoints.map((checkpoint, idx) => {
 												if (checkpoint)

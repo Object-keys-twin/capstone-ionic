@@ -4,7 +4,20 @@ import { IonPage } from "@ionic/react";
 type Props = {
 	lat: number;
 	long: number;
+	checkpoints: Array<BusinessData>;
 };
+
+interface BusinessData {
+	id: string;
+	name: string;
+	location: object;
+	imageUrl: string;
+	categories: Array<object>;
+	rating: number;
+	latitude: number;
+	longitude: number;
+	price: string;
+}
 
 export default class Map extends Component<Props> {
 	mapEle: React.RefObject<HTMLDivElement>;
@@ -45,11 +58,44 @@ export default class Map extends Component<Props> {
 		marker.addListener("click", () => {
 			infoWindow.open(this.map, marker);
 		});
+
+		this.addMarkers();
 	}
 
 	// componentDidUpdate(prevProps: Props) {
 	//     // this.addMarkers();
 	// }
+
+	addMarkers = () => {
+		this.props.checkpoints.forEach(markerData => {
+			let infoWindow = new google.maps.InfoWindow({
+				content: `<h5>${markerData.name}</h5>`
+			});
+
+			let marker = new google.maps.Marker({
+				position: new google.maps.LatLng(
+					markerData.latitude,
+					markerData.longitude
+				),
+				map: this.map,
+				title: markerData.name
+			});
+
+			marker.addListener("click", () => {
+				infoWindow.open(this.map, marker);
+			});
+
+			this.markers.push(marker);
+		});
+
+		// if (this.map && this.markers.length) {
+		// 	const bounds = new google.maps.LatLngBounds();
+		// 	for (let i = 0; i < this.markers.length; i++) {
+		// 		bounds.extend(this.markers[i].getPosition());
+		// 	}
+		// 	this.map.fitBounds(bounds);
+		// }
+	};
 
 	// addMarkers() {
 	//     this.props.locations.forEach((markerData) => {

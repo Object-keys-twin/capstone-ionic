@@ -18,9 +18,13 @@ type State = {
 	longitude: number;
 };
 
+type Props = {
+	location: any;
+};
+
 const { Geolocation } = Plugins;
 
-class MapPage extends Component<{}, State> {
+class MapPage extends Component<Props, State> {
 	state = {
 		latitude: 0,
 		longitude: 0
@@ -28,6 +32,7 @@ class MapPage extends Component<{}, State> {
 
 	componentDidMount() {
 		this.getCurrentPosition();
+		console.log("props", this.props.location.state.checkpoints);
 	}
 
 	getCurrentPosition = async () => {
@@ -44,20 +49,34 @@ class MapPage extends Component<{}, State> {
 
 	render() {
 		console.log(this.state);
+
+		if (this.props.location.state) {
+			const { checkpoints } = this.props.location.state;
+
+			return (
+				<IonPage>
+					<IonHeader>
+						<IonToolbar>
+							<IonButtons slot="start">
+								<IonMenuButton></IonMenuButton>
+							</IonButtons>
+							<IonTitle>Map</IonTitle>
+						</IonToolbar>
+					</IonHeader>
+
+					<IonContent class="map-page">
+						<Map
+							lat={this.state.latitude}
+							long={this.state.longitude}
+							checkpoints={checkpoints}
+						/>
+					</IonContent>
+				</IonPage>
+			);
+		}
 		return (
 			<IonPage>
-				<IonHeader>
-					<IonToolbar>
-						<IonButtons slot="start">
-							<IonMenuButton></IonMenuButton>
-						</IonButtons>
-						<IonTitle>Map</IonTitle>
-					</IonToolbar>
-				</IonHeader>
-
-				<IonContent class="map-page">
-					<Map lat={this.state.latitude} long={this.state.longitude} />
-				</IonContent>
+				<IonContent>Loading...</IonContent>
 			</IonPage>
 		);
 	}
