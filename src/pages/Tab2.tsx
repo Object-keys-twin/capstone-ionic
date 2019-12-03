@@ -2,20 +2,13 @@ import {
 	IonContent,
 	IonHeader,
 	IonPage,
-	IonTitle,
-	IonToolbar,
-	IonImg,
-	IonFab,
-	IonInput,
 	IonList,
 	IonItem,
 	IonLabel,
-	IonRow,
 	IonCol,
 	IonGrid
 } from "@ionic/react";
 import React, { Component } from "react";
-import { Plugins } from "@capacitor/core";
 import db from "../firebase/firebase";
 import "./Tab2.css";
 
@@ -70,7 +63,7 @@ class PublicTours extends Component<{}, State> {
 			checkpointsWithData.push(checkpoints.data());
 		}
 		let tours = this.state.tours;
-		tours.map((el, i) => {
+		tours.forEach((el, i) => {
 			if (i === idx) el.checkpoints = checkpointsWithData;
 		});
 		this.setState({ tours });
@@ -78,7 +71,7 @@ class PublicTours extends Component<{}, State> {
 
 	render() {
 		const { tours } = this.state;
-		console.log(tours);
+
 		return (
 			<IonPage>
 				<IonHeader>PUBLIC TOURS</IonHeader>
