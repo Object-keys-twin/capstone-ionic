@@ -85,10 +85,10 @@ class PublicTours extends Component<{}, State> {
 				<IonContent className="ion-padding">
 					<IonList>
 						{tours.map((tour, idx) => (
-							<IonItem key={idx} onClick={() => {}} className="mainListRow">
+							<IonItem key={idx} className="mainListRow">
 								<IonGrid>
 									<IonCol>
-										<IonLabel>{tour.name}</IonLabel>
+										<IonLabel onClick={() => {}}>{tour.name}</IonLabel>
 										<IonList>
 											{tour.checkpoints.map((checkpoint, idx) => {
 												if (checkpoint)

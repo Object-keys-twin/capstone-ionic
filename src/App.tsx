@@ -41,10 +41,6 @@ import { firebaseConfig } from "./firebase/config";
 import BeanMenu from "./pages/BeanMenu";
 
 const App: React.FC = () => {
-	// class App extends Component {
-
-	// render() {
-	// FirebaseWrapper.GetInstance().Initialize(firebaseConfig);
 	return (
 		<IonApp>
 			<IonReactRouter>

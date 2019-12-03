@@ -59,10 +59,9 @@ class CreateStory extends Component<{}, State> {
 		stringbean: Array<BusinessData>()
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		this.getCurrentPosition();
 		this.getStringBeanOnMount();
-		console.log("HELLLOOOOOOOOOOO");
 	}
 
 	getCurrentPosition = async () => {
