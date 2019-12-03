@@ -1,23 +1,30 @@
-import React, { Component } from 'react';
-import {connect} from 'react-redux';
+import React, { Component } from "react";
+import { connect } from "react-redux";
 // import {actions, RootState, selectors} from '../store';
-import Map from './MapView';
-import {IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonContent} from '@ionic/react';
-// import {Location} from '../store/locations/types';
-import {Plugins} from '@capacitor/core';
+import Map from "./MapView";
+import {
+	IonHeader,
+	IonToolbar,
+	IonButtons,
+	IonMenuButton,
+	IonTitle,
+	IonContent,
+	IonPage
+} from "@ionic/react";
+import { Plugins } from "@capacitor/core";
 
 type State = {
 	latitude: number;
 	longitude: number;
-}
+};
 
-const {Geolocation} = Plugins;
+const { Geolocation } = Plugins;
 
-class MapPage extends Component <{}, State> {
+class MapPage extends Component<{}, State> {
 	state = {
 		latitude: 0,
-		longitude: 0,
-	}
+		longitude: 0
+	};
 
 	componentDidMount() {
 		this.getCurrentPosition();
@@ -25,33 +32,36 @@ class MapPage extends Component <{}, State> {
 
 	getCurrentPosition = async () => {
 		const coordinates = await Geolocation.getCurrentPosition();
-		this.setState(
-			{
-				latitude: coordinates.coords.latitude,
-				longitude: coordinates.coords.longitude
-			}
-		);
+		this.setState({
+			latitude: coordinates.coords.latitude,
+			longitude: coordinates.coords.longitude
+		});
 	};
-		render (){
-    return (
-        <>
-            <IonHeader>
-                <IonToolbar>
-                    <IonButtons slot="start">
-                        <IonMenuButton></IonMenuButton>
-                    </IonButtons>
-                    <IonTitle>Map</IonTitle>
-                </IonToolbar>
-            </IonHeader>
 
-            <IonContent class="map-page">
-                <Map lat = {this.state.latitude} long = {this.state.longitude}/>
-            </IonContent>
-        </>
-    );
-}
-}
+	// setInterval = (callback: (fn: any) => void, time: number) => {
+	// 	callback(this.getCurrentPosition()), 3000;
+	// };
 
+	render() {
+		console.log(this.state);
+		return (
+			<IonPage>
+				<IonHeader>
+					<IonToolbar>
+						<IonButtons slot="start">
+							<IonMenuButton></IonMenuButton>
+						</IonButtons>
+						<IonTitle>Map</IonTitle>
+					</IonToolbar>
+				</IonHeader>
+
+				<IonContent class="map-page">
+					<Map lat={this.state.latitude} long={this.state.longitude} />
+				</IonContent>
+			</IonPage>
+		);
+	}
+}
 
 // const mapDispatchToProps = {
 //     addLocation: (location: Location) => actions.locations.updateLocations(location)
@@ -63,4 +73,4 @@ class MapPage extends Component <{}, State> {
 //     userLocationRetrieved: state.locations.userLocationRetrieved
 // });
 
-export default MapPage
+export default MapPage;

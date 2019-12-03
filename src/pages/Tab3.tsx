@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, EffectCallback } from "react";
 import {
 	IonHeader,
 	IonToolbar,
@@ -59,9 +59,10 @@ class CreateStory extends Component<{}, State> {
 		stringbean: Array<BusinessData>()
 	};
 
-	componentDidMount() {
+	componentWillMount() {
 		this.getCurrentPosition();
 		this.getStringBeanOnMount();
+		console.log("HELLLOOOOOOOOOOO");
 	}
 
 	getCurrentPosition = async () => {

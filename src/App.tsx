@@ -54,7 +54,7 @@ const App: React.FC = () => {
 						<Route path="/tab2" component={Home} exact={true} />
 						<Route path="/tab2/details" component={Details} />
 						<Route path="/tab3" component={CreateStory} />
-						<Route path="/map" component={MapPage} />
+						<Route path="/map" component={MapPage} exact={true} />
 						{/* <Route path="/tab4" component={BeanMenu} /> */}
 						<Route
 							path="/"
