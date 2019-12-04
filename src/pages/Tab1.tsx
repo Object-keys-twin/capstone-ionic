@@ -2,22 +2,18 @@ import {
 	IonCard,
 	IonCardContent,
 	IonCardHeader,
-	IonCardSubtitle,
 	IonCardTitle,
 	IonContent,
 	IonHeader,
-	IonIcon,
 	IonItem,
-	IonLabel,
-	IonList,
-	IonListHeader,
 	IonPage,
 	IonTitle,
-	IonToolbar
+	IonToolbar,
+	IonIcon
 } from '@ionic/react'
 import React, { Component } from 'react'
 import { Plugins } from '@capacitor/core'
-import { book, build, colorFill, grid } from 'ionicons/icons'
+import { walk } from 'ionicons/icons'
 import './Tab1.css'
 import db from '../firebase/firebase'
 const { Storage } = Plugins
@@ -97,7 +93,6 @@ class Profile extends Component<Props, State> {
 	}
 
 	render() {
-		console.log(this.state.tours)
 		return (
 			<IonPage>
 				<IonHeader>
@@ -115,12 +110,17 @@ class Profile extends Component<Props, State> {
 						</IonCardHeader>
 						<IonCardContent></IonCardContent>
 					</IonCard>
-
+					<IonCard>
+						<IonCardTitle className="string-bean-title">
+							My Stringbeans
+						</IonCardTitle>
+					</IonCard>
 					{this.state.tours.map((tour, i) => (
 						<IonCard className="welcome-card" key={i}>
-							<IonCardHeader>
+							<IonItem>
+								<IonIcon slot="start" color="medium" icon={walk} />
 								<IonCardTitle>{tour.name}</IonCardTitle>
-							</IonCardHeader>
+							</IonItem>
 							<IonCardContent>
 								{tour.checkpoints.map((checkpoint, i) => {
 									if (checkpoint) {
@@ -130,37 +130,6 @@ class Profile extends Component<Props, State> {
 							</IonCardContent>
 						</IonCard>
 					))}
-
-					{/* <IonList lines="none">
-						<IonListHeader>
-							<IonLabel>Resources</IonLabel>
-						</IonListHeader>
-						<IonItem href="https://ionicframework.com/docs/" target="_blank">
-							<IonIcon slot="start" color="medium" icon={book} />
-							<IonLabel>Ionic Documentation</IonLabel>
-						</IonItem>
-						<IonItem
-							href="https://ionicframework.com/docs/building/scaffolding"
-							target="_blank"
-						>
-							<IonIcon slot="start" color="medium" icon={build} />
-							<IonLabel>Scaffold Out Your App</IonLabel>
-						</IonItem>
-						<IonItem
-							href="https://ionicframework.com/docs/layout/structure"
-							target="_blank"
-						>
-							<IonIcon slot="start" color="medium" icon={grid} />
-							<IonLabel>Change Your App Layout</IonLabel>
-						</IonItem>
-						<IonItem
-							href="https://ionicframework.com/docs/theming/basics"
-							target="_blank"
-						>
-							<IonIcon slot="start" color="medium" icon={colorFill} />
-							<IonLabel>Theme Your App</IonLabel>
-						</IonItem>
-					</IonList> */}
 				</IonContent>
 			</IonPage>
 		)
