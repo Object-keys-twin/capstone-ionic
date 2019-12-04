@@ -8,17 +8,17 @@ import {
 	IonTabBar,
 	IonTabButton,
 	IonTabs
-} from "@ionic/react";
-import { Plugins } from "@capacitor/core";
-import { IonReactRouter } from "@ionic/react-router";
-import { apps, person, add } from "ionicons/icons";
-import firebase from "firebase";
-import Tab1 from "./pages/Tab1";
-import Home from "./pages/Tab2";
-import CreateStory from "./pages/Tab3";
-import Details from "./pages/Details";
-import MapPage from "./pages/Map";
-import Login from "./pages/Login";
+} from '@ionic/react'
+import { Plugins } from '@capacitor/core'
+import { IonReactRouter } from '@ionic/react-router'
+import { apps, person, add } from 'ionicons/icons'
+import firebase from 'firebase'
+import Profile from './pages/Tab1'
+import Home from './pages/Tab2'
+import CreateStory from './pages/Tab3'
+import Details from './pages/Details'
+import MapPage from './pages/Map'
+import Login from './pages/Login'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
