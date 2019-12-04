@@ -8,17 +8,17 @@ import {
 	IonTabBar,
 	IonTabButton,
 	IonTabs
-} from '@ionic/react'
-import { Plugins } from '@capacitor/core'
-import { IonReactRouter } from '@ionic/react-router'
-import { apps, flash, send } from 'ionicons/icons'
-import firebase from 'firebase'
-import Profile from './pages/Tab1'
-import Home from './pages/Tab2'
-import CreateStory from './pages/Tab3'
-import Details from './pages/Details'
-import MapPage from './pages/Map'
-import Login from './pages/Login'
+} from "@ionic/react";
+import { Plugins } from "@capacitor/core";
+import { IonReactRouter } from "@ionic/react-router";
+import { apps, person, add } from "ionicons/icons";
+import firebase from "firebase";
+import Tab1 from "./pages/Tab1";
+import Home from "./pages/Tab2";
+import CreateStory from "./pages/Tab3";
+import Details from "./pages/Details";
+import MapPage from "./pages/Map";
+import Login from "./pages/Login";
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -141,16 +141,16 @@ class App extends Component<{}, State> {
 							</IonRouterOutlet>
 							<IonTabBar slot="bottom">
 								<IonTabButton tab="tab1" href="/tab1">
-									<IonIcon icon={flash} />
-									<IonLabel>Home</IonLabel>
+									<IonIcon icon={person} />
+									<IonLabel>Profile</IonLabel>
 								</IonTabButton>
 								<IonTabButton tab="tab2" href="/tab2">
 									<IonIcon icon={apps} />
-									<IonLabel>Tab Two</IonLabel>
+									<IonLabel>Tours</IonLabel>
 								</IonTabButton>
 								<IonTabButton tab="tab3" href="/tab3">
-									<IonIcon icon={send} />
-									<IonLabel>Tab Three</IonLabel>
+									<IonIcon icon={add} />
+									<IonLabel>Create</IonLabel>
 								</IonTabButton>
 								{/* <IonTabButton tab="map" href="/map">
 									<IonIcon icon={send} />
