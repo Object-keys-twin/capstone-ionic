@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { IonPage } from "@ionic/react";
 
 type Props = {
 	lat: number;
@@ -32,10 +31,6 @@ export default class Map extends Component<Props> {
 		this.checkpoints = Array<BusinessData>();
 	}
 
-	// componentDidMount = () => {
-	// 	this.checkpoints = this.props.checkpoints;
-	// };
-
 	showMap() {
 		this.map = new google.maps.Map(this.mapEle.current, {
 			center: {
@@ -44,7 +39,6 @@ export default class Map extends Component<Props> {
 			},
 			zoom: 15
 		});
-		console.log("THIS IS NEW GOOGLE.MAPS.MAP");
 
 		google.maps.event.addListenerOnce(this.map, "idle", () => {
 			if (this.mapEle.current) {
@@ -52,37 +46,29 @@ export default class Map extends Component<Props> {
 			}
 		});
 
-		console.log("THIS IS GOOGLE.MAPS.EVENT");
-
 		let marker = new google.maps.Marker({
 			position: new google.maps.LatLng(this.props.lat, this.props.long),
 			map: this.map,
-			title: "current location"
+			title: "current location",
+			icon: {
+				url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+			}
 		});
-
-		console.log("THIS IS GOOGLE.MAPS.MARKER");
 
 		let infoWindow = new google.maps.InfoWindow({
 			content: "<h5>Current Location</h5>"
 		});
 
-		console.log("THIS IS GOOGLE.MAPS.INFOWINDOW");
-
 		marker.addListener("click", () => {
 			infoWindow.open(this.map, marker);
 		});
 
-		console.log("MARKER.ADDLISTENER");
 		this.addMarkers();
 	}
 
-	// componentDidUpdate(prevProps: Props) {
-	// 	this.addMarkers();
-	// }
-
 	addMarkers = () => {
 		if (this.props.checkpoints)
-			this.props.checkpoints.forEach(markerData => {
+			this.props.checkpoints.forEach((markerData, index) => {
 				let infoWindow = new google.maps.InfoWindow({
 					content: `<h5>${markerData.name}</h5><p>${markerData.location}</p>`
 				});
@@ -93,7 +79,11 @@ export default class Map extends Component<Props> {
 						markerData.longitude
 					),
 					map: this.map,
-					title: markerData.name
+					title: markerData.name,
+					label: {
+						text: (index+1).toString(),
+						color: 'white'
+					}
 				});
 
 				marker.addListener("click", () => {
@@ -112,39 +102,7 @@ export default class Map extends Component<Props> {
 		}
 	};
 
-	// addMarkers() {
-	//     this.props.locations.forEach((markerData) => {
-	//         let infoWindow = new google.maps.InfoWindow({
-	//             content: `<h5>${markerData.name}</h5>`
-	//         });
-
-	//         let marker = new google.maps.Marker({
-	//             position: new google.maps.LatLng(markerData.lat, markerData.lng),
-	//             map: this.map,
-	//             title: markerData.name
-	//         });
-
-	//         marker.addListener('click', () => {
-	//             infoWindow.open(this.map, marker);
-	//         });
-
-	//         this.markers.push(marker);
-	//     });
-
-	//     // zoom and center the map around the markers
-	//     if (this.map && this.markers.length) {
-
-	//         const bounds = new google.maps.LatLngBounds();
-	//         for (let i = 0; i < this.markers.length; i++) {
-	//             bounds.extend(this.markers[i].getPosition());
-	//         }
-	//         this.map.fitBounds(bounds);
-	//     }
-
-	// }
-
 	render() {
-		console.log("REF: ", this.mapEle.current);
 		if (
 			this.props.lat !== 0 &&
 			this.props.long !== 0 &&
@@ -152,7 +110,7 @@ export default class Map extends Component<Props> {
 		) {
 			this.showMap();
 		}
-		// return null;
+
 		return (
 			<div
 				ref={this.mapEle}
