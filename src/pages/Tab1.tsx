@@ -17,6 +17,7 @@ import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
 import { Plugins } from "@capacitor/core";
 import { walk } from "ionicons/icons";
+import { Link } from "react-router-dom";
 import "./Tab1.css";
 import db from "../firebase/firebase";
 
@@ -113,56 +114,65 @@ class Profile extends Component<Props, State> {
     this.setState({ tours });
   };
 
-  render() {
-    return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Profile</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent>
-          <IonCard className="welcome-card">
-            <img src={this.props.user.photoURL} />
-            <IonCardHeader>
-              <IonCardTitle>
-                Welcome, {this.props.user.displayName}
-              </IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent></IonCardContent>
-          </IonCard>
-          <IonCard>
-            <IonCardTitle className="string-bean-title">
-              My Stringbeans
-            </IonCardTitle>
-          </IonCard>
-          {this.state.tours.map((tour, i) => (
-            <IonCard className="welcome-card" key={i}>
-              <IonItem>
-                <IonIcon slot="start" color="medium" icon={walk} />
-                <IonCardTitle>{tour.name}</IonCardTitle>
-              </IonItem>
-              <IonCardContent>
-                {tour.checkpoints.map((checkpoint, i) => {
-                  if (checkpoint) {
-                    return <IonItem key={i}>{checkpoint.name}</IonItem>;
-                  }
-                })}
-              </IonCardContent>
-            </IonCard>
-          ))}
-          <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
-            <IonRefresherContent
-              pullingIcon="arrow-dropdown"
-              pullingText="Pull to refresh"
-              refreshingSpinner="circles"
-              refreshingText="Refreshing..."
-            ></IonRefresherContent>
-          </IonRefresher>
-        </IonContent>
-      </IonPage>
-    );
-  }
+	render() {
+		return (
+			<IonPage>
+				<IonHeader>
+					<IonToolbar>
+						<IonTitle>Profile</IonTitle>
+					</IonToolbar>
+				</IonHeader>
+				<IonContent>
+					<IonCard className="welcome-card">
+						<img src={this.props.user.photoURL} />
+						<IonCardHeader>
+							<IonCardTitle>
+								Welcome, {this.props.user.displayName}
+							</IonCardTitle>
+						</IonCardHeader>
+						<IonCardContent></IonCardContent>
+					</IonCard>
+					<IonCard>
+						<IonCardTitle className="string-bean-title">
+							My Stringbeans
+						</IonCardTitle>
+					</IonCard>
+					{this.state.tours.map((tour, i) => (
+						<IonCard className="welcome-card" key={i}>
+							<IonItem>
+								<IonIcon slot="start" color="medium" icon={walk} />
+								<IonCardTitle>
+								<Link
+												to={{
+													pathname: "/map",
+													state: { checkpoints: tour.checkpoints }
+												}}
+											>
+												{tour.name}
+											</Link>
+									</IonCardTitle>
+							</IonItem>
+							<IonCardContent>
+								{tour.checkpoints.map((checkpoint, i) => {
+									if (checkpoint) {
+										return <IonItem key={i}>{checkpoint.name}</IonItem>;
+									}
+								})}
+							</IonCardContent>
+						</IonCard>
+					))}
+					<IonRefresher slot="fixed" onIonRefresh={this.refresh}>
+						<IonRefresherContent
+							pullingIcon="arrow-dropdown"
+							pullingText="Pull to refresh"
+							refreshingSpinner="circles"
+							refreshingText="Refreshing..."
+						></IonRefresherContent>
+					</IonRefresher>
+				</IonContent>
+			</IonPage>
+		);
+	}
 }
 
 export default Profile;
