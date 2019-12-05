@@ -93,8 +93,8 @@ class PublicTours extends Component<{}, State> {
   };
 
   render() {
-    console.log("in the render");
-    console.log("ARRAY OF TOURS: ", this.state.tours);
+    // console.log("in the render");
+    // console.log("ARRAY OF TOURS: ", this.state.tours);
     const { tours } = this.state;
 
     return (

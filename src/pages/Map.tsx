@@ -12,7 +12,8 @@ import {
   IonItem,
   IonIcon,
   IonFab,
-  IonFabButton
+  IonFabButton,
+  IonSpinner
 } from "@ionic/react";
 import { navigate } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
@@ -107,7 +108,9 @@ class MapPage extends Component<Props, State> {
                 </IonFab>
               </IonContent>
             ) : (
-              <IonItem>Finding your location...</IonItem>
+              <IonContent>
+                <IonSpinner class="spinner"></IonSpinner>
+              </IonContent>
             )}
           </IonContent>
         </IonPage>

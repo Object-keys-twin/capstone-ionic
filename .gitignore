@@ -26,3 +26,5 @@ yarn-error.log*
 
 firebase/config.js
 firebase/firebase.js
+
+src/secrets.tsx
