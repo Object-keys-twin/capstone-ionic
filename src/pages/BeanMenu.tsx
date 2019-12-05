@@ -59,7 +59,10 @@ export default class BeanMenu extends Component<Props, State> {
 		let beanRef = db.collection("checkpoints").doc(bean.id);
 		let getBean = await beanRef.get();
 		if (!getBean.data()) {
-			await beanRef.set(Object.assign({}, bean));
+			if (bean.price === undefined) {
+				bean.price = "not available";
+			}
+			await beanRef.set(bean);
 		}
 	};
 
