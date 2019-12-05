@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import './MapView.css'
 
 type Props = {
 	lat: number;
@@ -106,7 +105,9 @@ export default class Map extends Component<Props> {
 		if (this.props.checkpoints)
 			this.props.checkpoints.forEach((markerData, index) => {
 				let infoWindow = new google.maps.InfoWindow({
-					content: `<h5>${index+1}. ${markerData.name}</h5><p><img src="${markerData.imageUrl}" style="float: left" width=65 height=65>Rating: ${markerData.rating}<br>${markerData.location}</p>`
+					content: `<h5>${index+1}. ${markerData.name}</h5>
+					<p><img src="${markerData.imageUrl}" height=65 width=65 style="float: left; margin-right: 10px;">
+					Rating: ${markerData.rating}</p><p>${markerData.location}</p>`
 				});
 
 				let marker = new google.maps.Marker({
