@@ -9,17 +9,19 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonIcon
+  IonIcon,
+  IonRefresher,
+  IonRefresherContent
 } from "@ionic/react";
+import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
-// import { Plugins } from '@capacitor/core'
+import { Plugins } from "@capacitor/core";
 import { walk } from "ionicons/icons";
 import "./Tab1.css";
 import db from "../firebase/firebase";
-// const { Storage } = Plugins
 
-// import { Plugins } from "@capacitor/core";
-// const { Geolocation } = Plugins;
+const { Storage } = Plugins;
+
 type Props = {
   user: userData;
 };
@@ -50,26 +52,45 @@ class Profile extends Component<Props, State> {
   componentDidMount() {
     this.getTours();
   }
+
+  refresh = (e: CustomEvent<RefresherEventDetail>) => {
+    setTimeout(() => {
+      this.getTours();
+      console.log("Async operation has ended");
+      e.detail.complete();
+    }, 2000);
+  };
+
   getTours = () => {
+    let tourData = Array<DbData>();
     db.collection("tours")
       .where("user", "==", this.props.user.email)
       .get()
       .then(docs => {
         docs.forEach(doc => {
-          this.setState({
-            tours: [
-              ...this.state.tours,
-              {
-                checkpoints: doc.data().checkpoints,
-                description: doc.data().description,
-                name: doc.data().name,
-                created: doc.data().timestamp,
-                upvotes: doc.data().upvotes,
-                user: doc.data().user
-              }
-            ]
+          // this.setState({
+          // 	tours: [
+          // 		...this.state.tours,
+          // 		{
+          // 			checkpoints: doc.data().checkpoints,
+          // 			description: doc.data().description,
+          // 			name: doc.data().name,
+          // 			created: doc.data().timestamp,
+          // 			upvotes: doc.data().upvotes,
+          // 			user: doc.data().user
+          // 		}
+          // 	]
+          // });
+          tourData.push({
+            checkpoints: doc.data().checkpoints,
+            description: doc.data().description,
+            name: doc.data().name,
+            created: doc.data().timestamp,
+            upvotes: doc.data().upvotes,
+            user: doc.data().user
           });
         });
+        this.setState({ tours: tourData });
         this.state.tours.forEach((tour, id) => {
           this.getCheckpoints(tour, id);
         });
@@ -130,6 +151,14 @@ class Profile extends Component<Props, State> {
               </IonCardContent>
             </IonCard>
           ))}
+          <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
+            <IonRefresherContent
+              pullingIcon="arrow-dropdown"
+              pullingText="Pull to refresh"
+              refreshingSpinner="circles"
+              refreshingText="Refreshing..."
+            ></IonRefresherContent>
+          </IonRefresher>
         </IonContent>
       </IonPage>
     );

@@ -12,10 +12,10 @@ interface BusinessData {
   location: object;
   imageUrl: string;
   categories: Array<object>;
-  rating: number;
+  rating?: number;
   latitude: number;
   longitude: number;
-  price: string;
+  price?: string | undefined;
 }
 
 interface DirectionsData {

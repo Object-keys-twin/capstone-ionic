@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { Redirect, Route } from "react-router-dom";
 import {
-  IonApp,
-  IonIcon,
-  IonLabel,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs
+	IonApp,
+	IonIcon,
+	IonLabel,
+	IonRouterOutlet,
+	IonTabBar,
+	IonTabButton,
+	IonTabs
 } from "@ionic/react";
 import { Plugins } from "@capacitor/core";
 import { IonReactRouter } from "@ionic/react-router";
@@ -42,78 +42,78 @@ import "./theme/variables.css";
 const { Storage } = Plugins;
 
 type State = {
-  user: userData | null;
+	user: userData | null;
 };
 
 interface userData {
-  email: string | null;
-  uid: string | null;
-  displayName: string | null;
-  photoURL: string | null;
+	email: string | null;
+	uid: string | null;
+	displayName: string | null;
+	photoURL: string | null;
 }
 
 class App extends Component<{}, State> {
-  state = {
-    user: {
-      email: "",
-      uid: "",
-      displayName: "",
-      photoURL: ""
-    }
-  };
+	state = {
+		user: {
+			email: "",
+			uid: "",
+			displayName: "",
+			photoURL: ""
+		}
+	};
 
-  componentDidMount = () => {
-    this.getUser();
-  };
+	componentDidMount = () => {
+		this.getUser();
+	};
 
-  getUser = async () => {
-    const data = await Storage.get({
-      key: "user"
-    });
+	getUser = async () => {
+		const data = await Storage.get({
+			key: "user"
+		});
 
-    if (data.value) {
-      const user = JSON.parse(data.value);
-      this.setState({
-        user: user
-      });
-    }
-  };
+		if (data.value) {
+			const user = JSON.parse(data.value);
+			this.setState({
+				user: user
+			});
+		}
+	};
 
-  handleGoogle = () => {
-    var provider = new firebase.auth.GoogleAuthProvider();
-    firebase
-      .auth()
-      .signInWithPopup(provider)
-      .then(result => {
-        console.log("Google login success");
-        if (result.user) {
-          const { uid, displayName, email, photoURL } = result.user;
-          const user = {
-            uid: uid,
-            displayName: displayName,
-            email: email,
-            photoURL: photoURL
-          };
-          this.setState({
-            user: {
-              ...this.state.user,
-              uid: uid,
-              displayName: displayName,
-              email: email,
-              photoURL: photoURL
-            }
-          });
-          Storage.set({
-            key: "user",
-            value: JSON.stringify(user)
-          });
-        }
-      })
-      .catch(function(error) {
-        var errorMessage = error.message;
-        alert("Google sign in error: " + errorMessage);
-      });
-  };
+	handleGoogle = () => {
+		var provider = new firebase.auth.GoogleAuthProvider();
+		firebase
+			.auth()
+			.signInWithPopup(provider)
+			.then(result => {
+				console.log("Google login success");
+				if (result.user) {
+					const { uid, displayName, email, photoURL } = result.user;
+					const user = {
+						uid: uid,
+						displayName: displayName,
+						email: email,
+						photoURL: photoURL
+					};
+					this.setState({
+						user: {
+							...this.state.user,
+							uid: uid,
+							displayName: displayName,
+							email: email,
+							photoURL: photoURL
+						}
+					});
+					Storage.set({
+						key: "user",
+						value: JSON.stringify(user)
+					});
+				}
+			})
+			.catch(function(error) {
+				var errorMessage = error.message;
+				alert("Google sign in error: " + errorMessage);
+			});
+	};
 
   render() {
     //!this.state.user.email
@@ -157,6 +157,7 @@ class App extends Component<{}, State> {
 									<IonIcon icon={send} />
 									<IonLabel>Map</IonLabel>
 								</IonTabButton> */}
+<<<<<<< HEAD
               </IonTabBar>
             </IonTabs>
           </IonReactRouter>
@@ -165,6 +166,16 @@ class App extends Component<{}, State> {
     }
     return <Login handleGoogle={this.handleGoogle} />;
   }
+=======
+							</IonTabBar>
+						</IonTabs>
+					</IonReactRouter>
+				</IonApp>
+			);
+		}
+		return <Login handleGoogle={this.handleGoogle} />;
+	}
+>>>>>>> master
 }
 // }
 
