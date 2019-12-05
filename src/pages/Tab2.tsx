@@ -6,8 +6,11 @@ import {
 	IonItem,
 	IonLabel,
 	IonCol,
-	IonGrid
+	IonGrid,
+	IonRefresher,
+	IonRefresherContent
 } from "@ionic/react";
+import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import db from "../firebase/firebase";
@@ -31,28 +34,43 @@ class PublicTours extends Component<{}, State> {
 		this.getTours();
 	}
 
-	componentWillUnmount() {
-		console.log("I UNMOUNTED");
-	}
+	refresh = (e: CustomEvent<RefresherEventDetail>) => {
+		setTimeout(() => {
+			this.getTours();
+			console.log("Async operation has ended");
+			e.detail.complete();
+		}, 2000);
+	};
+
 	getTours = () => {
+		let tourData = Array<DbData>();
 		db.collection("tours")
 			.get()
 			.then(docs => {
 				docs.forEach(doc => {
-					this.setState({
-						tours: [
-							...this.state.tours,
-							{
-								checkpoints: doc.data().checkpoints,
-								description: doc.data().description,
-								name: doc.data().name,
-								created: doc.data().timestamp,
-								upvotes: doc.data().upvotes,
-								user: doc.data().user
-							}
-						]
+					// this.setState({
+					// 	tours: [
+					// 		...this.state.tours,
+					// 		{
+					// 			checkpoints: doc.data().checkpoints,
+					// 			description: doc.data().description,
+					// 			name: doc.data().name,
+					// 			created: doc.data().timestamp,
+					// 			upvotes: doc.data().upvotes,
+					// 			user: doc.data().user
+					// 		}
+					// 	]
+					// });
+					tourData.push({
+						checkpoints: doc.data().checkpoints,
+						description: doc.data().description,
+						name: doc.data().name,
+						created: doc.data().timestamp,
+						upvotes: doc.data().upvotes,
+						user: doc.data().user
 					});
 				});
+				this.setState({ tours: tourData });
 				this.state.tours.forEach((tour, id) => {
 					this.getCheckpoints(tour, id);
 				});
@@ -76,11 +94,12 @@ class PublicTours extends Component<{}, State> {
 
 	render() {
 		console.log("in the render");
+		console.log("ARRAY OF TOURS: ", this.state.tours);
 		const { tours } = this.state;
 
 		return (
 			<IonPage>
-				<IonHeader>PUBLIC TOURS</IonHeader>
+				<IonHeader id="header">EXPLORE STRINGBEANS</IonHeader>
 				<IonContent className="ion-padding">
 					<IonList>
 						{tours.map((tour, idx) => (
@@ -108,6 +127,14 @@ class PublicTours extends Component<{}, State> {
 							</IonItem>
 						))}
 					</IonList>
+					<IonRefresher slot="fixed" onIonRefresh={this.refresh}>
+						<IonRefresherContent
+							pullingIcon="arrow-dropdown"
+							pullingText="Pull to refresh"
+							refreshingSpinner="circles"
+							refreshingText="Refreshing..."
+						></IonRefresherContent>
+					</IonRefresher>
 				</IonContent>
 			</IonPage>
 		);
