@@ -5,7 +5,10 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonButton
+  IonButton,
+  IonItem,
+  IonLabel,
+  IonInput
 } from "@ionic/react";
 
 type Props = {
@@ -21,6 +24,26 @@ class Login extends Component<Props> {
           </IonToolbar>
         </IonHeader>
         <IonContent>
+          <IonItem>
+            <IonLabel>Username</IonLabel>
+            <IonInput clearInput></IonInput>
+          </IonItem>
+          <IonItem>
+            <IonLabel>Email</IonLabel>
+            <IonInput
+              clearInput
+              type="email"
+              placeholder="mrbean123@email.com"
+            ></IonInput>
+          </IonItem>
+          <IonItem>
+            <IonLabel>Password</IonLabel>
+            <IonInput
+              clearInput
+              type="password"
+              placeholder="password"
+            ></IonInput>
+          </IonItem>
           <IonButton
             onClick={() => {
               this.props.handleGoogle();

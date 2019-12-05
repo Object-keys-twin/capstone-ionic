@@ -1,0 +1,8 @@
+.spinner {
+  --color: #900c3f;
+  display: block;
+  margin: auto;
+  top: 30%;
+  height: 50px;
+  width: 50px;
+}
