@@ -80,34 +80,6 @@ class MapPage extends Component<Props, State> {
     if (this.props.location.state) {
       const { checkpoints } = this.props.location.state;
 
-<<<<<<< HEAD
-			return (
-				<IonPage>
-					<IonHeader>
-						<IonToolbar>
-							<IonButtons slot="start">
-								<IonMenuButton></IonMenuButton>
-							</IonButtons>
-							<IonTitle>Map</IonTitle>
-						</IonToolbar>
-					</IonHeader>
-					<IonContent class="map-page">
-						<Map
-							lat={this.state.latitude}
-							long={this.state.longitude}
-							checkpoints={checkpoints}
-						/>
-					</IonContent>
-				</IonPage>
-			);
-		}
-		return (
-			<IonPage>
-				<IonContent>Loading...</IonContent>
-			</IonPage>
-		);
-	}
-=======
       return (
         <IonPage>
           <IonHeader>
@@ -150,7 +122,6 @@ class MapPage extends Component<Props, State> {
       </IonPage>
     );
   }
->>>>>>> a630cea01c0af79a4110e7a785af18b8f2cf7443
 }
 
 // const mapDispatchToProps = {
