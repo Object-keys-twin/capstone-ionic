@@ -82,10 +82,7 @@ class CreateStory extends Component<{}, State> {
 		storage = await Storage.get({
 			key: 'stringbean'
 		})
-		// console.log(typeof storage.value)
 		parsedStorage = JSON.parse(storage.value)
-		console.log(parsedStorage)
-		console.log(id)
 		const removedBean = parsedStorage.filter(
 			(item: BusinessData) => item.id !== id
 		)
