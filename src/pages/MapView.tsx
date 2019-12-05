@@ -47,7 +47,8 @@ export default class Map extends Component<Props> {
         lat: this.props.lat,
         lng: this.props.long
       },
-      zoom: 15
+			zoom: 15,
+			fullscreenControl: false
     });
     if (this.props.checkpoints) {
       directionsRenderer.setMap(this.map);
