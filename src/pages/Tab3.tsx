@@ -1,4 +1,4 @@
-import React, { Component, useEffect, EffectCallback } from "react";
+import React, { Component } from "react";
 import {
   IonHeader,
   IonToolbar,
@@ -143,7 +143,7 @@ class CreateStory extends Component<{}, State> {
   //write function to publish story. loops through the checkpoints, checks if they exist in the database. if not, adds it to the database. grabs the checkpoint's firestore ID. holds the checkpoints' firestore IDs in an array.
   //then build the tour object. use the array of checkpoint firestore IDs.
 
-    render() {
+  render() {
     // console.log("everything", this.state);
 
     const { businesses } = this.state;

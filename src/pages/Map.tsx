@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
 import "./Map.css";
 // import {actions, RootState, selectors} from '../store';
 import Map from "./MapView";
@@ -7,14 +6,11 @@ import {
   IonHeader,
   IonToolbar,
   IonButtons,
-  IonMenuButton,
   IonTitle,
   IonContent,
   IonPage,
-  IonButton,
   IonItem,
   IonIcon,
-  IonLabel,
   IonFab,
   IonFabButton
 } from "@ionic/react";
@@ -43,7 +39,7 @@ class MapPage extends Component<Props, State> {
   componentDidMount = async () => {
     await this.getCurrentPosition();
     await this.launchGoogleMapsNav();
-    console.log("props", this.props.location.state.checkpoints);
+    // console.log("props", this.props.location.state.checkpoints);
   };
 
   getCurrentPosition = async () => {
@@ -78,7 +74,7 @@ class MapPage extends Component<Props, State> {
     }
   };
   render() {
-    console.log(this.state);
+    // console.log(this.state);
 
     if (this.props.location.state) {
       const { checkpoints } = this.props.location.state;
@@ -111,7 +107,7 @@ class MapPage extends Component<Props, State> {
                 </IonFab>
               </IonContent>
             ) : (
-              <IonItem>Finding location...</IonItem>
+              <IonItem>Finding your location...</IonItem>
             )}
           </IonContent>
         </IonPage>

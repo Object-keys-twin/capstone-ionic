@@ -117,7 +117,7 @@ class App extends Component<{}, State> {
 
   render() {
     //!this.state.user.email
-    if (true) {
+    if (false) {
       return (
         <IonApp>
           <IonReactRouter>
