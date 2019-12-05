@@ -63,7 +63,6 @@ class MapPage extends Component<Props, State> {
 							<IonTitle>Map</IonTitle>
 						</IonToolbar>
 					</IonHeader>
-
 					<IonContent class="map-page">
 						<Map
 							lat={this.state.latitude}

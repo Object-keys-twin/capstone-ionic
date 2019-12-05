@@ -16,6 +16,7 @@ import { Plugins } from '@capacitor/core'
 import { walk } from 'ionicons/icons'
 import './Tab1.css'
 import db from '../firebase/firebase'
+import { Link } from "react-router-dom";
 const { Storage } = Plugins
 
 // import { Plugins } from "@capacitor/core";
@@ -119,7 +120,16 @@ class Profile extends Component<Props, State> {
 						<IonCard className="welcome-card" key={i}>
 							<IonItem>
 								<IonIcon slot="start" color="medium" icon={walk} />
-								<IonCardTitle>{tour.name}</IonCardTitle>
+								<IonCardTitle>
+								<Link
+												to={{
+													pathname: "/map",
+													state: { checkpoints: tour.checkpoints }
+												}}
+											>
+												{tour.name}
+											</Link>
+									</IonCardTitle>
 							</IonItem>
 							<IonCardContent>
 								{tour.checkpoints.map((checkpoint, i) => {
