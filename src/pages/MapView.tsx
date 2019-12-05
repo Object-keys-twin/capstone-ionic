@@ -12,10 +12,10 @@ interface BusinessData {
 	location: object;
 	imageUrl: string;
 	categories: Array<object>;
-	rating: number;
+	rating?: number;
 	latitude: number;
 	longitude: number;
-	price: string;
+	price?: string | undefined;
 }
 
 interface DirectionsData {
@@ -39,7 +39,9 @@ export default class Map extends Component<Props> {
 	}
 
 	showMap() {
-		const directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
+		const directionsRenderer = new google.maps.DirectionsRenderer({
+			suppressMarkers: true
+		});
 		this.map = new google.maps.Map(this.mapEle.current, {
 			center: {
 				lat: this.props.lat,
@@ -47,27 +49,32 @@ export default class Map extends Component<Props> {
 			},
 			zoom: 15
 		});
-		if(this.props.checkpoints){
-		directionsRenderer.setMap(this.map);
-		let checkpointArray: Array <any> = [];
-		for(let i = 0; i < this.props.checkpoints.length; i++) {
-			checkpointArray.push({location: new google.maps.LatLng(this.props.checkpoints[i].latitude, this.props.checkpoints[i].longitude)})
+		if (this.props.checkpoints) {
+			directionsRenderer.setMap(this.map);
+			let checkpointArray: Array<any> = [];
+			for (let i = 0; i < this.props.checkpoints.length; i++) {
+				checkpointArray.push({
+					location: new google.maps.LatLng(
+						this.props.checkpoints[i].latitude,
+						this.props.checkpoints[i].longitude
+					)
+				});
+			}
+			const directionsService = new google.maps.DirectionsService();
+			const start = new google.maps.LatLng(this.props.lat, this.props.long);
+			const end = checkpointArray[checkpointArray.length - 1].location;
+			const request: DirectionsData = {
+				origin: start,
+				destination: end,
+				travelMode: "WALKING",
+				waypoints: checkpointArray.slice(0, -1)
+			};
+			directionsService.route(request, function(result, status) {
+				if (status == "OK") {
+					directionsRenderer.setDirections(result);
+				}
+			});
 		}
-		const directionsService = new google.maps.DirectionsService();
-		const start = new google.maps.LatLng(this.props.lat, this.props.long);
-		const end = checkpointArray[checkpointArray.length-1].location
-  	const request: DirectionsData = {
-    origin: start,
-    destination: end,
-		travelMode: 'WALKING',
-		waypoints: checkpointArray.slice(0,-1)
-  };
-  directionsService.route(request, function(result, status) {
-    if (status == 'OK') {
-      directionsRenderer.setDirections(result);
-    }
-  });
-}
 		google.maps.event.addListenerOnce(this.map, "idle", () => {
 			if (this.mapEle.current) {
 				this.mapEle.current.classList.add("show-map");
@@ -109,8 +116,8 @@ export default class Map extends Component<Props> {
 					map: this.map,
 					title: markerData.name,
 					label: {
-						text: (index+1).toString(),
-						color: 'white'
+						text: (index + 1).toString(),
+						color: "white"
 					}
 				});
 
@@ -130,9 +137,7 @@ export default class Map extends Component<Props> {
 		}
 	};
 
-	addDirections = () => {
-
-	}
+	addDirections = () => {};
 
 	render() {
 		if (

@@ -26,10 +26,10 @@ interface BusinessData {
 	location: object;
 	imageUrl: string;
 	categories: Array<object>;
-	rating: number;
+	rating?: number;
 	latitude: number;
 	longitude: number;
-	price: string | undefined;
+	price?: string | undefined;
 }
 
 type State = {
@@ -59,6 +59,9 @@ export default class BeanMenu extends Component<Props, State> {
 		let beanRef = db.collection("checkpoints").doc(bean.id);
 		let getBean = await beanRef.get();
 		if (!getBean.data()) {
+			if (bean.price === undefined) {
+				bean.price = "not available";
+			}
 			await beanRef.set(bean);
 		}
 	};
