@@ -82,7 +82,7 @@ export default class SignUp extends Component<Props, State> {
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonTitle>Sign Up</IonTitle>
+            <IonTitle class="header">Sign Up</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent>
@@ -93,6 +93,7 @@ export default class SignUp extends Component<Props, State> {
               clearInput
               class="input"
               name="displayName"
+              placeholder="mrbean123"
               onIonChange={e =>
                 this.handleDisplayName((e.target as HTMLInputElement).value)
               }
@@ -124,7 +125,7 @@ export default class SignUp extends Component<Props, State> {
                   ? PasswordVisibility.Password
                   : PasswordVisibility.Text
               }
-              placeholder="password"
+              placeholder="123123123"
               name="password"
             ></IonInput>
 

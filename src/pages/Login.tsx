@@ -31,6 +31,7 @@ interface userData {
 type Props = {
   handleGoogle: () => void;
   handleSubmit: (user: userData, type?: string) => void;
+  logInError: boolean;
 };
 
 type State = {
@@ -85,7 +86,7 @@ class Login extends Component<Props, State> {
         <IonPage>
           <IonHeader>
             <IonToolbar>
-              <IonTitle>Login</IonTitle>
+              <IonTitle class="header">Login</IonTitle>
             </IonToolbar>
           </IonHeader>
           <IonContent>
@@ -114,7 +115,7 @@ class Login extends Component<Props, State> {
                     ? PasswordVisibility.Password
                     : PasswordVisibility.Text
                 }
-                placeholder="password"
+                placeholder="123123123"
               ></IonInput>
 
               {this.state.password ? (
@@ -147,6 +148,11 @@ class Login extends Component<Props, State> {
             >
               Sign Up
             </IonButton>
+            {this.props.logInError ? (
+              <IonItem>Wrong email/password!</IonItem>
+            ) : (
+              <IonItem></IonItem>
+            )}
           </IonContent>
         </IonPage>
       );

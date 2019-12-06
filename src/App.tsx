@@ -46,6 +46,7 @@ const { Storage } = Plugins;
 type State = {
   user: userData | null;
   loggedIn: boolean;
+  logInError: boolean;
 };
 
 interface userData {
@@ -65,7 +66,8 @@ class App extends Component<{}, State> {
       photoURL: "",
       password: ""
     },
-    loggedIn: false
+    loggedIn: false,
+    logInError: false
   };
 
   componentDidMount = () => {
@@ -73,7 +75,17 @@ class App extends Component<{}, State> {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         console.log("Currently logged in!");
-        this.setState({ loggedIn: true });
+        let userObj = {
+          ...this.state.user
+        };
+        userObj = {
+          email: user.email || "",
+          uid: user.uid || "",
+          displayName: user.displayName || "",
+          photoURL: user.photoURL || "",
+          password: ""
+        };
+        this.setState({ user: userObj, loggedIn: true, logInError: false });
         Storage.set({
           key: "user",
           value: JSON.stringify(user)
@@ -104,14 +116,16 @@ class App extends Component<{}, State> {
   };
 
   handleSubmit = (user: userData, type?: string) => {
-    if (type === "signup") {
-      this.createUserOnFirestore(user.email, user.password);
-    } else {
-      this.signInOnFirestore(user.email, user.password);
+    if (user.email) {
+      if (type === "signup") {
+        this.createUserOnFirestore(user.email, user.password);
+      } else {
+        this.signInOnFirestore(user.email, user.password);
+      }
     }
   };
 
-  createUserOnFirestore = (email: string | null, password: string | null) => {
+  createUserOnFirestore = (email: string, password: string) => {
     if (email && password) {
       firebase
         .auth()
@@ -124,15 +138,16 @@ class App extends Component<{}, State> {
     }
   };
 
-  signInOnFirestore = (email: string | null, password: string | null) => {
+  signInOnFirestore = (email: string, password: string) => {
     if (email && password) {
       firebase
         .auth()
         .signInWithEmailAndPassword(email, password)
-        .catch(function(error) {
+        .catch(error => {
           var errorCode = error.code;
           var errorMessage = error.message;
           console.log("Log-in error:", errorCode, errorMessage);
+          this.setState({ logInError: true });
         });
     }
   };
@@ -174,7 +189,6 @@ class App extends Component<{}, State> {
   };
 
   render() {
-    //!this.state.user.email
     if (this.state.loggedIn) {
       return (
         <IonApp id="app">
@@ -226,6 +240,7 @@ class App extends Component<{}, State> {
       <Login
         handleGoogle={this.handleGoogle}
         handleSubmit={this.handleSubmit}
+        logInError={this.state.logInError}
       />
     );
   }
