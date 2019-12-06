@@ -8,3 +8,8 @@
 .item {
   flex: 1;
 }
+
+.welcome-card img {
+	max-height: 35vh;
+	overflow: hidden;
+}

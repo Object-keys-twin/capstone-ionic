@@ -22,6 +22,7 @@ import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
 import { Plugins } from "@capacitor/core";
 import { walk, logOut, settings } from "ionicons/icons";
+import { Link } from "react-router-dom";
 import "./Tab1.css";
 import firebase from "firebase";
 import db from "../firebase/firebase";
@@ -160,7 +161,16 @@ class Profile extends Component<Props, State> {
             <IonCard className="welcome-card" key={i}>
               <IonItem>
                 <IonIcon slot="start" color="medium" icon={walk} />
-                <IonCardTitle>{tour.name}</IonCardTitle>
+                <IonCardTitle>
+                  <Link
+                    to={{
+                      pathname: "/map",
+                      state: { checkpoints: tour.checkpoints }
+                    }}
+                  >
+                    {tour.name}
+                  </Link>
+                </IonCardTitle>
               </IonItem>
               <IonCardContent>
                 {tour.checkpoints.map((checkpoint, i) => {
