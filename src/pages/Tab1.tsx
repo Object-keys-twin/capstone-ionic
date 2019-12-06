@@ -15,12 +15,13 @@ import {
   IonButton,
   IonImg,
   IonFab,
-  IonFabButton
+  IonFabButton,
+  IonFabList
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
 import { Plugins } from "@capacitor/core";
-import { walk } from "ionicons/icons";
+import { walk, logOut, settings } from "ionicons/icons";
 import "./Tab1.css";
 import firebase from "firebase";
 import db from "../firebase/firebase";
@@ -170,10 +171,26 @@ class Profile extends Component<Props, State> {
               </IonCardContent>
             </IonCard>
           ))}
-          <IonFab vertical="bottom" horizontal="center" slot="fixed">
-            <IonFabButton id="logout" onClick={this.signOut}>
-              Logout
+
+          <IonFab vertical="bottom" horizontal="end" slot="fixed">
+            <IonFabButton id="settings-button">
+              <IonIcon class="settings-tray-icon" icon={settings} />
             </IonFabButton>
+            <IonFabList side="start" id="profile-settings-tray">
+              <IonFabButton
+                class="settings-tray-button"
+                id="logout"
+                onClick={this.signOut}
+              >
+                <IonIcon class="settings-tray-icon" icon={logOut} />
+              </IonFabButton>
+              <IonFabButton class="settings-tray-button">
+                Bookmarks
+              </IonFabButton>
+              <IonFabButton class="settings-tray-button">
+                Something
+              </IonFabButton>
+            </IonFabList>
           </IonFab>
           <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
             <IonRefresherContent

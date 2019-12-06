@@ -10,14 +10,19 @@ import {
   IonRouterOutlet,
   IonButtons,
   IonButton,
-  IonMenuButton
+  IonMenuButton,
+  IonFab,
+  IonFabButton,
+  IonIcon
 } from "@ionic/react";
 
+import { list } from "ionicons/icons";
 import { menuController } from "@ionic/core";
 import { Plugins } from "@capacitor/core";
 import db from "../firebase/firebase";
 import BeanMenuForm from "./BeanMenuForm";
 import firebase from "firebase";
+import "./BeanMenu.css";
 const { Storage } = Plugins;
 
 interface BusinessData {
@@ -131,16 +136,12 @@ export default class BeanMenu extends Component<Props, State> {
             // handleChange={this.handleChange}
           />
         </IonMenu>
-        <IonHeader>
-          <IonToolbar>
-            <IonButtons slot="end">
-              <IonMenuButton
-                autoHide={false}
-                onClick={() => menuController.open}
-              ></IonMenuButton>
-            </IonButtons>
-          </IonToolbar>
-        </IonHeader>
+        <IonFab id="menu-button" vertical="bottom" horizontal="end">
+          <IonMenuButton autoHide={false} onClick={() => menuController.open}>
+            <IonIcon id="menu-icon" icon={list} />
+          </IonMenuButton>
+        </IonFab>
+
         <IonRouterOutlet id="main"></IonRouterOutlet>
       </>
     );
