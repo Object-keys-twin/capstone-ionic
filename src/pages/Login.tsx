@@ -86,7 +86,7 @@ class Login extends Component<Props, State> {
         <IonPage>
           <IonHeader>
             <IonToolbar>
-              <IonTitle class="header">Login</IonTitle>
+              <IonTitle className="header">Login</IonTitle>
             </IonToolbar>
           </IonHeader>
           <IonContent>

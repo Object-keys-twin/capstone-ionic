@@ -10,12 +10,17 @@ import {
   IonButton,
   IonModal,
   IonSpinner,
-  IonLabel
+  IonLabel,
+  IonCard,
+  IonInput,
+  IonIcon
 } from "@ionic/react";
+import { search } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
 import axios from "axios";
 import BeanMenu from "./BeanMenu";
 import { yelpApiKey } from "../secrets";
+import "./Tab3.css";
 
 const { Geolocation, Storage } = Plugins;
 
@@ -72,6 +77,16 @@ class CreateStory extends Component<{}, State> {
     const data = await Storage.get({ key: "stringbean" });
     if (data.value) {
       this.setState({ stringbean: JSON.parse(data.value) });
+    }
+  };
+
+  keyUpHandler = (e: any) => {
+    if (e.key === "Enter") {
+      this.getYelp(
+        this.state.latitude,
+        this.state.longitude,
+        this.state.search
+      );
     }
   };
 
@@ -139,20 +154,22 @@ class CreateStory extends Component<{}, State> {
     // console.log(Storage.get({ key: "stringbean" }));
 
     return (
-      <IonPage>
+      <IonPage onKeyUp={(e: any) => this.keyUpHandler(e)}>
         <IonHeader>
           <IonToolbar>
-            <IonTitle class="header">Beans</IonTitle>
+            <IonTitle className="header">Beans</IonTitle>
           </IonToolbar>
         </IonHeader>
         <BeanMenu stringbean={this.state.stringbean} />
-        <IonSearchbar
-          onIonChange={e =>
-            this.handleChange((e.target as HTMLInputElement).value)
-          }
-        >
+        <IonCard id="search-bar">
+          <IonInput
+            onIonChange={e =>
+              this.handleChange((e.target as HTMLInputElement).value)
+            }
+            placeholder="Search for beans!"
+          ></IonInput>
           <IonButton
-            size="small"
+            id="search-button"
             onClick={() =>
               this.getYelp(
                 this.state.latitude,
@@ -161,9 +178,9 @@ class CreateStory extends Component<{}, State> {
               )
             }
           >
-            Search
+            <IonIcon icon={search} />
           </IonButton>
-        </IonSearchbar>
+        </IonCard>
 
         {businesses.length ? (
           <IonContent>

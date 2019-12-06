@@ -135,7 +135,7 @@ class Profile extends Component<Props, State> {
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonTitle class="header">Profile</IonTitle>
+            <IonTitle className="header">Profile</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent>
@@ -144,7 +144,7 @@ class Profile extends Component<Props, State> {
               src={this.props.user.photoURL || "assets/icon/bean-profile.png"}
             />
             <IonCardHeader>
-              <IonCardTitle>
+              <IonCardTitle class="header">
                 Welcome, {this.props.user.displayName || this.props.user.email}
               </IonCardTitle>
             </IonCardHeader>

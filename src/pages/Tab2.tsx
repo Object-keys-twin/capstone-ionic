@@ -103,7 +103,7 @@ class PublicTours extends Component<{}, State> {
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonTitle class="header">Explore</IonTitle>
+            <IonTitle className="header">Explore</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding">

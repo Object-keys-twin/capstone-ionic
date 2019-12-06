@@ -82,7 +82,7 @@ export default class SignUp extends Component<Props, State> {
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonTitle class="header">Sign Up</IonTitle>
+            <IonTitle className="header">Sign Up</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent>

@@ -1,0 +1,13 @@
+#search-bar {
+  display: flex;
+  height: 7vh;
+  font-size: 2.5vh;
+  padding: 1vh;
+}
+
+#search-button {
+  margin: auto;
+  text-transform: none;
+  font-size: 2.5vh;
+  --background: #900c3f;
+}
