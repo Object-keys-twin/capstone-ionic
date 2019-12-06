@@ -11,13 +11,18 @@ import {
   IonToolbar,
   IonIcon,
   IonRefresher,
-  IonRefresherContent
+  IonRefresherContent,
+  IonButton,
+  IonImg,
+  IonFab,
+  IonFabButton
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
 import { Plugins } from "@capacitor/core";
 import { walk } from "ionicons/icons";
 import "./Tab1.css";
+import firebase from "firebase";
 import db from "../firebase/firebase";
 
 const { Storage } = Plugins;
@@ -113,20 +118,34 @@ class Profile extends Component<Props, State> {
     this.setState({ tours });
   };
 
+  signOut = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(function() {
+        // Sign-out successful.
+      })
+      .catch(function(error) {
+        // An error happened.
+      });
+  };
+
   render() {
     return (
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonTitle>Profile</IonTitle>
+            <IonTitle class="header">Profile</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent>
           <IonCard className="welcome-card">
-            <img src={this.props.user.photoURL} />
+            <IonImg
+              src={this.props.user.photoURL || "assets/icon/bean-profile.png"}
+            />
             <IonCardHeader>
               <IonCardTitle>
-                Welcome, {this.props.user.displayName}
+                Welcome, {this.props.user.displayName || this.props.user.email}
               </IonCardTitle>
             </IonCardHeader>
             <IonCardContent></IonCardContent>
@@ -151,6 +170,11 @@ class Profile extends Component<Props, State> {
               </IonCardContent>
             </IonCard>
           ))}
+          <IonFab vertical="bottom" horizontal="center" slot="fixed">
+            <IonFabButton id="logout" onClick={this.signOut}>
+              Logout
+            </IonFabButton>
+          </IonFab>
           <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
             <IonRefresherContent
               pullingIcon="arrow-dropdown"

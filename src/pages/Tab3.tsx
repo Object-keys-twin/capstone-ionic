@@ -142,7 +142,7 @@ class CreateStory extends Component<{}, State> {
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonTitle>Beans</IonTitle>
+            <IonTitle class="header">Beans</IonTitle>
           </IonToolbar>
         </IonHeader>
         <BeanMenu stringbean={this.state.stringbean} />

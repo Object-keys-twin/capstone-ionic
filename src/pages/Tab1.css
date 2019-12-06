@@ -1,9 +1,13 @@
 .welcome-card img {
-	max-height: 35vh;
-	overflow: hidden;
+  max-height: 35vh;
+  overflow: hidden;
 }
 
 .string-bean-title {
-	text-align: center;
-	padding: 10px;
+  text-align: center;
+  padding: 10px;
+}
+
+#logout {
+  --background: #8a0000;
 }

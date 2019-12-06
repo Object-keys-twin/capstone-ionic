@@ -6,3 +6,11 @@
   height: 50px;
   width: 50px;
 }
+
+.header {
+  text-align: center;
+}
+
+.app {
+  --background: #900c3f;
+}
