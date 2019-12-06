@@ -5,12 +5,10 @@ import {
   IonPage,
   IonTitle,
   IonContent,
-  IonSearchbar,
   IonItem,
   IonButton,
   IonModal,
   IonSpinner,
-  IonLabel,
   IonCard,
   IonInput,
   IonIcon
@@ -90,6 +88,25 @@ class CreateStory extends Component<{}, State> {
     }
   };
 
+  removeFromStringBean = async (id: string) => {
+    let storage: any;
+    let parsedStorage: any;
+    storage = await Storage.get({
+      key: "stringbean"
+    });
+    parsedStorage = JSON.parse(storage.value);
+    const removedBean = parsedStorage.filter(
+      (item: BusinessData) => item.id !== id
+    );
+    this.setState({
+      stringbean: removedBean
+    });
+    await Storage.set({
+      key: "stringbean",
+      value: JSON.stringify(removedBean)
+    });
+  };
+
   getYelp = async (latitude: number, longitude: number, term?: string) => {
     const api = axios.create({
       baseURL: "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3",
@@ -160,9 +177,13 @@ class CreateStory extends Component<{}, State> {
             <IonTitle className="header">Beans</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <BeanMenu stringbean={this.state.stringbean} />
+        <BeanMenu
+          stringbean={this.state.stringbean}
+          removeFromStringBean={this.removeFromStringBean}
+        />
         <IonCard id="search-bar">
           <IonInput
+            clearInput
             onIonChange={e =>
               this.handleChange((e.target as HTMLInputElement).value)
             }

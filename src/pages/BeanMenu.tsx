@@ -13,10 +13,13 @@ import {
   IonMenuButton,
   IonFab,
   IonFabButton,
-  IonIcon
+  IonIcon,
+  IonItemSliding,
+  IonItemOption,
+  IonItemOptions
 } from "@ionic/react";
 
-import { list } from "ionicons/icons";
+import { list, trash } from "ionicons/icons";
 import { menuController } from "@ionic/core";
 import { Plugins } from "@capacitor/core";
 import db from "../firebase/firebase";
@@ -46,6 +49,7 @@ type State = {
 
 type Props = {
   stringbean: Array<BusinessData>;
+  removeFromStringBean: (id: string) => void;
 };
 
 export default class BeanMenu extends Component<Props, State> {
@@ -118,7 +122,19 @@ export default class BeanMenu extends Component<Props, State> {
           <IonContent>
             <IonList>
               {this.props.stringbean.map((bean, idx) => (
-                <IonItem key={idx}>{bean.name}</IonItem>
+                <IonItemSliding key={idx}>
+                  <IonItemOptions side="end">
+                    <IonItemOption
+                      color="danger"
+                      onClick={() => {
+                        this.props.removeFromStringBean(bean.id);
+                      }}
+                    >
+                      <IonIcon slot="icon-only" icon={trash}></IonIcon>
+                    </IonItemOption>
+                  </IonItemOptions>
+                  <IonItem>{bean.name}</IonItem>
+                </IonItemSliding>
               ))}
             </IonList>
           </IonContent>
