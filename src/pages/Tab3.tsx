@@ -5,17 +5,20 @@ import {
   IonPage,
   IonTitle,
   IonContent,
-  IonSearchbar,
   IonItem,
   IonButton,
   IonModal,
   IonSpinner,
-  IonLabel
+  IonCard,
+  IonInput,
+  IonIcon
 } from "@ionic/react";
+import { search } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
 import axios from "axios";
 import BeanMenu from "./BeanMenu";
 import { yelpApiKey } from "../secrets";
+import "./Tab3.css";
 
 const { Geolocation, Storage } = Plugins;
 
@@ -73,6 +76,35 @@ class CreateStory extends Component<{}, State> {
     if (data.value) {
       this.setState({ stringbean: JSON.parse(data.value) });
     }
+  };
+
+  keyUpHandler = (e: any) => {
+    if (e.key === "Enter") {
+      this.getYelp(
+        this.state.latitude,
+        this.state.longitude,
+        this.state.search
+      );
+    }
+  };
+
+  removeFromStringBean = async (id: string) => {
+    let storage: any;
+    let parsedStorage: any;
+    storage = await Storage.get({
+      key: "stringbean"
+    });
+    parsedStorage = JSON.parse(storage.value);
+    const removedBean = parsedStorage.filter(
+      (item: BusinessData) => item.id !== id
+    );
+    this.setState({
+      stringbean: removedBean
+    });
+    await Storage.set({
+      key: "stringbean",
+      value: JSON.stringify(removedBean)
+    });
   };
 
   getYelp = async (latitude: number, longitude: number, term?: string) => {
@@ -139,20 +171,26 @@ class CreateStory extends Component<{}, State> {
     // console.log(Storage.get({ key: "stringbean" }));
 
     return (
-      <IonPage>
+      <IonPage onKeyUp={(e: any) => this.keyUpHandler(e)}>
         <IonHeader>
           <IonToolbar>
-            <IonTitle>Beans</IonTitle>
+            <IonTitle className="header">Beans</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <BeanMenu stringbean={this.state.stringbean} />
-        <IonSearchbar
-          onIonChange={e =>
-            this.handleChange((e.target as HTMLInputElement).value)
-          }
-        >
+        <BeanMenu
+          stringbean={this.state.stringbean}
+          removeFromStringBean={this.removeFromStringBean}
+        />
+        <IonCard id="search-bar">
+          <IonInput
+            clearInput
+            onIonChange={e =>
+              this.handleChange((e.target as HTMLInputElement).value)
+            }
+            placeholder="Search for beans!"
+          ></IonInput>
           <IonButton
-            size="small"
+            id="search-button"
             onClick={() =>
               this.getYelp(
                 this.state.latitude,
@@ -161,9 +199,9 @@ class CreateStory extends Component<{}, State> {
               )
             }
           >
-            Search
+            <IonIcon icon={search} />
           </IonButton>
-        </IonSearchbar>
+        </IonCard>
 
         {businesses.length ? (
           <IonContent>

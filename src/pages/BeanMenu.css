@@ -1,0 +1,12 @@
+#menu-button {
+  margin: 1.5vh;
+  background: #ff9269;
+  color: #ffffff;
+  border-radius: 10vh;
+  width: 9vh;
+  height: 9vh;
+}
+
+#menu-icon {
+  font-size: 5vh;
+}

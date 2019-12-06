@@ -1,9 +1,35 @@
 .welcome-card img {
-	max-height: 35vh;
-	overflow: hidden;
+  max-height: 35vh;
+  overflow: hidden;
 }
 
 .string-bean-title {
-	text-align: center;
-	padding: 10px;
+  text-align: center;
+  padding: 2vh;
+}
+
+#logout {
+  --background: #8a0000;
+}
+
+.settings-tray-icon {
+  color: #ffffff;
+  font-size: 6vh;
+}
+.settings-tray-button {
+  height: 9vh;
+  width: 9vh;
+  margin-right: 1vh;
+}
+
+#settings-button {
+  height: 9vh;
+  width: 9vh;
+  --background: #ff9269;
+  margin: 1.5vh;
+  margin-top: 0;
+}
+
+#profile-settings-tray {
+  margin-right: 11.5vh;
 }

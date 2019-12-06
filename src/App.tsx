@@ -45,13 +45,16 @@ const { Storage } = Plugins;
 
 type State = {
   user: userData | null;
+  loggedIn: boolean;
+  logInError: boolean;
 };
 
 interface userData {
   email: string | null;
-  uid: string | null;
+  uid?: string | null;
   displayName: string | null;
   photoURL: string | null;
+  password: string;
 }
 
 class App extends Component<{}, State> {
@@ -60,12 +63,42 @@ class App extends Component<{}, State> {
       email: "",
       uid: "",
       displayName: "",
-      photoURL: ""
-    }
+      photoURL: "",
+      password: ""
+    },
+    loggedIn: false,
+    logInError: false
   };
 
   componentDidMount = () => {
     this.getUser();
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        console.log("Currently logged in!");
+        let userObj = {
+          ...this.state.user
+        };
+        userObj = {
+          email: user.email || "",
+          uid: user.uid || "",
+          displayName: user.displayName || "",
+          photoURL: user.photoURL || "",
+          password: ""
+        };
+        this.setState({ user: userObj, loggedIn: true, logInError: false });
+        Storage.set({
+          key: "user",
+          value: JSON.stringify(user)
+        });
+        console.log("logged in user", user);
+      } else {
+        console.log("Not logged in.");
+        this.setState({ loggedIn: false });
+        Storage.remove({
+          key: "user"
+        });
+      }
+    });
   };
 
   getUser = async () => {
@@ -76,8 +109,46 @@ class App extends Component<{}, State> {
     if (data.value) {
       const user = JSON.parse(data.value);
       this.setState({
-        user: user
+        user: user,
+        loggedIn: true
       });
+    }
+  };
+
+  handleSubmit = (user: userData, type?: string) => {
+    if (user.email) {
+      if (type === "signup") {
+        this.createUserOnFirestore(user.email, user.password);
+      } else {
+        this.signInOnFirestore(user.email, user.password);
+      }
+    }
+  };
+
+  createUserOnFirestore = (email: string, password: string) => {
+    if (email && password) {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .catch(function(error) {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log("Sign-up error:", errorCode, errorMessage);
+        });
+    }
+  };
+
+  signInOnFirestore = (email: string, password: string) => {
+    if (email && password) {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .catch(error => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log("Log-in error:", errorCode, errorMessage);
+          this.setState({ logInError: true });
+        });
     }
   };
 
@@ -118,10 +189,9 @@ class App extends Component<{}, State> {
   };
 
   render() {
-    //!this.state.user.email
-    if (true) {
+    if (this.state.loggedIn) {
       return (
-        <IonApp>
+        <IonApp id="app">
           <IonReactRouter>
             <IonTabs>
               <IonRouterOutlet>
@@ -136,6 +206,7 @@ class App extends Component<{}, State> {
                 <Route path="/tab2/details" component={Details} />
                 <Route path="/tab3" component={CreateStory} />
                 <Route path="/map" component={MapPage} exact={true} />
+                {/* <Route path="/signup" component={SignUp} exact={true} /> */}
                 <Route
                   path="/"
                   render={() => <Redirect to="/tab2" />}
@@ -165,7 +236,13 @@ class App extends Component<{}, State> {
         </IonApp>
       );
     }
-    return <Login handleGoogle={this.handleGoogle} />;
+    return (
+      <Login
+        handleGoogle={this.handleGoogle}
+        handleSubmit={this.handleSubmit}
+        logInError={this.state.logInError}
+      />
+    );
   }
 }
 // }

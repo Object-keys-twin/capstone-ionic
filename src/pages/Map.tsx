@@ -70,7 +70,7 @@ class MapPage extends Component<Props, State> {
         0,
         checkpointsString.length - 3
       );
-      let googleUrl = `https://www.google.com/maps/dir/?api=1&origin=${this.state.latitude}%2C${this.state.longitude}&destination=${lastCheckpoint}&waypoints=${newCheckpointsString}`;
+      let googleUrl = `https://www.google.com/maps/dir/?api=1&origin=${this.state.latitude}%2C${this.state.longitude}&destination=${lastCheckpoint}&travelmode=walking&waypoints=${newCheckpointsString}`;
       this.setState({ link: googleUrl });
     }
   };

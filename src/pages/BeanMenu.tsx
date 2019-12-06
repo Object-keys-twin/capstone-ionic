@@ -10,14 +10,22 @@ import {
   IonRouterOutlet,
   IonButtons,
   IonButton,
-  IonMenuButton
+  IonMenuButton,
+  IonFab,
+  IonFabButton,
+  IonIcon,
+  IonItemSliding,
+  IonItemOption,
+  IonItemOptions
 } from "@ionic/react";
 
+import { list, trash } from "ionicons/icons";
 import { menuController } from "@ionic/core";
 import { Plugins } from "@capacitor/core";
 import db from "../firebase/firebase";
 import BeanMenuForm from "./BeanMenuForm";
 import firebase from "firebase";
+import "./BeanMenu.css";
 const { Storage } = Plugins;
 
 interface BusinessData {
@@ -41,6 +49,7 @@ type State = {
 
 type Props = {
   stringbean: Array<BusinessData>;
+  removeFromStringBean: (id: string) => void;
 };
 
 export default class BeanMenu extends Component<Props, State> {
@@ -113,7 +122,19 @@ export default class BeanMenu extends Component<Props, State> {
           <IonContent>
             <IonList>
               {this.props.stringbean.map((bean, idx) => (
-                <IonItem key={idx}>{bean.name}</IonItem>
+                <IonItemSliding key={idx}>
+                  <IonItemOptions side="end">
+                    <IonItemOption
+                      color="danger"
+                      onClick={() => {
+                        this.props.removeFromStringBean(bean.id);
+                      }}
+                    >
+                      <IonIcon slot="icon-only" icon={trash}></IonIcon>
+                    </IonItemOption>
+                  </IonItemOptions>
+                  <IonItem>{bean.name}</IonItem>
+                </IonItemSliding>
               ))}
             </IonList>
           </IonContent>
@@ -131,16 +152,12 @@ export default class BeanMenu extends Component<Props, State> {
             // handleChange={this.handleChange}
           />
         </IonMenu>
-        <IonHeader>
-          <IonToolbar>
-            <IonButtons slot="end">
-              <IonMenuButton
-                autoHide={false}
-                onClick={() => menuController.open}
-              ></IonMenuButton>
-            </IonButtons>
-          </IonToolbar>
-        </IonHeader>
+        <IonFab id="menu-button" vertical="bottom" horizontal="end">
+          <IonMenuButton autoHide={false} onClick={() => menuController.open}>
+            <IonIcon id="menu-icon" icon={list} />
+          </IonMenuButton>
+        </IonFab>
+
         <IonRouterOutlet id="main"></IonRouterOutlet>
       </>
     );

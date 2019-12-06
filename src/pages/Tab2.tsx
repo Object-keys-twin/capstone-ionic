@@ -8,7 +8,9 @@ import {
   IonCol,
   IonGrid,
   IonRefresher,
-  IonRefresherContent
+  IonRefresherContent,
+  IonTitle,
+  IonToolbar
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
@@ -99,7 +101,11 @@ class PublicTours extends Component<{}, State> {
 
     return (
       <IonPage>
-        <IonHeader id="header">EXPLORE STRINGBEANS</IonHeader>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle className="header">Explore</IonTitle>
+          </IonToolbar>
+        </IonHeader>
         <IonContent className="ion-padding">
           <IonList>
             {tours.map((tour, idx) => (
