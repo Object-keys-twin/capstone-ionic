@@ -87,9 +87,7 @@ class PublicTours extends Component<{}, State> {
 		return (
 			<IonPage>
 				<IonHeader>
-					<IonToolbar>
-						<IonTitle className="tab2header">Explore</IonTitle>
-					</IonToolbar>
+					<IonTitle className="tabheader">Explore</IonTitle>
 				</IonHeader>
 				<IonContent>
 					<IonList className="list">

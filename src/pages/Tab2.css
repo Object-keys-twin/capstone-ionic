@@ -1,6 +1,7 @@
-.tab2header {
+.tabheader {
 	background-color: green;
 	font-size: 25pt;
+	text-align: center;
 }
 
 .tours {
