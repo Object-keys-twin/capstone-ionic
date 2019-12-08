@@ -174,7 +174,7 @@ class CreateStory extends Component<{}, State> {
       <IonPage onKeyUp={(e: any) => this.keyUpHandler(e)}>
         <IonHeader>
           <IonToolbar>
-            <IonTitle className="header">Beans</IonTitle>
+            <IonTitle className="header header-font">Beans</IonTitle>
           </IonToolbar>
         </IonHeader>
         <BeanMenu

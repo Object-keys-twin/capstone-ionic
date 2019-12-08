@@ -19,7 +19,7 @@
 .settings-tray-button {
   height: 9vh;
   width: 9vh;
-  margin-right: 1vh;
+  margin-top: 2vh;
 }
 
 #settings-button {
@@ -27,9 +27,11 @@
   width: 9vh;
   --background: #ff9269;
   margin: 1.5vh;
-  margin-top: 0;
+  /* margin-top: 1.5vh; */
 }
 
 #profile-settings-tray {
-  margin-right: 11.5vh;
+  margin-right: 1.5vh;
+  margin-left: 1.5vh;
+  margin-top: 11vh;
 }

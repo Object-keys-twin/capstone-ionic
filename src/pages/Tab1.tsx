@@ -137,7 +137,7 @@ class Profile extends Component<Props, State> {
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonTitle className="header">Profile</IonTitle>
+            <IonTitle className="header header-font">My Profile</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent>
@@ -182,11 +182,11 @@ class Profile extends Component<Props, State> {
             </IonCard>
           ))}
 
-          <IonFab vertical="bottom" horizontal="end" slot="fixed">
+          <IonFab vertical="top" horizontal="end" slot="fixed">
             <IonFabButton id="settings-button">
               <IonIcon class="settings-tray-icon" icon={settings} />
             </IonFabButton>
-            <IonFabList side="start" id="profile-settings-tray">
+            <IonFabList side="bottom" id="profile-settings-tray">
               <IonFabButton
                 class="settings-tray-button"
                 id="logout"

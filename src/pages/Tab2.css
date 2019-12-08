@@ -3,6 +3,7 @@
   /* --ion-background-color: red; */
   display: flex;
   flex-direction: column;
+  /* border-bottom: none; */
 }
 
 .item {
@@ -10,6 +11,6 @@
 }
 
 .welcome-card img {
-	max-height: 35vh;
-	overflow: hidden;
+  max-height: 35vh;
+  overflow: hidden;
 }
