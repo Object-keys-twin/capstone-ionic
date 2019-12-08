@@ -83,12 +83,10 @@ class PublicTours extends Component<{}, State> {
     const { tours } = this.state;
     return (
       <IonPage>
-        <IonHeader class="tab-header-block">
-          {/* <IonToolbar> */}
+        <IonHeader class="tab-header-block tabheader">
           <IonTitle size="small" class="tab-header header-font">
             Stringbeans
           </IonTitle>
-          {/* </IonToolbar> */}
         </IonHeader>
         <IonContent>
           <IonList className="list">

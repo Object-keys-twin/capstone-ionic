@@ -134,20 +134,18 @@ class Profile extends Component<Props, State> {
     return (
       <IonPage>
         <IonHeader class="tab-header-block">
-          {/* <IonToolbar> */}
-          <IonTitle size="small" class="tab-header header-font">
+          <IonTitle size="small" class="tab-header header-font tabheader">
             My Profile
           </IonTitle>
-          {/* </IonToolbar> */}
         </IonHeader>
         <IonContent>
-          <IonCard class="profile-card">
+          <IonCard class="profile-card welcome-card">
             <IonImg
               id="profile-photo"
               src={this.props.user.photoURL || "assets/icon/bean-profile.png"}
             />
             <IonCardHeader>
-              <IonCardTitle id="profile-text">
+              <IonCardTitle id="profile-text" class="header">
                 Welcome, {this.props.user.displayName || this.props.user.email}!
               </IonCardTitle>
             </IonCardHeader>

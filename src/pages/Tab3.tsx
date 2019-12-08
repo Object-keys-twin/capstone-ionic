@@ -164,19 +164,14 @@ class CreateStory extends Component<{}, State> {
   //then build the tour object. use the array of checkpoint firestore IDs.
 
   render() {
-    // console.log("everything", this.state);
-
     const { businesses } = this.state;
-    // console.log(Storage.get({ key: "stringbean" }));
 
     return (
-      <IonPage onKeyUp={(e: any) => this.keyUpHandler(e)}>
+      <IonPage className="beanpage" onKeyUp={(e: any) => this.keyUpHandler(e)}>
         <IonHeader class="tab-header-block">
-          {/* <IonToolbar> */}
-          <IonTitle size="small" class="tab-header header-font">
+          <IonTitle size="small" class="tab-header header-font tabheader">
             Beans
           </IonTitle>
-          {/* </IonToolbar> */}
         </IonHeader>
         <BeanMenu
           stringbean={this.state.stringbean}
@@ -205,10 +200,13 @@ class CreateStory extends Component<{}, State> {
         </IonCard>
 
         {businesses.length ? (
-          <IonContent>
+          <IonContent className="beancontent">
             {businesses.map((business, idx) => (
-              <IonItem key={idx}>
-                <IonItem onClick={() => this.setState({ showModal: idx })}>
+              <IonCard className="beancard" key={idx}>
+                <IonItem
+                  className="beanitem"
+                  onClick={() => this.setState({ showModal: idx })}
+                >
                   {business.name} <br></br>
                   {business.location}
                 </IonItem>
@@ -232,7 +230,7 @@ class CreateStory extends Component<{}, State> {
                     Back
                   </IonButton>
                 </IonModal>
-              </IonItem>
+              </IonCard>
             ))}
           </IonContent>
         ) : (

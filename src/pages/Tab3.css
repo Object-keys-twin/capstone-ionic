@@ -3,6 +3,26 @@
   height: 7vh;
   font-size: 2.5vh;
   padding: 1vh;
+  margin: 10px;
+  --background: white;
+}
+
+.beanpage {
+  padding: 5px;
+  background-color: blue;
+}
+
+.beancontent {
+  --background: blue;
+}
+
+.beancard {
+  margin: 30px, 0px, 0px, 0px;
+  --background: red;
+}
+
+.beanitem {
+  --background: clear;
 }
 
 #search-button {
