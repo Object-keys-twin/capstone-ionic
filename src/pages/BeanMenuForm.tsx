@@ -67,17 +67,17 @@ export default class BeanMenuForm extends Component<Props> {
       <IonAlert
         isOpen={this.props.showAlert}
         onDidDismiss={() => this.props.toggleAlert()}
-        header={"Prompt!"}
+        header={"Give It A Name!"}
         inputs={[
           {
             name: "name",
             type: "text",
-            placeholder: "Enter Title"
+            placeholder: "Title"
           },
           {
             name: "description",
             type: "text",
-            placeholder: "Enter Description"
+            placeholder: "Description"
           }
         ]}
         buttons={[

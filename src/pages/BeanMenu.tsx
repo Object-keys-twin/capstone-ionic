@@ -76,6 +76,10 @@ export default class BeanMenu extends Component<Props, State> {
   };
 
   publishTour = async (name: string, description: string) => {
+    if (!this.props.stringbean.length) {
+      console.log("No beans to string!");
+      return;
+    }
     let checkpoints = Array<string>();
 
     this.props.stringbean.forEach(async bean => {
@@ -116,7 +120,7 @@ export default class BeanMenu extends Component<Props, State> {
         <IonMenu side="end" contentId="main" type="overlay" swipeGesture={true}>
           <IonHeader>
             <IonToolbar color="primary">
-              <IonTitle>My Beans</IonTitle>
+              <IonTitle>Beans To String</IonTitle>
             </IonToolbar>
           </IonHeader>
           <IonContent>

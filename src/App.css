@@ -1,5 +1,9 @@
+ion-button {
+  text-transform: none;
+}
+
 .spinner {
-  --color: #900c3f;
+  --color: #6dd67c;
   display: block;
   margin: auto;
   top: 30%;
@@ -7,8 +11,26 @@
   width: 9vh;
 }
 
-.header {
+.header-font {
+  font-family: "Lobster Two", cursive;
+  font-size: 4vh;
+  color: #fff5ba;
+}
+.login-signup-header {
+  font-size: 7vh;
+}
+
+.tab-header {
   text-align: center;
+  background-color: #6dd67c;
+  font-size: 25pt;
+  padding: 0;
+  overflow: scroll;
+  /* height: 10vh; */
+}
+
+.tab-header-block {
+  height: 9vh;
 }
 
 .app {

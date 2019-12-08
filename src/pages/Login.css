@@ -3,10 +3,6 @@
   --highlight-color-focused: none;
 }
 
-ion-button {
-  text-transform: none;
-}
-
 video {
   position: fixed;
   left: -100%;
@@ -30,9 +26,10 @@ video {
 }
 
 .login-signup-card {
-  --background: #ff9269;
+  --background: #a2e87d;
   width: 100%;
-  border-radius: 2vh;
+  border-radius: 8vh 3vh 8vh 3vh;
+  padding: 1vh;
 }
 
 .login-signup-header {
@@ -40,7 +37,8 @@ video {
 }
 
 .login-signup-button {
-  --background: green;
+  --background: #ffb68e;
+  font-size: 2vh;
 }
 
 .login-signup-toast {
@@ -77,7 +75,8 @@ video {
   --background: clear;
 }
 
-.header-font {
-  font-family: "Mansalva", cursive;
-  font-size: 4vh;
+#signup-button {
+  font-size: 3vh;
+  color: #fff7ca;
+  font-family: "Lobster Two", cursive;
 }

@@ -109,7 +109,9 @@ class Login extends Component<Props, State> {
                 {!this.state.showSignUp ? (
                   <>
                     <IonCardHeader class="login-signup-header">
-                      <IonCardTitle class="header-font">Login</IonCardTitle>
+                      <IonCardTitle class="header-font login-signup-header">
+                        Login
+                      </IonCardTitle>
                     </IonCardHeader>
                     <IonCardContent class="login-signup-input-container">
                       <IonItem class="login-signup-input-nestedcontainer login-ionitem">
@@ -173,6 +175,7 @@ class Login extends Component<Props, State> {
                       </IonRow>
                       <IonRow class="login-button-row">
                         <IonButton
+                          id="signup-button"
                           fill="clear"
                           onClick={() => {
                             this.showSignUp();

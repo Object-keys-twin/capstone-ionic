@@ -9,7 +9,7 @@
 }
 
 #logout {
-  --background: #8a0000;
+  --background: #fc5a5a;
 }
 
 .settings-tray-icon {
@@ -25,7 +25,7 @@
 #settings-button {
   height: 9vh;
   width: 9vh;
-  --background: #ff9269;
+  --background: #ffb68e;
   margin: 1.5vh;
   /* margin-top: 1.5vh; */
 }

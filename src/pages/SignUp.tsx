@@ -92,13 +92,16 @@ export default class SignUp extends Component<Props, State> {
     return (
       <>
         <IonCardHeader class="login-signup-header">
-          <IonCardTitle class="header-font">Sign Up</IonCardTitle>
+          <IonCardTitle class="header-font login-signup-header">
+            Sign Up
+          </IonCardTitle>
         </IonCardHeader>
         <IonCardContent class="login-signup-input-container">
           <IonItem class="login-signup-input-nestedcontainer login-ionitem">
             <IonInput
               clearInput
-              class="login-signup-input"
+              type="text"
+              class="login-signup-input-field"
               name="displayName"
               placeholder="Username"
               onIonChange={e =>
@@ -110,7 +113,7 @@ export default class SignUp extends Component<Props, State> {
         <IonCardContent class="login-signup-input-container">
           <IonItem class="login-signup-input-nestedcontainer login-ionitem">
             <IonInput
-              class="login-signup-input"
+              class="login-signup-input-field"
               clearInput
               type="email"
               placeholder="Email"

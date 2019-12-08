@@ -172,10 +172,12 @@ class CreateStory extends Component<{}, State> {
 
     return (
       <IonPage onKeyUp={(e: any) => this.keyUpHandler(e)}>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle className="header header-font">Beans</IonTitle>
-          </IonToolbar>
+        <IonHeader class="tab-header-block">
+          {/* <IonToolbar> */}
+          <IonTitle size="small" class="tab-header header-font">
+            Beans
+          </IonTitle>
+          {/* </IonToolbar> */}
         </IonHeader>
         <BeanMenu
           stringbean={this.state.stringbean}
