@@ -10,7 +10,8 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonTitle,
-  IonToolbar
+  IonToolbar,
+  IonCard
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
@@ -50,19 +51,6 @@ class PublicTours extends Component<{}, State> {
       .get()
       .then(docs => {
         docs.forEach(doc => {
-          // this.setState({
-          // 	tours: [
-          // 		...this.state.tours,
-          // 		{
-          // 			checkpoints: doc.data().checkpoints,
-          // 			description: doc.data().description,
-          // 			name: doc.data().name,
-          // 			created: doc.data().timestamp,
-          // 			upvotes: doc.data().upvotes,
-          // 			user: doc.data().user
-          // 		}
-          // 	]
-          // });
           tourData.push({
             checkpoints: doc.data().checkpoints,
             description: doc.data().description,
@@ -95,42 +83,36 @@ class PublicTours extends Component<{}, State> {
   };
 
   render() {
-    // console.log("in the render");
-    // console.log("ARRAY OF TOURS: ", this.state.tours);
     const { tours } = this.state;
-
     return (
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonTitle className="header header-font">Stringbeans</IonTitle>
+            <IonTitle className="tab2header header-font">Stringbeans</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonContent className="ion-padding">
-          <IonList>
+        <IonContent>
+          <IonList className="list">
             {tours.map((tour, idx) => (
-              <IonItem key={idx} className="mainListRow">
-                <IonGrid>
-                  <IonCol>
-                    <IonLabel>
-                      <Link
-                        to={{
-                          pathname: "/map",
-                          state: { checkpoints: tour.checkpoints }
-                        }}
-                      >
-                        {tour.name}
-                      </Link>
-                    </IonLabel>
-                    <IonList>
-                      {tour.checkpoints.map((checkpoint, idx) => {
-                        if (checkpoint)
-                          return <IonItem key={idx}>{checkpoint.name}</IonItem>;
-                      })}
-                    </IonList>
-                  </IonCol>
-                </IonGrid>
-              </IonItem>
+              <IonCard key={idx} className="mainListRow">
+                <IonLabel>
+                  <Link
+                    className="tourlink"
+                    to={{
+                      pathname: "/map",
+                      state: { checkpoints: tour.checkpoints }
+                    }}
+                  >
+                    <IonItem className="tourname">{tour.name}</IonItem>
+                  </Link>
+                </IonLabel>
+                <IonList>
+                  {tour.checkpoints.map((checkpoint, idx) => {
+                    if (checkpoint)
+                      return <IonItem key={idx}>{checkpoint.name}</IonItem>;
+                  })}
+                </IonList>
+              </IonCard>
             ))}
           </IonList>
           <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
