@@ -8,11 +8,9 @@ import {
   IonList,
   IonItem,
   IonRouterOutlet,
-  IonButtons,
   IonButton,
   IonMenuButton,
   IonFab,
-  IonFabButton,
   IonIcon,
   IonItemSliding,
   IonItemOption,
@@ -120,7 +118,9 @@ export default class BeanMenu extends Component<Props, State> {
         <IonMenu side="end" contentId="main" type="overlay" swipeGesture={true}>
           <IonHeader>
             <IonToolbar color="primary">
-              <IonTitle>Beans To String</IonTitle>
+              <IonTitle class="header-font bean-menu-header">
+                Beans To String
+              </IonTitle>
             </IonToolbar>
           </IonHeader>
           <IonContent>
@@ -143,6 +143,7 @@ export default class BeanMenu extends Component<Props, State> {
             </IonList>
           </IonContent>
           <IonButton
+            id="publish-button"
             onClick={() => {
               this.toggleAlert();
             }}
@@ -157,7 +158,11 @@ export default class BeanMenu extends Component<Props, State> {
           />
         </IonMenu>
         <IonFab id="menu-button" vertical="bottom" horizontal="end">
-          <IonMenuButton autoHide={false} onClick={() => menuController.open}>
+          <IonMenuButton
+            id="menu-button2"
+            autoHide={false}
+            onClick={() => menuController.open}
+          >
             <IonIcon id="menu-icon" icon={list} />
           </IonMenuButton>
         </IonFab>

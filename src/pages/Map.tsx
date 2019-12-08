@@ -3,13 +3,8 @@ import "./Map.css";
 // import {actions, RootState, selectors} from '../store';
 import Map from "./MapView";
 import {
-  IonHeader,
-  IonToolbar,
-  IonButtons,
-  IonTitle,
   IonContent,
   IonPage,
-  IonItem,
   IonIcon,
   IonFab,
   IonFabButton,

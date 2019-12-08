@@ -7,6 +7,24 @@
   height: 9vh;
 }
 
+#menu-button2 {
+  --background-hover: #ffe65e;
+  --background-focused: #ffe65e;
+  --background-activated: #ffe65e;
+}
+
+#publish-button {
+  --background: #ffb68e;
+  --background-hover: #ffb68e;
+  --background-focused: #ffb68e;
+  --background-activated: #ffb68e;
+}
+
 #menu-icon {
   font-size: 5vh;
+}
+
+.bean-menu-header {
+  font-size: 3vh;
+  text-align: center;
 }

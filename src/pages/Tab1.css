@@ -1,15 +1,19 @@
-.welcome-card img {
-  max-height: 35vh;
-  overflow: hidden;
+.profile-card {
+  display: flex;
+  align-items: center;
 }
 
 .string-bean-title {
   text-align: center;
   padding: 2vh;
+  background: #fff5ba;
 }
 
 #logout {
   --background: #fc5a5a;
+  --background-hover: #fc5a5a;
+  --background-focused: #fc5a5a;
+  --background-activated: #fc5a5a;
 }
 
 .settings-tray-icon {
@@ -26,6 +30,9 @@
   height: 9vh;
   width: 9vh;
   --background: #ffb68e;
+  --background-hover: #ffb68e;
+  --background-focused: #ffb68e;
+  --background-activated: #ffb68e;
   margin: 1.5vh;
   /* margin-top: 1.5vh; */
 }
@@ -34,4 +41,13 @@
   margin-right: 1.5vh;
   margin-left: 1.5vh;
   margin-top: 11vh;
+}
+
+#profile-photo {
+  height: 30vh;
+  width: 30vh;
+}
+
+#profile-text {
+  text-align: center;
 }

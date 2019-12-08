@@ -8,11 +8,9 @@ import {
   IonItem,
   IonPage,
   IonTitle,
-  IonToolbar,
   IonIcon,
   IonRefresher,
   IonRefresherContent,
-  IonButton,
   IonImg,
   IonFab,
   IonFabButton,
@@ -20,14 +18,14 @@ import {
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
-import { Plugins } from "@capacitor/core";
+// import { Plugins } from "@capacitor/core";
 import { walk, logOut, settings } from "ionicons/icons";
 import { Link } from "react-router-dom";
 import "./Tab1.css";
 import firebase from "firebase";
 import db from "../firebase/firebase";
 
-const { Storage } = Plugins;
+// const { Storage } = Plugins;
 
 type Props = {
   user: userData;
@@ -143,13 +141,14 @@ class Profile extends Component<Props, State> {
           {/* </IonToolbar> */}
         </IonHeader>
         <IonContent>
-          <IonCard className="welcome-card">
+          <IonCard class="profile-card">
             <IonImg
+              id="profile-photo"
               src={this.props.user.photoURL || "assets/icon/bean-profile.png"}
             />
             <IonCardHeader>
-              <IonCardTitle>
-                Welcome, {this.props.user.displayName || this.props.user.email}
+              <IonCardTitle id="profile-text">
+                Welcome, {this.props.user.displayName || this.props.user.email}!
               </IonCardTitle>
             </IonCardHeader>
             <IonCardContent></IonCardContent>

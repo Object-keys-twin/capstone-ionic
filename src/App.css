@@ -2,6 +2,11 @@ ion-button {
   text-transform: none;
 }
 
+ion-tab-button {
+  --color: #c1daa0;
+  --color-selected: #64af02;
+}
+
 .spinner {
   --color: #6dd67c;
   display: block;

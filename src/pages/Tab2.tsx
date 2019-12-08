@@ -5,12 +5,9 @@ import {
   IonList,
   IonItem,
   IonLabel,
-  IonCol,
-  IonGrid,
   IonRefresher,
   IonRefresherContent,
   IonTitle,
-  IonToolbar,
   IonCard
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
