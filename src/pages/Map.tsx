@@ -3,13 +3,8 @@ import "./Map.css";
 // import {actions, RootState, selectors} from '../store';
 import Map from "./MapView";
 import {
-  IonHeader,
-  IonToolbar,
-  IonButtons,
-  IonTitle,
   IonContent,
   IonPage,
-  IonItem,
   IonIcon,
   IonFab,
   IonFabButton,
@@ -82,12 +77,14 @@ class MapPage extends Component<Props, State> {
 
       return (
         <IonPage>
-          <IonHeader>
-            <IonToolbar>
-              <IonButtons slot="start"></IonButtons>
-              <IonTitle>Map</IonTitle>
-            </IonToolbar>
-          </IonHeader>
+          {/* <IonHeader> */}
+          {/* <IonToolbar> */}
+          {/* <IonButtons slot="start"></IonButtons> */}
+          {/* <IonTitle size="small" class="tab-header header-font">
+              Map
+            </IonTitle> */}
+          {/* </IonToolbar> */}
+          {/* </IonHeader> */}
 
           <IonContent class="map-page">
             {this.state.latitude ? (

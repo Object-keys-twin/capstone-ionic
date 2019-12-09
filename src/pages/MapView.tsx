@@ -47,8 +47,8 @@ export default class Map extends Component<Props> {
         lat: this.props.lat,
         lng: this.props.long
       },
-			zoom: 15,
-			fullscreenControl: false
+      zoom: 15,
+      fullscreenControl: false
     });
     if (this.props.checkpoints) {
       directionsRenderer.setMap(this.map);
@@ -103,13 +103,15 @@ export default class Map extends Component<Props> {
   }
 
   addMarkers = () => {
-		if (this.props.checkpoints)
-			this.props.checkpoints.forEach((markerData, index) => {
-				let infoWindow = new google.maps.InfoWindow({
-					content: `<h5>${index+1}. ${markerData.name}</h5>
-					<p><img src="${markerData.imageUrl}" height=65 width=65 style="float: left; margin-right: 10px;">
+    if (this.props.checkpoints)
+      this.props.checkpoints.forEach((markerData, index) => {
+        let infoWindow = new google.maps.InfoWindow({
+          content: `<h5>${index + 1}. ${markerData.name}</h5>
+					<p><img src="${
+            markerData.imageUrl
+          }" height=65 width=65 style="float: left; margin-right: 10px;">
 					Rating: ${markerData.rating}</p><p>${markerData.location}</p>`
-				});
+        });
 
         let marker = new google.maps.Marker({
           position: new google.maps.LatLng(
@@ -139,8 +141,6 @@ export default class Map extends Component<Props> {
       this.map.fitBounds(bounds);
     }
   };
-
-  addDirections = () => {};
 
   render() {
     if (

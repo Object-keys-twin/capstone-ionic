@@ -8,11 +8,9 @@ import {
   IonList,
   IonItem,
   IonRouterOutlet,
-  IonButtons,
   IonButton,
   IonMenuButton,
   IonFab,
-  IonFabButton,
   IonIcon,
   IonItemSliding,
   IonItemOption,
@@ -76,6 +74,10 @@ export default class BeanMenu extends Component<Props, State> {
   };
 
   publishTour = async (name: string, description: string) => {
+    if (!this.props.stringbean.length) {
+      console.log("No beans to string!");
+      return;
+    }
     let checkpoints = Array<string>();
 
     this.props.stringbean.forEach(async bean => {
@@ -116,7 +118,9 @@ export default class BeanMenu extends Component<Props, State> {
         <IonMenu side="end" contentId="main" type="overlay" swipeGesture={true}>
           <IonHeader>
             <IonToolbar color="primary">
-              <IonTitle>My Beans</IonTitle>
+              <IonTitle class="header-font bean-menu-header">
+                To String
+              </IonTitle>
             </IonToolbar>
           </IonHeader>
           <IonContent>
@@ -133,12 +137,13 @@ export default class BeanMenu extends Component<Props, State> {
                       <IonIcon slot="icon-only" icon={trash}></IonIcon>
                     </IonItemOption>
                   </IonItemOptions>
-                  <IonItem>{bean.name}</IonItem>
+                  <IonItem lines="none">{bean.name}</IonItem>
                 </IonItemSliding>
               ))}
             </IonList>
           </IonContent>
           <IonButton
+            id="publish-button"
             onClick={() => {
               this.toggleAlert();
             }}
@@ -153,7 +158,11 @@ export default class BeanMenu extends Component<Props, State> {
           />
         </IonMenu>
         <IonFab id="menu-button" vertical="bottom" horizontal="end">
-          <IonMenuButton autoHide={false} onClick={() => menuController.open}>
+          <IonMenuButton
+            id="menu-button2"
+            autoHide={false}
+            onClick={() => menuController.open}
+          >
             <IonIcon id="menu-icon" icon={list} />
           </IonMenuButton>
         </IonFab>

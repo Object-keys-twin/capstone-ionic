@@ -1,5 +1,14 @@
+ion-button {
+  text-transform: none;
+}
+
+ion-tab-button {
+  --color: #9ce4be;
+  --color-selected: #6ba486;
+}
+
 .spinner {
-  --color: #900c3f;
+  --color: #ffa676;
   display: block;
   margin: auto;
   top: 30%;
@@ -7,10 +16,23 @@
   width: 9vh;
 }
 
-.header {
-  text-align: center;
+.header-font {
+  font-family: "Lobster Two", cursive;
+  font-size: 4vh;
+  color: #fff5ba;
+}
+.login-signup-header {
+  font-size: 7vh;
 }
 
-.app {
-  --background: #900c3f;
+.tab-header {
+  text-align: center;
+  background-color: #6ba486;
+  font-size: 25pt;
+  padding: 0;
+  overflow: scroll;
+}
+
+.tab-header-block {
+  height: 9vh;
 }

@@ -1,29 +1,31 @@
-.tabheader {
-	background-color: green;
-	font-size: 25pt;
-	text-align: center;
-}
-
 .tours {
-	--background: red;
-}
-.list {
-	background-color: yellow;
+  --background: red;
 }
 
 .tourname {
-	--background: blue;
-	text-align: center;
-	font-size: 18pt;
+  --background: blue;
+  text-align: center;
+  font-size: 18pt;
 }
 
-.mainListRow {
-	/* border: 1px solid red; */
-	/* --ion-background-color: red; */
-	display: flex;
-	flex-direction: column;
-	text-align: center;
-	border-style: solid;
-	border-width: 5px;
-	border-color: black;
+.stringbean-card {
+  display: flex;
+  flex-direction: column;
+
+  --background: white;
+}
+
+.stringbean-title {
+  --color: #fffadc;
+  --background: #89c2a3;
+  font-size: 3vh;
+}
+
+.stringbean-link {
+  color: white;
+  text-decoration: none;
+}
+
+.stringbean-card-content {
+  --color: white;
 }
