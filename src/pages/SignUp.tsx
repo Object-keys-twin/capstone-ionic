@@ -118,7 +118,10 @@ export default class SignUp extends Component<Props, State> {
           </IonItem>
         </IonCardContent>
         <IonCardContent class="login-signup-input-container">
-          <IonItem class="login-signup-input-nestedcontainer login-ionitem">
+          <IonItem
+            lines="none"
+            class="login-signup-input-nestedcontainer login-ionitem"
+          >
             <IonInput
               class="login-signup-input-field"
               clearInput

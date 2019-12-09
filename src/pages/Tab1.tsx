@@ -14,7 +14,8 @@ import {
   IonImg,
   IonFab,
   IonFabButton,
-  IonFabList
+  IonFabList,
+  IonLabel
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
@@ -134,12 +135,12 @@ class Profile extends Component<Props, State> {
     return (
       <IonPage>
         <IonHeader class="tab-header-block">
-          <IonTitle size="small" class="tab-header header-font tabheader">
+          <IonTitle size="small" class="tab-header header-font">
             My Profile
           </IonTitle>
         </IonHeader>
-        <IonContent>
-          <IonCard class="profile-card welcome-card">
+        <IonContent className="beancontent">
+          <IonCard class="profile-card">
             <IonImg
               id="profile-photo"
               src={this.props.user.photoURL || "assets/icon/bean-profile.png"}
@@ -151,33 +152,36 @@ class Profile extends Component<Props, State> {
             </IonCardHeader>
             <IonCardContent></IonCardContent>
           </IonCard>
-          <IonCard>
+          <IonCard id="string-bean-title-card">
             <IonCardTitle className="string-bean-title">
               My Stringbeans
             </IonCardTitle>
           </IonCard>
           {this.state.tours.map((tour, i) => (
-            <IonCard className="welcome-card" key={i}>
-              <IonItem>
-                <IonIcon slot="start" color="medium" icon={walk} />
-                <IonCardTitle>
-                  <Link
-                    to={{
-                      pathname: "/map",
-                      state: { checkpoints: tour.checkpoints }
-                    }}
-                  >
-                    {tour.name}
-                  </Link>
-                </IonCardTitle>
-              </IonItem>
-              <IonCardContent>
-                {tour.checkpoints.map((checkpoint, i) => {
-                  if (checkpoint) {
-                    return <IonItem key={i}>{checkpoint.name}</IonItem>;
-                  }
-                })}
-              </IonCardContent>
+            <IonCard className="stringbean-card" key={i}>
+              <Link
+                className="stringbean-link"
+                to={{
+                  pathname: "/map",
+                  state: { checkpoints: tour.checkpoints }
+                }}
+              >
+                <IonItem lines="none" className="stringbean-title">
+                  {tour.name}
+                </IonItem>
+
+                <IonCardContent>
+                  {tour.checkpoints.map((checkpoint, i) => {
+                    if (checkpoint) {
+                      return (
+                        <IonItem lines="none" key={i}>
+                          {checkpoint.name}
+                        </IonItem>
+                      );
+                    }
+                  })}
+                </IonCardContent>
+              </Link>
             </IonCard>
           ))}
 
@@ -193,12 +197,12 @@ class Profile extends Component<Props, State> {
               >
                 <IonIcon class="settings-tray-icon" icon={logOut} />
               </IonFabButton>
-              <IonFabButton class="settings-tray-button">
+              {/* <IonFabButton class="settings-tray-button">
                 Bookmarks
               </IonFabButton>
               <IonFabButton class="settings-tray-button">
                 Something
-              </IonFabButton>
+              </IonFabButton> */}
             </IonFabList>
           </IonFab>
           <IonRefresher slot="fixed" onIonRefresh={this.refresh}>

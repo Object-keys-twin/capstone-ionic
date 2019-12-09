@@ -11,6 +11,7 @@
   --background-hover: #ffe65e;
   --background-focused: #ffe65e;
   --background-activated: #ffe65e;
+  --color: white;
 }
 
 #publish-button {
@@ -22,9 +23,11 @@
 
 #menu-icon {
   font-size: 5vh;
+  --color: white;
 }
 
 .bean-menu-header {
   font-size: 3vh;
   text-align: center;
+  background: #6ba486;
 }

@@ -8,7 +8,8 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonTitle,
-  IonCard
+  IonCard,
+  IonCardContent
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
@@ -83,35 +84,40 @@ class PublicTours extends Component<{}, State> {
     const { tours } = this.state;
     return (
       <IonPage>
-        <IonHeader class="tab-header-block tabheader">
+        <IonHeader class="tab-header-block">
           <IonTitle size="small" class="tab-header header-font">
             Stringbeans
           </IonTitle>
         </IonHeader>
-        <IonContent>
-          <IonList className="list">
-            {tours.map((tour, idx) => (
-              <IonCard key={idx} className="mainListRow">
-                <IonLabel>
-                  <Link
-                    className="tourlink"
-                    to={{
-                      pathname: "/map",
-                      state: { checkpoints: tour.checkpoints }
-                    }}
-                  >
-                    <IonItem className="tourname">{tour.name}</IonItem>
-                  </Link>
-                </IonLabel>
-                <IonList>
+        <IonContent className="beancontent">
+          {tours.map((tour, idx) => (
+            <IonCard className="stringbean-card" key={idx}>
+              <Link
+                className="stringbean-link"
+                to={{
+                  pathname: "/map",
+                  state: { checkpoints: tour.checkpoints }
+                }}
+              >
+                <IonItem lines="none" class="stringbean-title">
+                  {tour.name}
+                </IonItem>
+
+                <IonCardContent class="stringbean-card-content">
                   {tour.checkpoints.map((checkpoint, idx) => {
-                    if (checkpoint)
-                      return <IonItem key={idx}>{checkpoint.name}</IonItem>;
+                    if (checkpoint) {
+                      return (
+                        <IonItem lines="none" key={idx}>
+                          {checkpoint.name}
+                        </IonItem>
+                      );
+                    }
                   })}
-                </IonList>
-              </IonCard>
-            ))}
-          </IonList>
+                </IonCardContent>
+              </Link>
+            </IonCard>
+          ))}
+
           <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
             <IonRefresherContent
               pullingIcon="arrow-dropdown"

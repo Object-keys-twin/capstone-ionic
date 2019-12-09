@@ -1,17 +1,14 @@
 .profile-card {
   display: flex;
   align-items: center;
-}
-
-.welcome-card img {
-  max-height: 35vh;
-  overflow: hidden;
+  --background: white;
 }
 
 .string-bean-title {
   text-align: center;
   padding: 2vh;
   background: #fff5ba;
+  color: rgb(0, 0, 0);
 }
 
 #logout {
@@ -39,7 +36,6 @@
   --background-focused: #ffb68e;
   --background-activated: #ffb68e;
   margin: 1.5vh;
-  /* margin-top: 1.5vh; */
 }
 
 #profile-settings-tray {
@@ -55,4 +51,11 @@
 
 #profile-text {
   text-align: center;
+}
+
+.stringbean-card {
+  --background: white;
+}
+
+#string-bean-title-card {
 }

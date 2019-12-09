@@ -226,7 +226,7 @@ class App extends Component<{}, State> {
   render() {
     if (this.state.loggedIn) {
       return (
-        <IonApp id="app">
+        <IonApp>
           <IonReactRouter>
             <IonTabs>
               <IonRouterOutlet>

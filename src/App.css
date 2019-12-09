@@ -3,12 +3,12 @@ ion-button {
 }
 
 ion-tab-button {
-  --color: #c1daa0;
-  --color-selected: #64af02;
+  --color: #9ce4be;
+  --color-selected: #6ba486;
 }
 
 .spinner {
-  --color: #6dd67c;
+  --color: #ffa676;
   display: block;
   margin: auto;
   top: 30%;
@@ -27,17 +27,12 @@ ion-tab-button {
 
 .tab-header {
   text-align: center;
-  background-color: #6dd67c;
+  background-color: #6ba486;
   font-size: 25pt;
   padding: 0;
   overflow: scroll;
-  /* height: 10vh; */
 }
 
 .tab-header-block {
   height: 9vh;
-}
-
-.app {
-  --background: #900c3f;
 }

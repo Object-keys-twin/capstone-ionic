@@ -119,7 +119,7 @@ export default class BeanMenu extends Component<Props, State> {
           <IonHeader>
             <IonToolbar color="primary">
               <IonTitle class="header-font bean-menu-header">
-                Beans To String
+                To String
               </IonTitle>
             </IonToolbar>
           </IonHeader>
@@ -137,7 +137,7 @@ export default class BeanMenu extends Component<Props, State> {
                       <IonIcon slot="icon-only" icon={trash}></IonIcon>
                     </IonItemOption>
                   </IonItemOptions>
-                  <IonItem>{bean.name}</IonItem>
+                  <IonItem lines="none">{bean.name}</IonItem>
                 </IonItemSliding>
               ))}
             </IonList>

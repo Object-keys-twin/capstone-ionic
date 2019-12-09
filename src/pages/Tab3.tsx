@@ -10,7 +10,11 @@ import {
   IonSpinner,
   IonCard,
   IonInput,
-  IonIcon
+  IonIcon,
+  IonGrid,
+  IonRow,
+  IonImg,
+  IonText
 } from "@ionic/react";
 import { search } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
@@ -167,9 +171,12 @@ class CreateStory extends Component<{}, State> {
     const { businesses } = this.state;
 
     return (
-      <IonPage className="beanpage" onKeyUp={(e: any) => this.keyUpHandler(e)}>
+      <IonPage
+        className="beancontent"
+        onKeyUp={(e: any) => this.keyUpHandler(e)}
+      >
         <IonHeader class="tab-header-block">
-          <IonTitle size="small" class="tab-header header-font tabheader">
+          <IonTitle size="small" class="tab-header header-font">
             Beans
           </IonTitle>
         </IonHeader>
@@ -179,6 +186,7 @@ class CreateStory extends Component<{}, State> {
         />
         <IonCard id="search-bar">
           <IonInput
+            id="search-box"
             clearInput
             onIonChange={e =>
               this.handleChange((e.target as HTMLInputElement).value)
@@ -187,6 +195,7 @@ class CreateStory extends Component<{}, State> {
           ></IonInput>
           <IonButton
             id="search-button"
+            size="small"
             onClick={() =>
               this.getYelp(
                 this.state.latitude,
@@ -204,6 +213,7 @@ class CreateStory extends Component<{}, State> {
             {businesses.map((business, idx) => (
               <IonCard className="beancard" key={idx}>
                 <IonItem
+                  lines="none"
                   className="beanitem"
                   onClick={() => this.setState({ showModal: idx })}
                 >
@@ -212,29 +222,65 @@ class CreateStory extends Component<{}, State> {
                 </IonItem>
 
                 <IonModal isOpen={idx === this.state.showModal}>
-                  <h1>{business.name}</h1>
-                  <p>{business.location}</p>
-                  <IonButton
-                    onClick={() => {
-                      this.addToStringBean(business);
-                      this.setState({ showModal: Infinity });
-                    }}
-                  >
-                    Add To Stringbean
-                  </IonButton>
-                  <IonButton
-                    onClick={() => {
-                      this.setState({ showModal: Infinity });
-                    }}
-                  >
-                    Back
-                  </IonButton>
+                  <IonGrid id="modal-grid">
+                    <IonRow id="modal-info">
+                      <IonGrid id="modal-info-grid">
+                        <IonRow class="modal-info-text" id="modal-name">
+                          {business.name}
+                        </IonRow>
+                        <IonRow class="modal-info-text" id="modal-location">
+                          {business.location}
+                        </IonRow>
+                        <IonRow>
+                          <IonImg
+                            id="modal-image"
+                            src={
+                              business.imageUrl ||
+                              "assets/icon/bean-profile.png"
+                            }
+                          ></IonImg>
+                        </IonRow>
+                        <IonRow class="modal-info-text" id="modal-rating">
+                          Rating: {business.rating}/5
+                        </IonRow>
+                        <IonRow class="modal-info-text" id="modal-price">
+                          Price:&nbsp;
+                          <IonText id="modal-price-dollars">
+                            {business.price || "N/A"}
+                          </IonText>
+                        </IonRow>
+                      </IonGrid>
+                    </IonRow>
+
+                    <IonRow id="modal-buttons-row">
+                      <IonButton
+                        class="modal-button"
+                        size="small"
+                        id="modal-button-add"
+                        onClick={() => {
+                          this.addToStringBean(business);
+                          this.setState({ showModal: Infinity });
+                        }}
+                      >
+                        Add To Stringbean
+                      </IonButton>
+                      <IonButton
+                        class="modal-button"
+                        id="modal-button-back"
+                        onClick={() => {
+                          this.setState({ showModal: Infinity });
+                        }}
+                      >
+                        Back
+                      </IonButton>
+                    </IonRow>
+                  </IonGrid>
                 </IonModal>
               </IonCard>
             ))}
           </IonContent>
         ) : (
-          <IonContent>
+          <IonContent className="beancontent">
             <IonSpinner class="spinner"></IonSpinner>
           </IonContent>
         )}

@@ -2,35 +2,98 @@
   display: flex;
   height: 7vh;
   font-size: 2.5vh;
-  padding: 1vh;
-  margin: 10px;
+  padding: 2vh;
+  margin: 2vh;
   --background: white;
 }
 
-.beanpage {
-  padding: 5px;
-  background-color: blue;
-}
-
 .beancontent {
-  --background: blue;
+  --background: #ade4ca;
+  background-color: #ade4ca;
 }
 
 .beancard {
-  margin: 30px, 0px, 0px, 0px;
-  --background: red;
+  padding-top: 0.8vh;
+  padding-bottom: 0.8vh;
+  margin: 2vh;
+  --background: white;
 }
 
 .beanitem {
+  font-size: 2.2vh;
   --background: clear;
 }
 
 #search-button {
-  margin: auto;
+  margin: -1vh;
   text-transform: none;
   font-size: 2.5vh;
   --background: #ffb68e;
   --background-hover: #ffb68e;
   --background-focused: #ffb68e;
   --background-activated: #ffb68e;
+}
+
+#modal-grid {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #ade4ca;
+  padding: 3vh;
+}
+
+#modal-buttons-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-button {
+  --background: #6ba486;
+}
+
+#modal-button-back {
+  width: 30%;
+}
+
+#modal-button-add {
+  font-size: 3vh;
+  min-height: 4vh;
+  width: 90%;
+}
+
+#modal-info {
+  background: white;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  width: 100%;
+  border-radius: 2vh;
+}
+
+#modal-image {
+  max-height: 50vh;
+  margin-top: 3vh;
+  margin-bottom: 3vh;
+}
+
+#modal-info-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2vh;
+}
+
+.modal-info-text {
+  font-size: 3vh;
+}
+
+#modal-name {
+  font-size: 4vh;
+  margin-bottom: 1vh;
+}
+
+#modal-price-dollars {
+  color: green;
 }
