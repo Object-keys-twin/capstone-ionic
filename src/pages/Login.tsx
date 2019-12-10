@@ -98,7 +98,13 @@ class Login extends Component<Props, State> {
             loop
             src="assets/video/video.mp4"
           ></video>
+
           <IonGrid id="login-signup-grid">
+            <IonRow>
+              <IonItem lines="none" id="main-title">
+                Bean
+              </IonItem>
+            </IonRow>
             <IonRow id="login-signup-row">
               <IonCard class="login-signup-card">
                 {!this.state.showSignUp ? (

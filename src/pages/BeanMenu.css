@@ -30,4 +30,9 @@
   font-size: 3vh;
   text-align: center;
   background: #6ba486;
+  padding: 0;
+}
+
+.bean-menu-toolbar {
+  padding: 1vh;
 }

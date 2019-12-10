@@ -117,9 +117,9 @@ export default class BeanMenu extends Component<Props, State> {
       <>
         <IonMenu side="end" contentId="main" type="overlay" swipeGesture={true}>
           <IonHeader>
-            <IonToolbar color="primary">
+            <IonToolbar class="bean-menu-toolbar" color="primary">
               <IonTitle class="header-font bean-menu-header">
-                To String
+                My Stringbean
               </IonTitle>
             </IonToolbar>
           </IonHeader>

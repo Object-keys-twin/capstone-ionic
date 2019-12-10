@@ -20,7 +20,7 @@ import {
 import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
 // import { Plugins } from "@capacitor/core";
-import { walk, logOut, settings } from "ionicons/icons";
+import { create, heart, logOut, settings } from "ionicons/icons";
 import { Link } from "react-router-dom";
 import "./Tab1.css";
 import firebase from "firebase";
@@ -190,19 +190,22 @@ class Profile extends Component<Props, State> {
               <IonIcon class="settings-tray-icon" icon={settings} />
             </IonFabButton>
             <IonFabList side="bottom" id="profile-settings-tray">
+              <IonFabButton class="settings-tray-button" id="favorites-button">
+                <IonIcon
+                  class="settings-tray-icon favorites-icon"
+                  icon={heart}
+                />
+              </IonFabButton>
+              <IonFabButton class="settings-tray-button" id="edit-button">
+                <IonIcon class="settings-tray-icon" icon={create} />
+              </IonFabButton>
               <IonFabButton
                 class="settings-tray-button"
-                id="logout"
+                id="logout-button"
                 onClick={this.signOut}
               >
                 <IonIcon class="settings-tray-icon" icon={logOut} />
               </IonFabButton>
-              {/* <IonFabButton class="settings-tray-button">
-                Bookmarks
-              </IonFabButton>
-              <IonFabButton class="settings-tray-button">
-                Something
-              </IonFabButton> */}
             </IonFabList>
           </IonFab>
           <IonRefresher slot="fixed" onIonRefresh={this.refresh}>

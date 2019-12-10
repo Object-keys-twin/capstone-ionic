@@ -9,9 +9,14 @@ import {
   IonRefresherContent,
   IonTitle,
   IonCard,
-  IonCardContent
+  IonCardContent,
+  IonIcon,
+  IonText,
+  IonGrid,
+  IonCol
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
+import { heartEmpty, heart } from "ionicons/icons";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import db from "../firebase/firebase";
@@ -107,9 +112,22 @@ class PublicTours extends Component<{}, State> {
                   {tour.checkpoints.map((checkpoint, idx) => {
                     if (checkpoint) {
                       return (
-                        <IonItem lines="none" key={idx}>
-                          {checkpoint.name}
-                        </IonItem>
+                        <IonGrid item-content class="checkpoint-row" key={idx}>
+                          <IonCol class="list-checkpoint-col">
+                            <IonItem lines="none">{checkpoint.name}</IonItem>
+                          </IonCol>
+                          <IonCol class="list-favorites-col">
+                            <IonIcon
+                              class="favorites-icon list-favorites-icon"
+                              icon={
+                                checkpoint.name &&
+                                checkpoint.name.charCodeAt(0) < 75
+                                  ? heart
+                                  : heartEmpty
+                              }
+                            />{" "}
+                          </IonCol>
+                        </IonGrid>
                       );
                     }
                   })}
