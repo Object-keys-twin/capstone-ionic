@@ -38,6 +38,9 @@ video {
 
 .login-signup-button {
   --background: #ffb68e;
+  --background-hover: #ffb68e;
+  --background-focused: #ffb68e;
+  --background-activated: #ffb68e;
   font-size: 2vh;
 }
 
