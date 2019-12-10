@@ -2,20 +2,35 @@
   display: flex;
   align-items: center;
   --background: white;
+  padding-left: 2vh;
 }
 
 .string-bean-title {
   text-align: center;
   padding: 2vh;
   background: #fff5ba;
-  color: rgb(0, 0, 0);
+  color: #8d8d8d;
 }
 
-#logout {
+#logout-button {
   --background: #fc5a5a;
   --background-hover: #fc5a5a;
   --background-focused: #fc5a5a;
   --background-activated: #fc5a5a;
+}
+
+#favorites-button {
+  --background: #ffe693;
+  --background-hover: #ffe693;
+  --background-focused: #ffe693;
+  --background-activated: #ffe693;
+}
+
+#edit-button {
+  --background: #74c098;
+  --background-hover: #74c098;
+  --background-focused: #74c098;
+  --background-activated: #74c098;
 }
 
 .settings-tray-icon {
@@ -35,13 +50,14 @@
   --background-hover: #ffb68e;
   --background-focused: #ffb68e;
   --background-activated: #ffb68e;
-  margin: 1.5vh;
+  margin-right: 2.1vh;
+  margin-top: 3vh;
 }
 
 #profile-settings-tray {
-  margin-right: 1.5vh;
-  margin-left: 1.5vh;
-  margin-top: 11vh;
+  /* margin-right: 1.5vh; */
+  /* margin-left: 1.5vh; */
+  margin-top: 13vh;
 }
 
 #profile-photo {
@@ -58,4 +74,8 @@
 }
 
 #string-bean-title-card {
+}
+
+.favorites-icon {
+  color: #ff7a7a;
 }

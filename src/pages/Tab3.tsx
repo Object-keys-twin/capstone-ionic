@@ -14,9 +14,10 @@ import {
   IonGrid,
   IonRow,
   IonImg,
-  IonText
+  IonText,
+  IonCol
 } from "@ionic/react";
-import { search } from "ionicons/icons";
+import { heart, heartEmpty, search } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
 import axios from "axios";
 import BeanMenu from "./BeanMenu";
@@ -212,14 +213,28 @@ class CreateStory extends Component<{}, State> {
           <IonContent className="beancontent">
             {businesses.map((business, idx) => (
               <IonCard className="beancard" key={idx}>
-                <IonItem
-                  lines="none"
-                  className="beanitem"
-                  onClick={() => this.setState({ showModal: idx })}
-                >
-                  {business.name} <br></br>
-                  {business.location}
-                </IonItem>
+                <IonGrid item-content class="checkpoint-row">
+                  <IonCol class="list-checkpoint-col">
+                    <IonItem
+                      lines="none"
+                      className="beanitem"
+                      onClick={() => this.setState({ showModal: idx })}
+                    >
+                      {business.name} <br></br>
+                      {business.location}
+                    </IonItem>
+                  </IonCol>
+                  <IonCol class="list-favorites-col">
+                    <IonIcon
+                      class="favorites-icon list-favorites-icon"
+                      icon={
+                        business.name && business.name.charCodeAt(0) < 75
+                          ? heart
+                          : heartEmpty
+                      }
+                    />{" "}
+                  </IonCol>
+                </IonGrid>
 
                 <IonModal isOpen={idx === this.state.showModal}>
                   <IonGrid id="modal-grid">

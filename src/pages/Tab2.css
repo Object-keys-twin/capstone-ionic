@@ -29,3 +29,22 @@
 .stringbean-card-content {
   --color: white;
 }
+
+.checkpoint-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.list-checkpoint-col {
+  flex: 10;
+}
+
+.list-favorites-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.list-favorites-icon {
+  font-size: 4vh;
+}
