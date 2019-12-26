@@ -19,6 +19,12 @@
   --background-hover: #ffb68e;
   --background-focused: #ffb68e;
   --background-activated: #ffb68e;
+  margin: 1.1vh;
+  letter-spacing: 0.3vh;
+  height: 6vh;
+  width: 100%;
+  --border-radius: 1.5vh;
+  font-size: 2.3vh;
 }
 
 #menu-icon {
@@ -26,13 +32,25 @@
   --color: white;
 }
 
-.bean-menu-header {
-  font-size: 3vh;
-  text-align: center;
+#bean-menu-header {
+  font-size: 4vh;
   background: #6ba486;
-  padding: 0;
+  padding: 1.5vh;
+  border-radius: 3vh 0 0 0;
 }
 
-.bean-menu-toolbar {
-  padding: 1vh;
+#beanmenu {
+  --background: transparent;
+}
+
+#bean-menu-button-container {
+  --inner-padding-end: 0px;
+  --padding-start: 0px;
+}
+
+.publish-toast {
+  text-align: center;
+  --background: #ffb68e;
+  --color: white;
+  font-size: 3vh;
 }

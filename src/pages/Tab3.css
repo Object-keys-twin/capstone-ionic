@@ -51,6 +51,9 @@
 
 .modal-button {
   --background: #6ba486;
+  --background-hover: #6ba486;
+  --background-focused: #6ba486;
+  --background-activated: #6ba486;
 }
 
 #modal-button-back {

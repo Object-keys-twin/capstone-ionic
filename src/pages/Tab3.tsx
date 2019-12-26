@@ -161,12 +161,7 @@ class CreateStory extends Component<{}, State> {
       key: "stringbean",
       value: JSON.stringify(stringBeanArray)
     });
-    // console.log(await Storage.get({ key: "stringbean" }));
-    // console.log(localStorage);
   };
-
-  //write function to publish story. loops through the checkpoints, checks if they exist in the database. if not, adds it to the database. grabs the checkpoint's firestore ID. holds the checkpoints' firestore IDs in an array.
-  //then build the tour object. use the array of checkpoint firestore IDs.
 
   render() {
     const { businesses } = this.state;
@@ -305,5 +300,3 @@ class CreateStory extends Component<{}, State> {
 }
 
 export default CreateStory;
-
-// onSubmit?: ((event: React.FormEvent<HTMLIonSearchbarElement>) => void)

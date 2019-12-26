@@ -1,13 +1,3 @@
-.tours {
-  --background: red;
-}
-
-.tourname {
-  --background: blue;
-  text-align: center;
-  font-size: 18pt;
-}
-
 .stringbean-card {
   display: flex;
   flex-direction: column;

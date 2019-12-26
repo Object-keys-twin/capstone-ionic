@@ -1,4 +1,7 @@
 #nav-button {
   --background: #65bb8c;
+  --background-hover: #65bb8c;
+  --background-focused: #65bb8c;
+  --background-activated: #65bb8c;
   --box-shadow: 0 0 2vh 0.5vh #fff5ba;
 }

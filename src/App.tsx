@@ -16,7 +16,6 @@ import firebase from "firebase";
 import Profile from "./pages/Tab1";
 import Home from "./pages/Tab2";
 import CreateStory from "./pages/Tab3";
-import Details from "./pages/Details";
 import MapPage from "./pages/Map";
 import Login from "./pages/Login";
 
@@ -238,7 +237,6 @@ class App extends Component<{}, State> {
                   exact={true}
                 />
                 <Route path="/explore" component={Home} exact={true} />
-                <Route path="/tab2/details" component={Details} />
                 <Route path="/create" component={CreateStory} />
                 <Route path="/map" component={MapPage} exact={true} />
                 {/* <Route path="/signup" component={SignUp} exact={true} /> */}

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./Map.css";
-// import {actions, RootState, selectors} from '../store';
+
 import Map from "./MapView";
 import {
   IonContent,
@@ -35,7 +35,6 @@ class MapPage extends Component<Props, State> {
   componentDidMount = async () => {
     await this.getCurrentPosition();
     await this.launchGoogleMapsNav();
-    // console.log("props", this.props.location.state.checkpoints);
   };
 
   getCurrentPosition = async () => {
@@ -45,10 +44,6 @@ class MapPage extends Component<Props, State> {
       longitude: coordinates.coords.longitude
     });
   };
-
-  // setInterval = (callback: (fn: any) => void, time: number) => {
-  // 	callback(this.getCurrentPosition()), 3000;
-  // };
 
   launchGoogleMapsNav = () => {
     if (this.props.location.state) {
@@ -70,22 +65,11 @@ class MapPage extends Component<Props, State> {
     }
   };
   render() {
-    // console.log(this.state);
-
     if (this.props.location.state) {
       const { checkpoints } = this.props.location.state;
 
       return (
         <IonPage>
-          {/* <IonHeader> */}
-          {/* <IonToolbar> */}
-          {/* <IonButtons slot="start"></IonButtons> */}
-          {/* <IonTitle size="small" class="tab-header header-font">
-              Map
-            </IonTitle> */}
-          {/* </IonToolbar> */}
-          {/* </IonHeader> */}
-
           <IonContent class="map-page">
             {this.state.latitude ? (
               <IonContent>
@@ -120,15 +104,5 @@ class MapPage extends Component<Props, State> {
     );
   }
 }
-
-// const mapDispatchToProps = {
-//     addLocation: (location: Location) => actions.locations.updateLocations(location)
-// };
-
-// const mapStateToProps = (state: RootState) => ({
-//     locations: selectors.locations.allLocations(state.locations),
-//     mapCenter: selectors.locations.mapCenter(state.locations),
-//     userLocationRetrieved: state.locations.userLocationRetrieved
-// });
 
 export default MapPage;

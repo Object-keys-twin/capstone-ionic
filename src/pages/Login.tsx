@@ -87,7 +87,6 @@ class Login extends Component<Props, State> {
   };
 
   render() {
-    // if (!this.state.showSignUp) {
     return (
       <IonPage>
         <IonContent>
@@ -180,7 +179,7 @@ class Login extends Component<Props, State> {
                       <IonRow class="login-button-row">
                         <IonButton
                           id="signup-button"
-                          fill="clear"
+                          size="small"
                           onClick={() => {
                             this.showSignUp();
                           }}
@@ -215,13 +214,6 @@ class Login extends Component<Props, State> {
       </IonPage>
     );
   }
-  // return (
-  //   <SignUp
-  //     handleSubmit={this.props.handleSubmit}
-  //     showSignUp={this.showSignUp}
-  //     signUpError={this.props.signUpError}
-  //   />
-  // );
 }
-// }
+
 export default Login;

@@ -14,19 +14,16 @@ import {
   IonImg,
   IonFab,
   IonFabButton,
-  IonFabList,
-  IonLabel
+  IonFabList
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
-// import { Plugins } from "@capacitor/core";
+
 import { create, heart, logOut, settings } from "ionicons/icons";
 import { Link } from "react-router-dom";
 import "./Tab1.css";
 import firebase from "firebase";
 import db from "../firebase/firebase";
-
-// const { Storage } = Plugins;
 
 type Props = {
   user: userData;
@@ -74,19 +71,6 @@ class Profile extends Component<Props, State> {
       .get()
       .then(docs => {
         docs.forEach(doc => {
-          // this.setState({
-          // 	tours: [
-          // 		...this.state.tours,
-          // 		{
-          // 			checkpoints: doc.data().checkpoints,
-          // 			description: doc.data().description,
-          // 			name: doc.data().name,
-          // 			created: doc.data().timestamp,
-          // 			upvotes: doc.data().upvotes,
-          // 			user: doc.data().user
-          // 		}
-          // 	]
-          // });
           tourData.push({
             checkpoints: doc.data().checkpoints,
             description: doc.data().description,

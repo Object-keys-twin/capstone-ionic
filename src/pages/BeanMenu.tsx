@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import {
   IonMenu,
   IonHeader,
-  IonToolbar,
   IonTitle,
   IonContent,
   IonList,
@@ -14,7 +13,8 @@ import {
   IonIcon,
   IonItemSliding,
   IonItemOption,
-  IonItemOptions
+  IonItemOptions,
+  IonToast
 } from "@ionic/react";
 
 import { list, trash } from "ionicons/icons";
@@ -43,6 +43,8 @@ type State = {
   showAlert: boolean;
   name: string;
   description: string;
+  publishError: boolean;
+  toastMessage: string;
 };
 
 type Props = {
@@ -55,7 +57,9 @@ export default class BeanMenu extends Component<Props, State> {
     stringbean: Array<BusinessData>(),
     showAlert: false,
     name: "",
-    description: ""
+    description: "",
+    publishError: false,
+    toastMessage: ""
   };
 
   toggleAlert = () => {
@@ -75,9 +79,23 @@ export default class BeanMenu extends Component<Props, State> {
 
   publishTour = async (name: string, description: string) => {
     if (!this.props.stringbean.length) {
+      this.setState({
+        publishError: true,
+        toastMessage: "No beans to string!"
+      });
       console.log("No beans to string!");
       return;
     }
+
+    if (name === "") {
+      this.setState({
+        publishError: true,
+        toastMessage: "Please name your stringbean!"
+      });
+      console.log("Please name your stringbean!");
+      return;
+    }
+
     let checkpoints = Array<string>();
 
     this.props.stringbean.forEach(async bean => {
@@ -115,13 +133,21 @@ export default class BeanMenu extends Component<Props, State> {
   render() {
     return (
       <>
-        <IonMenu side="end" contentId="main" type="overlay" swipeGesture={true}>
+        <IonMenu
+          id="beanmenu"
+          side="end"
+          contentId="main"
+          type="overlay"
+          swipeGesture={true}
+        >
           <IonHeader>
-            <IonToolbar class="bean-menu-toolbar" color="primary">
-              <IonTitle class="header-font bean-menu-header">
-                My Stringbean
-              </IonTitle>
-            </IonToolbar>
+            <IonTitle
+              size="small"
+              class="tab-header header-font"
+              id="bean-menu-header"
+            >
+              My Stringbean
+            </IonTitle>
           </IonHeader>
           <IonContent>
             <IonList>
@@ -142,19 +168,21 @@ export default class BeanMenu extends Component<Props, State> {
               ))}
             </IonList>
           </IonContent>
-          <IonButton
-            id="publish-button"
-            onClick={() => {
-              this.toggleAlert();
-            }}
-          >
-            Publish Stringbean
-          </IonButton>
+          <IonItem no-padding lines="full" id="bean-menu-button-container">
+            <IonButton
+              id="publish-button"
+              onClick={() => {
+                this.toggleAlert();
+              }}
+            >
+              Publish Stringbean
+            </IonButton>
+          </IonItem>
+
           <BeanMenuForm
             showAlert={this.state.showAlert}
             toggleAlert={this.toggleAlert}
             publishTour={this.publishTour}
-            // handleChange={this.handleChange}
           />
         </IonMenu>
         <IonFab id="menu-button" vertical="bottom" horizontal="end">
@@ -168,6 +196,15 @@ export default class BeanMenu extends Component<Props, State> {
         </IonFab>
 
         <IonRouterOutlet id="main"></IonRouterOutlet>
+        <IonToast
+          cssClass="publish-toast"
+          isOpen={this.state.publishError}
+          message={this.state.toastMessage}
+          duration={2000}
+          onDidDismiss={() => {
+            this.setState({ publishError: false, toastMessage: "" });
+          }}
+        />
       </>
     );
   }

@@ -2,16 +2,13 @@ import {
   IonContent,
   IonHeader,
   IonPage,
-  IonList,
   IonItem,
-  IonLabel,
   IonRefresher,
   IonRefresherContent,
   IonTitle,
   IonCard,
   IonCardContent,
   IonIcon,
-  IonText,
   IonGrid,
   IonCol
 } from "@ionic/react";
