@@ -74,7 +74,7 @@ class App extends Component<{}, State> {
   };
 
   componentDidMount = () => {
-    this.getUser();
+    // this.getUser();
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         console.log("Currently logged in!");
@@ -90,38 +90,36 @@ class App extends Component<{}, State> {
         };
         this.setState({
           user: userObj,
-          loggedIn: true,
-          logInError: false,
-          signUpError: false
+          loggedIn: true
         });
-        Storage.set({
-          key: "user",
-          value: JSON.stringify(user)
-        });
-        console.log("logged in user", user);
+        // Storage.set({
+        //   key: "user",
+        //   value: JSON.stringify(user)
+        // });
+        console.log("logged in user:", user);
       } else {
         console.log("Not logged in.");
         this.setState({ loggedIn: false });
-        Storage.remove({
-          key: "user"
-        });
+        // Storage.remove({
+        //   key: "user"
+        // });
       }
     });
   };
 
-  getUser = async () => {
-    const data = await Storage.get({
-      key: "user"
-    });
+  // getUser = async () => {
+  //   const data = await Storage.get({
+  //     key: "user"
+  //   });
 
-    if (data.value) {
-      const user = JSON.parse(data.value);
-      this.setState({
-        user: user,
-        loggedIn: true
-      });
-    }
-  };
+  //   if (data.value) {
+  //     const user = JSON.parse(data.value);
+  //     this.setState({
+  //       user: user,
+  //       loggedIn: true
+  //     });
+  //   }
+  // };
 
   handleSubmit = (user: userData, type?: string) => {
     if (!user.email) {
@@ -136,9 +134,7 @@ class App extends Component<{}, State> {
         signUpError: true,
         toastMessage: "Please enter a password."
       });
-    }
-    // if (user.email && user.password)
-    else {
+    } else {
       if (type === "signup") {
         this.createUserOnFirestore(user.email, user.password);
       } else {
@@ -239,7 +235,6 @@ class App extends Component<{}, State> {
                 <Route path="/explore" component={Home} exact={true} />
                 <Route path="/create" component={CreateStory} />
                 <Route path="/map" component={MapPage} exact={true} />
-                {/* <Route path="/signup" component={SignUp} exact={true} /> */}
                 <Route
                   path="/"
                   render={() => <Redirect to="/explore" />}

@@ -106,10 +106,23 @@ export default class BeanMenu extends Component<Props, State> {
       checkpoints.push(bean.id);
     });
 
-    let userEmail: string = "";
-    const data = await Storage.get({ key: "user" });
-    if (data.value) {
-      userEmail = JSON.parse(data.value).email;
+    let userEmail: string | null = "";
+    // const data = await Storage.get({ key: "user" });
+    // if (data.value) {
+    //   userEmail = JSON.parse(data.value).email;
+    // }
+
+    let user = firebase.auth().currentUser;
+    if (user) {
+      userEmail = user.email;
+    } else {
+      //this should never be triggered as if there is no user signed in, login page should be shown. just in case.
+      this.setState({
+        publishError: true,
+        toastMessage: "No user signed in!"
+      });
+      console.log("No user signed in!");
+      return;
     }
 
     let tour = {

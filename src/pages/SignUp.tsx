@@ -146,9 +146,7 @@ export default class SignUp extends Component<Props, State> {
             ) : null}
           </IonItem>
         </IonCardContent>
-        {/* {this.props.signUpError ? (
-          <IonItem>Password must be at least 6 characters!</IonItem>
-        ) : null} */}
+
         <IonGrid class="login-signup-button-container">
           <IonRow class="signup-button-row">
             <IonButton
