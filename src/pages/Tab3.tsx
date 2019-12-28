@@ -21,7 +21,7 @@ import { heart, heartEmpty, search } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
 import axios from "axios";
 import BeanMenu from "./BeanMenu";
-import { yelpApiKey } from "../../secrets";
+import { yelpApiKey } from "../secrets";
 import "./Tab3.css";
 
 const { Geolocation, Storage } = Plugins;
