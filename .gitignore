@@ -31,4 +31,5 @@ firebase.json
 .firebaserc
 
 
-/src/secrets.tsx
+/secrets.tsx
+/src/App.css
