@@ -7,6 +7,10 @@ ion-tab-button {
   --color-selected: #6ba486;
 }
 
+ion-tab-bar {
+  height: 8vh;
+}
+
 .spinner {
   --color: #ffa676;
   display: block;

@@ -45,6 +45,7 @@ type State = {
   search: string;
   showModal: number;
   stringbean: Array<BusinessData>;
+  searchSpinner: boolean;
 };
 
 class CreateStory extends Component<{}, State> {
@@ -54,7 +55,8 @@ class CreateStory extends Component<{}, State> {
     businesses: Array<BusinessData>(),
     search: "",
     showModal: Infinity,
-    stringbean: Array<BusinessData>()
+    stringbean: Array<BusinessData>(),
+    searchSpinner: false
   };
 
   componentDidMount() {
@@ -89,6 +91,7 @@ class CreateStory extends Component<{}, State> {
         this.state.longitude,
         this.state.search
       );
+      this.setState({ searchSpinner: true });
     }
   };
 
@@ -142,7 +145,7 @@ class CreateStory extends Component<{}, State> {
       rating: business.rating
     }));
 
-    this.setState({ businesses: info });
+    this.setState({ businesses: info, searchSpinner: false });
   };
 
   handleChange = (e: string) => {
@@ -200,7 +203,11 @@ class CreateStory extends Component<{}, State> {
               )
             }
           >
-            <IonIcon icon={search} />
+            {this.state.searchSpinner ? (
+              <IonSpinner id="search-spinner"></IonSpinner>
+            ) : (
+              <IonIcon icon={search} />
+            )}
           </IonButton>
         </IonCard>
 

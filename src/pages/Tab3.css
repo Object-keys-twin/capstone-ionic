@@ -1,8 +1,10 @@
 #search-bar {
   display: flex;
+  align-items: center;
   height: 7vh;
   font-size: 2.5vh;
-  padding: 2vh;
+  padding-left: 2vh;
+  padding-right: 0.7vh;
   margin: 2vh;
   --background: white;
 }
@@ -20,7 +22,6 @@
 }
 
 #search-button {
-  margin: -1vh;
   text-transform: none;
   font-size: 2.5vh;
   --background: #ffb68e;
@@ -95,4 +96,9 @@
 
 #modal-price-dollars {
   color: green;
+}
+
+#search-spinner {
+  height: 3.5vh;
+  width: 3.5vh;
 }

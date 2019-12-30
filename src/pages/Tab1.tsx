@@ -1,7 +1,6 @@
 import {
   IonCard,
   IonCardContent,
-  IonCardHeader,
   IonCardTitle,
   IonContent,
   IonHeader,
@@ -9,14 +8,12 @@ import {
   IonPage,
   IonTitle,
   IonIcon,
-  IonRefresher,
-  IonRefresherContent,
   IonImg,
   IonFab,
   IonFabButton,
   IonFabList
 } from "@ionic/react";
-import { RefresherEventDetail } from "@ionic/core";
+// import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
 
 import { create, heart, logOut, settings } from "ionicons/icons";
@@ -56,7 +53,7 @@ class Profile extends Component<Props, State> {
     // this.getTours();
 
     db.collection("tours")
-      .where("user", "==", this.props.user.email)
+      .where("user", "==", this.props.user.displayName || this.props.user.email)
       .onSnapshot(querySnapshot => {
         let tourData = Array<DbData>();
         querySnapshot.forEach(doc => {
@@ -73,7 +70,6 @@ class Profile extends Component<Props, State> {
         this.state.tours.forEach((tour, id) => {
           this.getCheckpoints(tour, id);
         });
-        console.log(this.state);
       });
   }
 
@@ -192,7 +188,7 @@ class Profile extends Component<Props, State> {
                   state: { checkpoints: tour.checkpoints }
                 }}
               >
-                <IonItem lines="none" className="stringbean-title">
+                <IonItem lines="none" className="stringbean-header-container">
                   {tour.name}
                 </IonItem>
 

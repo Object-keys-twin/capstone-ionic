@@ -10,7 +10,9 @@ import {
   IonCardContent,
   IonIcon,
   IonGrid,
-  IonCol
+  IonCol,
+  IonText,
+  IonRow
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
 import { heartEmpty, heart } from "ionicons/icons";
@@ -100,8 +102,11 @@ class PublicTours extends Component<{}, State> {
                   state: { checkpoints: tour.checkpoints }
                 }}
               >
-                <IonItem lines="none" class="stringbean-title">
-                  {tour.name}
+                <IonItem lines="none" class="stringbean-header-container">
+                  <IonGrid class="stringbean-header">
+                    <IonRow>{tour.name}</IonRow>
+                    <IonRow class="stringbean-creator">{tour.user}</IonRow>
+                  </IonGrid>
                 </IonItem>
 
                 <IonCardContent class="stringbean-card-content">

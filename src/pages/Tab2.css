@@ -5,10 +5,20 @@
   --background: white;
 }
 
-.stringbean-title {
-  --color: #fffadc;
+.stringbean-header-container {
+  --color: #fff4b7;
   --background: #89c2a3;
   font-size: 3vh;
+}
+
+.stringbean-header {
+  padding-top: 1.5vh;
+  padding-bottom: 1.5vh;
+}
+
+.stringbean-creator {
+  color: #ffffff;
+  font-size: 2.2vh;
 }
 
 .stringbean-link {
@@ -18,15 +28,18 @@
 
 .stringbean-card-content {
   --color: white;
+  padding: 1vh;
 }
 
 .checkpoint-row {
   display: flex;
   justify-content: space-between;
+  padding: 0;
 }
 
 .list-checkpoint-col {
   flex: 10;
+  padding-left: 0vh;
 }
 
 .list-favorites-col {

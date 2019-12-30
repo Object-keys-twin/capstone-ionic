@@ -106,14 +106,14 @@ export default class BeanMenu extends Component<Props, State> {
       checkpoints.push(bean.id);
     });
 
-    let userEmail: string | null = "";
+    let username: string | null = "";
     // const data = await Storage.get({ key: "user" });
     // if (data.value) {
     //   userEmail = JSON.parse(data.value).email;
     // }
 
     let user = firebase.auth().currentUser;
-    if (user) userEmail = user.email;
+    if (user) username = user.displayName || user.email;
     // the case of currentUser being null does not need to be handled because of the sign-in observer (onAuthStateChanged in App.tsx)
 
     let tour = {
@@ -121,7 +121,7 @@ export default class BeanMenu extends Component<Props, State> {
       name: name,
       description: description,
       created: firebase.firestore.Timestamp.fromDate(new Date()),
-      user: userEmail
+      user: username
     };
 
     await db
