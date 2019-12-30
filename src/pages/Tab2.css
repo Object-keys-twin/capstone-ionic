@@ -38,3 +38,13 @@
 .list-favorites-icon {
   font-size: 4vh;
 }
+
+.refresher-content {
+  --color: #fff5ba;
+  height: 12vh;
+}
+
+.refresher-pulling-icon {
+  color: #fff5ba !important;
+  font-size: 4vh;
+}

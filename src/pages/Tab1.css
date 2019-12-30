@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   --background: white;
-  padding-left: 2vh;
+  padding: 2vh;
 }
 
 .string-bean-title {
@@ -24,6 +24,7 @@
   --background-hover: #ffe693;
   --background-focused: #ffe693;
   --background-activated: #ffe693;
+  margin-top: 0;
 }
 
 #edit-button {
@@ -35,7 +36,7 @@
 
 .settings-tray-icon {
   color: #ffffff;
-  font-size: 6vh;
+  font-size: 5vh;
 }
 .settings-tray-button {
   height: 9vh;
@@ -44,24 +45,24 @@
 }
 
 #settings-button {
-  height: 9vh;
-  width: 9vh;
+  height: 6.4vh;
+  width: 6.4vh;
   --background: #ffb68e;
   --background-hover: #ffb68e;
   --background-focused: #ffb68e;
   --background-activated: #ffb68e;
-  margin-right: 2.1vh;
-  margin-top: 3vh;
+  justify-content: center;
 }
 
 #profile-settings-tray {
-  /* margin-right: 1.5vh; */
-  /* margin-left: 1.5vh; */
-  margin-top: 13vh;
+  margin-top: 9.4vh;
+  margin-left: -7vh;
+  background-color: #def1e4;
+  padding: 2vh;
+  border-radius: 50vh;
 }
 
 #profile-photo {
-  height: 30vh;
   width: 30vh;
 }
 

@@ -7,11 +7,6 @@
   --background: white;
 }
 
-.beancontent {
-  --background: #ade4ca;
-  background-color: #ade4ca;
-}
-
 .beancard {
   padding-top: 0.8vh;
   padding-bottom: 0.8vh;

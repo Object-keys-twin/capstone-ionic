@@ -40,7 +40,6 @@ class PublicTours extends Component<{}, State> {
   refresh = (e: CustomEvent<RefresherEventDetail>) => {
     setTimeout(() => {
       this.getTours();
-      console.log("Async operation has ended");
       e.detail.complete();
     }, 2000);
   };
@@ -134,12 +133,7 @@ class PublicTours extends Component<{}, State> {
           ))}
 
           <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
-            <IonRefresherContent
-              pullingIcon="arrow-dropdown"
-              pullingText="Pull to refresh"
-              refreshingSpinner="circles"
-              refreshingText="Refreshing..."
-            ></IonRefresherContent>
+            <IonRefresherContent className="refresher-content"></IonRefresherContent>
           </IonRefresher>
         </IonContent>
       </IonPage>

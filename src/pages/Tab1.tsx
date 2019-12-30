@@ -53,24 +53,13 @@ class Profile extends Component<Props, State> {
   state = { tours: Array<DbData>() };
 
   componentDidMount() {
-    this.getTours();
-  }
+    // this.getTours();
 
-  refresh = (e: CustomEvent<RefresherEventDetail>) => {
-    setTimeout(() => {
-      this.getTours();
-      console.log("Async operation has ended");
-      e.detail.complete();
-    }, 2000);
-  };
-
-  getTours = () => {
-    let tourData = Array<DbData>();
     db.collection("tours")
       .where("user", "==", this.props.user.email)
-      .get()
-      .then(docs => {
-        docs.forEach(doc => {
+      .onSnapshot(querySnapshot => {
+        let tourData = Array<DbData>();
+        querySnapshot.forEach(doc => {
           tourData.push({
             checkpoints: doc.data().checkpoints,
             description: doc.data().description,
@@ -84,17 +73,48 @@ class Profile extends Component<Props, State> {
         this.state.tours.forEach((tour, id) => {
           this.getCheckpoints(tour, id);
         });
+        console.log(this.state);
       });
-  };
+  }
+
+  // refresh = (e: CustomEvent<RefresherEventDetail>) => {
+  //   setTimeout(() => {
+  //     this.getTours();
+  //     e.detail.complete();
+  //   }, 2000);
+  // };
+
+  // getTours = () => {
+  //   let tourData = Array<DbData>();
+  //   db.collection("tours")
+  //     .where("user", "==", this.props.user.email)
+  //     .get()
+  //     .then(docs => {
+  //       docs.forEach(doc => {
+  //         tourData.push({
+  //           checkpoints: doc.data().checkpoints,
+  //           description: doc.data().description,
+  //           name: doc.data().name,
+  //           created: doc.data().timestamp,
+  //           upvotes: doc.data().upvotes,
+  //           user: doc.data().user
+  //         });
+  //       });
+  //       this.setState({ tours: tourData });
+  //       this.state.tours.forEach((tour, id) => {
+  //         this.getCheckpoints(tour, id);
+  //       });
+  //     });
+  // };
 
   getCheckpoints = async (tour: any, idx: number) => {
     let checkpointsWithData: any = [];
     for (let i = 0; i < tour.checkpoints.length; i++) {
-      const checkpoints = await db
+      const checkpoint = await db
         .collection("checkpoints")
         .doc(`${tour.checkpoints[i]}`)
         .get();
-      checkpointsWithData.push(checkpoints.data());
+      checkpointsWithData.push(checkpoint.data());
     }
     let tours = this.state.tours;
     tours.forEach((el, i) => {
@@ -122,6 +142,29 @@ class Profile extends Component<Props, State> {
           <IonTitle size="small" class="tab-header header-font">
             My Profile
           </IonTitle>
+          <IonFab vertical="top" horizontal="end">
+            <IonFabButton id="settings-button">
+              <IonIcon class="settings-tray-icon" icon={settings} />
+            </IonFabButton>
+            <IonFabList side="bottom" id="profile-settings-tray">
+              <IonFabButton class="settings-tray-button" id="favorites-button">
+                <IonIcon
+                  class="settings-tray-icon favorites-icon"
+                  icon={heart}
+                />
+              </IonFabButton>
+              <IonFabButton class="settings-tray-button" id="edit-button">
+                <IonIcon class="settings-tray-icon" icon={create} />
+              </IonFabButton>
+              <IonFabButton
+                class="settings-tray-button"
+                id="logout-button"
+                onClick={this.signOut}
+              >
+                <IonIcon class="settings-tray-icon" icon={logOut} />
+              </IonFabButton>
+            </IonFabList>
+          </IonFab>
         </IonHeader>
         <IonContent className="beancontent">
           <IonCard class="profile-card">
@@ -129,12 +172,11 @@ class Profile extends Component<Props, State> {
               id="profile-photo"
               src={this.props.user.photoURL || "assets/icon/bean-profile.png"}
             />
-            <IonCardHeader>
-              <IonCardTitle id="profile-text" class="header">
-                Welcome, {this.props.user.displayName || this.props.user.email}!
-              </IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent></IonCardContent>
+
+            <IonCardTitle id="profile-text">
+              Welcomeeeeeeeeeeeeee,{" "}
+              {this.props.user.displayName || this.props.user.email}!
+            </IonCardTitle>
           </IonCard>
           <IonCard id="string-bean-title-card">
             <IonCardTitle className="string-bean-title">
@@ -169,37 +211,13 @@ class Profile extends Component<Props, State> {
             </IonCard>
           ))}
 
-          <IonFab vertical="top" horizontal="end" slot="fixed">
-            <IonFabButton id="settings-button">
-              <IonIcon class="settings-tray-icon" icon={settings} />
-            </IonFabButton>
-            <IonFabList side="bottom" id="profile-settings-tray">
-              <IonFabButton class="settings-tray-button" id="favorites-button">
-                <IonIcon
-                  class="settings-tray-icon favorites-icon"
-                  icon={heart}
-                />
-              </IonFabButton>
-              <IonFabButton class="settings-tray-button" id="edit-button">
-                <IonIcon class="settings-tray-icon" icon={create} />
-              </IonFabButton>
-              <IonFabButton
-                class="settings-tray-button"
-                id="logout-button"
-                onClick={this.signOut}
-              >
-                <IonIcon class="settings-tray-icon" icon={logOut} />
-              </IonFabButton>
-            </IonFabList>
-          </IonFab>
-          <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
+          {/* <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
             <IonRefresherContent
               pullingIcon="arrow-dropdown"
               pullingText="Pull to refresh"
               refreshingSpinner="circles"
-              refreshingText="Refreshing..."
             ></IonRefresherContent>
-          </IonRefresher>
+          </IonRefresher> */}
         </IonContent>
       </IonPage>
     );
