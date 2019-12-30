@@ -34,9 +34,8 @@ interface userData {
 type Props = {
   handleGoogle: () => void;
   handleSubmit: (user: userData, type?: string) => void;
-  resetLogInError: () => void;
-  logInError: boolean;
-  signUpError: boolean;
+  resetLogInSignUpError: () => void;
+  logInSignUpError: boolean;
   toastMessage: string;
 };
 
@@ -190,11 +189,11 @@ class Login extends Component<Props, State> {
                     </IonGrid>
                     <IonToast
                       cssClass="login-signup-toast"
-                      isOpen={this.props.logInError}
+                      isOpen={this.props.logInSignUpError}
                       message={this.props.toastMessage}
                       duration={2000}
                       onDidDismiss={() => {
-                        this.props.resetLogInError();
+                        this.props.resetLogInSignUpError();
                       }}
                     />
                   </>
@@ -202,8 +201,8 @@ class Login extends Component<Props, State> {
                   <SignUp
                     handleSubmit={this.props.handleSubmit}
                     showSignUp={this.showSignUp}
-                    resetLogInError={this.props.resetLogInError}
-                    signUpError={this.props.signUpError}
+                    resetLogInSignUpError={this.props.resetLogInSignUpError}
+                    logInSignUpError={this.props.logInSignUpError}
                     toastMessage={this.props.toastMessage}
                   />
                 )}

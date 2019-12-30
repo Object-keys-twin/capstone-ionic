@@ -30,8 +30,8 @@ interface userData {
 type Props = {
   handleSubmit: (user: userData, type?: string) => void;
   showSignUp: () => void;
-  resetLogInError: () => void;
-  signUpError: boolean;
+  resetLogInSignUpError: () => void;
+  logInSignUpError: boolean;
   toastMessage: string;
 };
 
@@ -162,11 +162,11 @@ export default class SignUp extends Component<Props, State> {
         </IonGrid>
         <IonToast
           cssClass="login-signup-toast"
-          isOpen={this.props.signUpError}
+          isOpen={this.props.logInSignUpError}
           message={this.props.toastMessage}
           duration={2000}
           onDidDismiss={() => {
-            this.props.resetLogInError();
+            this.props.resetLogInSignUpError();
           }}
         />
       </>

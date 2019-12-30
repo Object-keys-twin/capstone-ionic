@@ -45,8 +45,7 @@ const { Storage } = Plugins;
 type State = {
   user: userData | null;
   loggedIn: boolean;
-  logInError: boolean;
-  signUpError: boolean;
+  logInSignUpError: boolean;
   toastMessage: string;
 };
 
@@ -68,8 +67,7 @@ class App extends Component<{}, State> {
       password: ""
     },
     loggedIn: false,
-    logInError: false,
-    signUpError: false,
+    logInSignUpError: false,
     toastMessage: ""
   };
 
@@ -124,14 +122,12 @@ class App extends Component<{}, State> {
   handleSubmit = (user: userData, type?: string) => {
     if (!user.email) {
       this.setState({
-        logInError: true,
-        signUpError: true,
+        logInSignUpError: true,
         toastMessage: "Please enter an email address."
       });
     } else if (!user.password) {
       this.setState({
-        logInError: true,
-        signUpError: true,
+        logInSignUpError: true,
         toastMessage: "Please enter a password."
       });
     } else {
@@ -143,8 +139,8 @@ class App extends Component<{}, State> {
     }
   };
 
-  resetLogInError = () => {
-    this.setState({ logInError: false, signUpError: false, toastMessage: "" });
+  resetLogInSignUpError = () => {
+    this.setState({ logInSignUpError: false, toastMessage: "" });
   };
 
   createUserOnFirestore = (email: string, password: string) => {
@@ -152,16 +148,16 @@ class App extends Component<{}, State> {
       firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
-        .catch(function(error) {
+        .catch(error => {
           const errorCode = error.code;
           const errorMessage = error.message;
           console.log("Sign-up error:", errorCode, errorMessage);
+          this.setState({
+            logInSignUpError: true,
+            toastMessage:
+              "Invalid email and/or password! Passwords must be at least 6 characters."
+          });
         });
-      this.setState({
-        signUpError: true,
-        toastMessage:
-          "Invalid email and/or password! Passwords must be at least 6 characters."
-      });
     }
   };
 
@@ -175,7 +171,7 @@ class App extends Component<{}, State> {
           var errorMessage = error.message;
           console.log("Log-in error:", errorCode, errorMessage);
           this.setState({
-            logInError: true,
+            logInSignUpError: true,
             toastMessage: "Wrong username and/or password!"
           });
         });
@@ -268,9 +264,8 @@ class App extends Component<{}, State> {
       <Login
         handleGoogle={this.handleGoogle}
         handleSubmit={this.handleSubmit}
-        resetLogInError={this.resetLogInError}
-        logInError={this.state.logInError}
-        signUpError={this.state.signUpError}
+        resetLogInSignUpError={this.resetLogInSignUpError}
+        logInSignUpError={this.state.logInSignUpError}
         toastMessage={this.state.toastMessage}
       />
     );

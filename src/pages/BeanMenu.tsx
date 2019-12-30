@@ -113,17 +113,8 @@ export default class BeanMenu extends Component<Props, State> {
     // }
 
     let user = firebase.auth().currentUser;
-    if (user) {
-      userEmail = user.email;
-    } else {
-      //this should never be triggered as if there is no user signed in, login page should be shown. just in case.
-      this.setState({
-        publishError: true,
-        toastMessage: "No user signed in!"
-      });
-      console.log("No user signed in!");
-      return;
-    }
+    if (user) userEmail = user.email;
+    // the case of currentUser being null does not need to be handled because of the sign-in observer (onAuthStateChanged in App.tsx)
 
     let tour = {
       checkpoints,
