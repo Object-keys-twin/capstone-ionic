@@ -40,7 +40,7 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 
-const { Storage } = Plugins;
+// const { Storage } = Plugins;
 
 type State = {
   user: userData | null;
@@ -50,10 +50,10 @@ type State = {
 };
 
 interface userData {
-  email: string | null;
-  uid?: string | null;
-  displayName: string | null;
-  photoURL: string | null;
+  email: string;
+  uid?: string;
+  displayName: string;
+  photoURL: string;
   password: string;
 }
 
@@ -77,12 +77,9 @@ class App extends Component<{}, State> {
       if (user) {
         console.log("Currently logged in!");
         let userObj = {
-          ...this.state.user
-        };
-        userObj = {
           email: user.email || "",
           uid: user.uid || "",
-          displayName: user.displayName || "",
+          displayName: this.state.user.displayName || user.displayName || "",
           photoURL: user.photoURL || "",
           password: ""
         };
@@ -94,7 +91,7 @@ class App extends Component<{}, State> {
         //   key: "user",
         //   value: JSON.stringify(user)
         // });
-        console.log("logged in user:", user);
+        console.log("Logged in firebase user:", user);
       } else {
         console.log("Not logged in.");
         this.setState({ loggedIn: false });
@@ -132,7 +129,7 @@ class App extends Component<{}, State> {
       });
     } else {
       if (type === "signup") {
-        this.createUserOnFirestore(user.email, user.password);
+        this.createUserOnFirestore(user.email, user.password, user.displayName);
       } else {
         this.signInOnFirestore(user.email, user.password);
       }
@@ -143,11 +140,16 @@ class App extends Component<{}, State> {
     this.setState({ logInSignUpError: false, toastMessage: "" });
   };
 
-  createUserOnFirestore = (email: string, password: string) => {
+  createUserOnFirestore = (
+    email: string,
+    password: string,
+    displayName: string
+  ) => {
     if (email && password) {
       firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
+
         .catch(error => {
           const errorCode = error.code;
           const errorMessage = error.message;
@@ -157,6 +159,18 @@ class App extends Component<{}, State> {
             toastMessage:
               "Invalid email and/or password! Passwords must be at least 6 characters."
           });
+        })
+        .then(() => {
+          let user = firebase.auth().currentUser;
+          if (user && displayName) {
+            //updateProfile takes longer than setState and the onAuthStateChanged listener reaction, so in onAuthStateChanged, need to grab the displayName from state instead of the firebase user data when updating state
+            user.updateProfile({
+              displayName: displayName
+            });
+            this.setState({
+              user: { ...this.state.user, displayName: displayName }
+            });
+          }
         });
     }
   };
@@ -187,25 +201,20 @@ class App extends Component<{}, State> {
         console.log("Google login success");
         if (result.user) {
           const { uid, displayName, email, photoURL } = result.user;
-          const user = {
-            uid: uid,
-            displayName: displayName,
-            email: email,
-            photoURL: photoURL
-          };
+
           this.setState({
             user: {
               ...this.state.user,
-              uid: uid,
-              displayName: displayName,
-              email: email,
-              photoURL: photoURL
+              uid: uid || "",
+              displayName: displayName || "",
+              email: email || "",
+              photoURL: photoURL || ""
             }
           });
-          Storage.set({
-            key: "user",
-            value: JSON.stringify(user)
-          });
+          // Storage.set({
+          //   key: "user",
+          //   value: JSON.stringify(user)
+          // });
         }
       })
       .catch(function(error) {
