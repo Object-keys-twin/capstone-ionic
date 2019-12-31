@@ -25,6 +25,7 @@ interface userData {
   displayName: string;
   photoURL: string;
   password: string;
+  favorites: object;
 }
 
 type Props = {
@@ -76,7 +77,8 @@ export default class SignUp extends Component<Props, State> {
       uid: "",
       displayName: this.state.displayName,
       photoURL: "",
-      password: this.state.password
+      password: this.state.password,
+      favorites: {}
     };
     this.props.handleSubmit(newUser, "signup");
   };

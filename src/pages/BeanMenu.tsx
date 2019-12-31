@@ -74,7 +74,9 @@ export default class BeanMenu extends Component<Props, State> {
         bean.price = "not available";
       }
       await beanRef.set(bean);
+      console.log("Created checkpoint in Firestore:", bean.name);
     }
+    //this only creates. need to add update functionality, so as yelp data update in the future, firestore will also be updated
   };
 
   publishTour = async (name: string, description: string) => {
@@ -118,8 +120,8 @@ export default class BeanMenu extends Component<Props, State> {
 
     let tour = {
       checkpoints,
-      name: name,
-      description: description,
+      name,
+      description,
       created: firebase.firestore.Timestamp.fromDate(new Date()),
       user: username
     };

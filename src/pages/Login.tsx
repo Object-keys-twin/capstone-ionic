@@ -29,6 +29,7 @@ interface userData {
   displayName: string;
   photoURL: string;
   password: string;
+  favorites: object;
 }
 
 type Props = {
@@ -80,7 +81,8 @@ class Login extends Component<Props, State> {
       uid: "",
       displayName: "",
       photoURL: "",
-      password: this.state.password
+      password: this.state.password,
+      favorites: {}
     };
     this.props.handleSubmit(tryLogIn);
   };

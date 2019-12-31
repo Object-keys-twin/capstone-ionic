@@ -22,9 +22,15 @@ import { Plugins } from "@capacitor/core";
 import axios from "axios";
 import BeanMenu from "./BeanMenu";
 import { yelpApiKey } from "../secrets";
+import db from "../firebase/firebase";
 import "./Tab3.css";
 
 const { Geolocation, Storage } = Plugins;
+
+type Props = {
+  favorites: { [key: string]: any };
+  toggleFavorite: (checkpointId: string) => void;
+};
 
 interface BusinessData {
   id: string;
@@ -48,7 +54,7 @@ type State = {
   searchSpinner: boolean;
 };
 
-class CreateStory extends Component<{}, State> {
+class CreateStory extends Component<Props, State> {
   state = {
     latitude: 0,
     longitude: 0,
@@ -166,6 +172,25 @@ class CreateStory extends Component<{}, State> {
     });
   };
 
+  createOrUpdateCheckpoint = async (bean: BusinessData) => {
+    let beanRef = db.collection("checkpoints").doc(bean.id);
+    let getBean = await beanRef.get();
+    if (!getBean.data()) {
+      if (bean.price === undefined) {
+        bean.price = "not available";
+      }
+      await beanRef.set(bean);
+      console.log("Created checkpoint in Firestore:", bean.name);
+    }
+    //this only creates. need to add update functionality, so as yelp data update in the future, firestore will also be updated
+  };
+
+  renderHeart = (checkpointId: string) => {
+    let favorites = this.props.favorites;
+    if (favorites[checkpointId]) return heart;
+    else return heartEmpty;
+  };
+
   render() {
     const { businesses } = this.state;
 
@@ -229,11 +254,11 @@ class CreateStory extends Component<{}, State> {
                   <IonCol class="list-favorites-col">
                     <IonIcon
                       class="favorites-icon list-favorites-icon"
-                      icon={
-                        business.name && business.name.charCodeAt(0) < 75
-                          ? heart
-                          : heartEmpty
-                      }
+                      onClick={() => {
+                        this.createOrUpdateCheckpoint(business);
+                        this.props.toggleFavorite(business.id);
+                      }}
+                      icon={this.renderHeart(business.id)}
                     />{" "}
                   </IonCol>
                 </IonGrid>

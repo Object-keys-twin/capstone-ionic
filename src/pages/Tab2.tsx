@@ -21,8 +21,24 @@ import { Link } from "react-router-dom";
 import db from "../firebase/firebase";
 import "./Tab2.css";
 
+type Props = {
+  favorites: { [key: string]: any };
+  toggleFavorite: (checkpointId: string) => void;
+};
+
+interface CheckpointData {
+  id: string;
+  imageUrl: string;
+  latitude: number;
+  location: string;
+  longitude: number;
+  name: string;
+  price: string;
+  rating: number;
+}
+
 interface DbData {
-  checkpoints: Array<any>;
+  checkpoints: Array<CheckpointData>;
   description: string;
   name: string;
   created: object;
@@ -33,7 +49,7 @@ interface DbData {
 type State = {
   tours: Array<DbData>;
 };
-class PublicTours extends Component<{}, State> {
+class PublicTours extends Component<Props, State> {
   state = { tours: Array<DbData>() };
   componentDidMount() {
     this.getTours();
@@ -83,6 +99,12 @@ class PublicTours extends Component<{}, State> {
     this.setState({ tours });
   };
 
+  renderHeart = (checkpointId: string) => {
+    let favorites = this.props.favorites;
+    if (favorites[checkpointId]) return heart;
+    else return heartEmpty;
+  };
+
   render() {
     const { tours } = this.state;
     return (
@@ -108,32 +130,29 @@ class PublicTours extends Component<{}, State> {
                     <IonRow class="stringbean-creator">{tour.user}</IonRow>
                   </IonGrid>
                 </IonItem>
-
-                <IonCardContent class="stringbean-card-content">
-                  {tour.checkpoints.map((checkpoint, idx) => {
-                    if (checkpoint) {
-                      return (
-                        <IonGrid item-content class="checkpoint-row" key={idx}>
-                          <IonCol class="list-checkpoint-col">
-                            <IonItem lines="none">{checkpoint.name}</IonItem>
-                          </IonCol>
-                          <IonCol class="list-favorites-col">
-                            <IonIcon
-                              class="favorites-icon list-favorites-icon"
-                              icon={
-                                checkpoint.name &&
-                                checkpoint.name.charCodeAt(0) < 75
-                                  ? heart
-                                  : heartEmpty
-                              }
-                            />{" "}
-                          </IonCol>
-                        </IonGrid>
-                      );
-                    }
-                  })}
-                </IonCardContent>
               </Link>
+              <IonCardContent class="stringbean-card-content">
+                {tour.checkpoints.map((checkpoint, idx) => {
+                  if (checkpoint) {
+                    return (
+                      <IonGrid item-content class="checkpoint-row" key={idx}>
+                        <IonCol class="list-checkpoint-col">
+                          <IonItem lines="none">{checkpoint.name}</IonItem>
+                        </IonCol>
+                        <IonCol class="list-favorites-col">
+                          <IonIcon
+                            onClick={() =>
+                              this.props.toggleFavorite(checkpoint.id)
+                            }
+                            class="favorites-icon list-favorites-icon"
+                            icon={this.renderHeart(checkpoint.id)}
+                          />
+                        </IonCol>
+                      </IonGrid>
+                    );
+                  }
+                })}
+              </IonCardContent>
             </IonCard>
           ))}
 

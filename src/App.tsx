@@ -9,7 +9,7 @@ import {
   IonTabButton,
   IonTabs
 } from "@ionic/react";
-import { Plugins } from "@capacitor/core";
+// import { Plugins } from "@capacitor/core";
 import { IonReactRouter } from "@ionic/react-router";
 import { apps, person, add } from "ionicons/icons";
 import firebase from "firebase";
@@ -18,6 +18,7 @@ import Home from "./pages/Tab2";
 import CreateStory from "./pages/Tab3";
 import MapPage from "./pages/Map";
 import Login from "./pages/Login";
+import db from "./firebase/firebase";
 
 import "./App.css";
 
@@ -55,6 +56,7 @@ interface userData {
   displayName: string;
   photoURL: string;
   password: string;
+  favorites: object;
 }
 
 class App extends Component<{}, State> {
@@ -64,7 +66,8 @@ class App extends Component<{}, State> {
       uid: "",
       displayName: "",
       photoURL: "",
-      password: ""
+      password: "",
+      favorites: {}
     },
     loggedIn: false,
     logInSignUpError: false,
@@ -73,7 +76,7 @@ class App extends Component<{}, State> {
 
   componentDidMount = () => {
     // this.getUser();
-    firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         console.log("Currently logged in!");
         let userObj = {
@@ -83,8 +86,18 @@ class App extends Component<{}, State> {
           photoURL: user.photoURL || "",
           password: ""
         };
+
+        let favorites = {};
+        const getUser = await db
+          .collection("users")
+          .doc(user.uid)
+          .get();
+        const userData = getUser.data();
+        if (userData) {
+          favorites = userData.favorites;
+        }
         this.setState({
-          user: userObj,
+          user: { ...this.state.user, ...userObj, favorites },
           loggedIn: true
         });
         // Storage.set({
@@ -127,6 +140,7 @@ class App extends Component<{}, State> {
         logInSignUpError: true,
         toastMessage: "Please enter a password."
       });
+      //do a lookup in firebase to make sure the displayName isn't already taken, and maybe email too? or is that builtin
     } else {
       if (type === "signup") {
         this.createUserOnFirestore(user.email, user.password, user.displayName);
@@ -160,16 +174,32 @@ class App extends Component<{}, State> {
               "Invalid email and/or password! Passwords must be at least 6 characters."
           });
         })
-        .then(() => {
+        .then(async () => {
           let user = firebase.auth().currentUser;
-          if (user && displayName) {
+          if (user) {
             //updateProfile takes longer than setState and the onAuthStateChanged listener reaction, so in onAuthStateChanged, need to grab the displayName from state instead of the firebase user data when updating state
-            user.updateProfile({
-              displayName: displayName
-            });
-            this.setState({
-              user: { ...this.state.user, displayName: displayName }
-            });
+            if (displayName) {
+              user.updateProfile({
+                displayName: displayName
+              });
+              this.setState({
+                user: { ...this.state.user, displayName: displayName }
+              });
+            }
+
+            let newUser = {
+              email,
+              favorites: {},
+              friends: {}
+            };
+
+            await db
+              .collection("users")
+              .doc(user.uid)
+              .set(newUser)
+              .then(() => {
+                console.log("Added new user.");
+              });
           }
         });
     }
@@ -223,6 +253,31 @@ class App extends Component<{}, State> {
       });
   };
 
+  toggleFavorite = async (checkpointId: string) => {
+    const userRef = db.collection("users").doc(this.state.user.uid);
+
+    const userData = await userRef.get();
+    const user = userData.data();
+    if (user) {
+      let favorites = user.favorites;
+
+      if (!favorites[checkpointId]) {
+        favorites[checkpointId] = 1;
+        console.log("Added favorite.");
+      } else {
+        delete favorites[checkpointId];
+        console.log("Deleted favorite.");
+      }
+      userRef.update({
+        favorites
+      });
+
+      this.setState({
+        user: { ...this.state.user, favorites }
+      });
+    }
+  };
+
   render() {
     if (this.state.loggedIn) {
       return (
@@ -237,8 +292,27 @@ class App extends Component<{}, State> {
                   )}
                   exact={true}
                 />
-                <Route path="/explore" component={Home} exact={true} />
-                <Route path="/create" component={CreateStory} />
+                <Route
+                  path="/explore"
+                  render={props => (
+                    <Home
+                      {...props}
+                      favorites={this.state.user.favorites}
+                      toggleFavorite={this.toggleFavorite}
+                    />
+                  )}
+                  exact={true}
+                />
+                <Route
+                  path="/create"
+                  render={props => (
+                    <CreateStory
+                      {...props}
+                      favorites={this.state.user.favorites}
+                      toggleFavorite={this.toggleFavorite}
+                    />
+                  )}
+                />
                 <Route path="/map" component={MapPage} exact={true} />
                 <Route
                   path="/"
