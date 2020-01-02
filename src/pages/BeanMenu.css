@@ -54,3 +54,7 @@
   --color: white;
   font-size: 3vh;
 }
+
+.modal-content {
+  --padding-top: 1vh;
+}

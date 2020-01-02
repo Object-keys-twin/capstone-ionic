@@ -17,7 +17,10 @@ import {
   IonList,
   IonItemSliding,
   IonItemOption,
-  IonItemOptions
+  IonItemOptions,
+  IonGrid,
+  IonRow,
+  IonText
 } from "@ionic/react";
 // import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
@@ -39,7 +42,7 @@ interface FavoriteObj {
 interface BusinessData {
   id: string;
   name: string;
-  location: object;
+  location: string;
   imageUrl: string;
   categories: Array<object>;
   rating?: number;
@@ -52,13 +55,14 @@ type Props = {
   user: userData;
   toggleFavorite: (checkpointId: string) => void;
   favoritesArray: Array<FavoriteObj>;
+  addToStringBean: (business: object) => void;
 };
 
 type State = {
   tours: Array<DbData>;
   favoritesModal: boolean;
-  addCheckpointModal: boolean;
-  currentFavoriteData: BusinessData;
+  addCheckpointModal: string;
+  currentFavoriteData: object;
 };
 
 interface DbData {
@@ -81,11 +85,11 @@ class Profile extends Component<Props, State> {
   state = {
     tours: Array<DbData>(),
     favoritesModal: false,
-    addCheckpointModal: false,
+    addCheckpointModal: "",
     currentFavoriteData: {
       id: "",
       name: "",
-      location: {},
+      location: "",
       imageUrl: "",
       categories: [],
       rating: 0,
@@ -159,28 +163,23 @@ class Profile extends Component<Props, State> {
         Authorization: `Bearer ${yelpApiKey}`
       }
     });
-    const { data } = await api.get("/businesses/{id}", {
-      params: {
-        id: businessId
-      }
-    });
+    const { data } = await api.get(`/businesses/${businessId}`);
 
-    const info = data.businesses.map((business: any) => ({
-      id: business.id,
-      name: business.name,
+    const businessObj = {
+      id: data.id,
+      name: data.name,
       location:
-        business.location.display_address[0] +
+        data.location.display_address[0] +
         ", " +
-        business.location.display_address[1],
-      latitude: business.coordinates.latitude,
-      longitude: business.coordinates.longitude,
-      price: business.price,
-      imageUrl: business.image_url,
-      categories: business.categories,
-      rating: business.rating
-    }));
-
-    this.setState({ currentFavoriteData: info });
+        data.location.display_address[1],
+      latitude: data.coordinates.latitude,
+      longitude: data.coordinates.longitude,
+      price: data.price,
+      imageUrl: data.image_url,
+      categories: data.categories,
+      rating: data.rating
+    };
+    this.setState({ currentFavoriteData: businessObj });
   };
 
   render() {
@@ -275,12 +274,21 @@ class Profile extends Component<Props, State> {
               </IonTitle>
             </IonHeader>
 
-            <IonContent>
+            <IonContent class="modal-content">
               <IonList>
                 {this.props.favoritesArray.map(favorite => {
                   return (
                     <IonItemSliding key={favorite.id}>
-                      <IonItem lines="none">{favorite.name}</IonItem>
+                      <IonItem
+                        class="favorites-list-name"
+                        lines="none"
+                        onClick={() => {
+                          this.setState({ addCheckpointModal: favorite.id });
+                          this.getBusinessFromYelp(favorite.id);
+                        }}
+                      >
+                        {favorite.name}
+                      </IonItem>
                       <IonItemOptions side="end">
                         <IonItemOption
                           color="danger"
@@ -291,6 +299,65 @@ class Profile extends Component<Props, State> {
                           <IonIcon slot="icon-only" icon={trash}></IonIcon>
                         </IonItemOption>
                       </IonItemOptions>
+                      <IonModal
+                        isOpen={favorite.id === this.state.addCheckpointModal}
+                      >
+                        <IonGrid class="modal-grid">
+                          <IonRow class="modal-info">
+                            <IonGrid class="modal-info-grid">
+                              <IonRow class="modal-info-text modal-name">
+                                {this.state.currentFavoriteData.name}
+                              </IonRow>
+                              <IonRow class="modal-info-text">
+                                {this.state.currentFavoriteData.location}
+                              </IonRow>
+                              <IonRow>
+                                <IonImg
+                                  class="modal-image"
+                                  src={
+                                    this.state.currentFavoriteData.imageUrl ||
+                                    "assets/icon/bean-profile.png"
+                                  }
+                                ></IonImg>
+                              </IonRow>
+                              <IonRow class="modal-info-text">
+                                Rating: {this.state.currentFavoriteData.rating}
+                                /5
+                              </IonRow>
+                              <IonRow class="modal-info-text">
+                                Price:&nbsp;
+                                <IonText class="modal-price-dollars">
+                                  {this.state.currentFavoriteData.price ||
+                                    "N/A"}
+                                </IonText>
+                              </IonRow>
+                            </IonGrid>
+                          </IonRow>
+
+                          <IonRow class="modal-buttons-row">
+                            <IonButton
+                              class="modal-button modal-button-add"
+                              size="small"
+                              onClick={() => {
+                                this.props.addToStringBean(
+                                  this.state.currentFavoriteData
+                                );
+                                this.setState({ addCheckpointModal: "" });
+                              }}
+                            >
+                              Add To Stringbean
+                            </IonButton>
+                            <IonButton
+                              class="modal-button  modal-button-back"
+                              onClick={() => {
+                                this.setState({ addCheckpointModal: "" });
+                              }}
+                            >
+                              Back
+                            </IonButton>
+                          </IonRow>
+                        </IonGrid>
+                      </IonModal>
                     </IonItemSliding>
                   );
                 })}
@@ -306,17 +373,6 @@ class Profile extends Component<Props, State> {
             >
               Back To My Profile
             </IonButton>
-          </IonModal>
-          <IonModal isOpen={this.state.addCheckpointModal}>
-            <IonHeader>
-              <IonTitle
-                size="small"
-                class="tab-header header-font"
-                id="favorites-header"
-              >
-                My Favorites
-              </IonTitle>
-            </IonHeader>
           </IonModal>
         </IonContent>
       </IonPage>

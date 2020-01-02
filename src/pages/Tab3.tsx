@@ -25,7 +25,7 @@ import { yelpApiKey } from "../secrets";
 import db from "../firebase/firebase";
 import "./Tab3.css";
 
-const { Geolocation, Storage } = Plugins;
+const { Geolocation } = Plugins;
 
 type Props = {
   favorites: { [key: string]: any };
@@ -39,7 +39,7 @@ type Props = {
 interface BusinessData {
   id: string;
   name: string;
-  location: object;
+  location: string;
   imageUrl: string;
   categories: Array<object>;
   rating?: number;
@@ -54,7 +54,6 @@ type State = {
   businesses: Array<BusinessData>;
   search: string;
   showModal: number;
-  // stringbean: Array<BusinessData>;
   searchSpinner: boolean;
 };
 
@@ -65,13 +64,11 @@ class CreateStory extends Component<Props, State> {
     businesses: Array<BusinessData>(),
     search: "",
     showModal: Infinity,
-    // stringbean: Array<BusinessData>(),
     searchSpinner: false
   };
 
   componentDidMount() {
     this.getCurrentPosition();
-    // this.getStringBeanOnMount();
   }
 
   getCurrentPosition = async () => {
@@ -80,19 +77,12 @@ class CreateStory extends Component<Props, State> {
       latitude: coordinates.coords.latitude,
       longitude: coordinates.coords.longitude
     });
-    this.getYelp(this.state.latitude, this.state.longitude);
+    this.getYelpBusinesses(this.state.latitude, this.state.longitude);
   };
-
-  // getStringBeanOnMount = async () => {
-  //   const data = await Storage.get({ key: "stringbean" });
-  //   if (data.value) {
-  //     this.setState({ stringbean: JSON.parse(data.value) });
-  //   }
-  // };
 
   keyUpHandler = (e: any) => {
     if (e.key === "Enter") {
-      this.getYelp(
+      this.getYelpBusinesses(
         this.state.latitude,
         this.state.longitude,
         this.state.search
@@ -101,26 +91,11 @@ class CreateStory extends Component<Props, State> {
     }
   };
 
-  // removeFromStringBean = async (id: string) => {
-  //   let storage: any;
-  //   let parsedStorage: any;
-  //   storage = await Storage.get({
-  //     key: "stringbean"
-  //   });
-  //   parsedStorage = JSON.parse(storage.value);
-  //   const removedBean = parsedStorage.filter(
-  //     (item: BusinessData) => item.id !== id
-  //   );
-  //   this.setState({
-  //     stringbean: removedBean
-  //   });
-  //   await Storage.set({
-  //     key: "stringbean",
-  //     value: JSON.stringify(removedBean)
-  //   });
-  // };
-
-  getYelp = async (latitude: number, longitude: number, term?: string) => {
+  getYelpBusinesses = async (
+    latitude: number,
+    longitude: number,
+    term?: string
+  ) => {
     const api = axios.create({
       baseURL: "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3",
       headers: {
@@ -157,22 +132,6 @@ class CreateStory extends Component<Props, State> {
   handleChange = (e: string) => {
     this.setState({ search: e });
   };
-
-  // addToStringBean = async (business: object) => {
-  //   let stringBeanArray = [];
-
-  //   const localStorage = await Storage.get({ key: "stringbean" });
-  //   if (localStorage.value) {
-  //     stringBeanArray = JSON.parse(localStorage.value);
-  //   }
-  //   stringBeanArray.push(business);
-
-  //   this.setState({ stringbean: stringBeanArray });
-  //   await Storage.set({
-  //     key: "stringbean",
-  //     value: JSON.stringify(stringBeanArray)
-  //   });
-  // };
 
   createOrUpdateCheckpoint = async (bean: BusinessData) => {
     let beanRef = db.collection("checkpoints").doc(bean.id);
@@ -224,7 +183,7 @@ class CreateStory extends Component<Props, State> {
             id="search-button"
             size="small"
             onClick={() => {
-              this.getYelp(
+              this.getYelpBusinesses(
                 this.state.latitude,
                 this.state.longitude,
                 this.state.search
@@ -268,41 +227,40 @@ class CreateStory extends Component<Props, State> {
                 </IonGrid>
 
                 <IonModal isOpen={idx === this.state.showModal}>
-                  <IonGrid id="modal-grid">
-                    <IonRow id="modal-info">
-                      <IonGrid id="modal-info-grid">
-                        <IonRow class="modal-info-text" id="modal-name">
+                  <IonGrid class="modal-grid">
+                    <IonRow class="modal-info">
+                      <IonGrid class="modal-info-grid">
+                        <IonRow class="modal-info-text modal-name">
                           {business.name}
                         </IonRow>
-                        <IonRow class="modal-info-text" id="modal-location">
+                        <IonRow class="modal-info-text">
                           {business.location}
                         </IonRow>
                         <IonRow>
                           <IonImg
-                            id="modal-image"
+                            class="modal-image"
                             src={
                               business.imageUrl ||
                               "assets/icon/bean-profile.png"
                             }
                           ></IonImg>
                         </IonRow>
-                        <IonRow class="modal-info-text" id="modal-rating">
+                        <IonRow class="modal-info-text">
                           Rating: {business.rating}/5
                         </IonRow>
-                        <IonRow class="modal-info-text" id="modal-price">
+                        <IonRow class="modal-info-text">
                           Price:&nbsp;
-                          <IonText id="modal-price-dollars">
+                          <IonText class="modal-price-dollars">
                             {business.price || "N/A"}
                           </IonText>
                         </IonRow>
                       </IonGrid>
                     </IonRow>
 
-                    <IonRow id="modal-buttons-row">
+                    <IonRow class="modal-buttons-row">
                       <IonButton
-                        class="modal-button"
+                        class="modal-button modal-button-add"
                         size="small"
-                        id="modal-button-add"
                         onClick={() => {
                           this.props.addToStringBean(business);
                           this.setState({ showModal: Infinity });
@@ -311,8 +269,7 @@ class CreateStory extends Component<Props, State> {
                         Add To Stringbean
                       </IonButton>
                       <IonButton
-                        class="modal-button"
-                        id="modal-button-back"
+                        class="modal-button modal-button-back"
                         onClick={() => {
                           this.setState({ showModal: Infinity });
                         }}

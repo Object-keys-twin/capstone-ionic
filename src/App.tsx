@@ -61,7 +61,7 @@ interface UserData {
 interface BusinessData {
   id: string;
   name: string;
-  location: object;
+  location: string;
   imageUrl: string;
   categories: Array<object>;
   rating?: number;
@@ -152,6 +152,9 @@ class App extends Component<{}, State> {
       this.setState({ stringbean: JSON.parse(data.value) });
     }
   };
+
+  //leaving this here. not using local storage means that the login page will flash upon refresh as it waits for authentication
+  //maybe for the sake of appearance we should end up using local storage just to not have the login page flash.
 
   // getUser = async () => {
   //   const data = await Storage.get({
@@ -398,6 +401,7 @@ class App extends Component<{}, State> {
                       user={this.state.user}
                       favoritesArray={this.state.user.favoritesArray}
                       toggleFavorite={this.toggleFavorite}
+                      addToStringBean={this.addToStringBean}
                     />
                   )}
                   exact={true}
@@ -447,9 +451,9 @@ class App extends Component<{}, State> {
                   <IonIcon icon={add} />
                   <IonLabel>Create</IonLabel>
                 </IonTabButton>
-                {/* <IonTabButton tab="map" href="/map">
+                {/* <IonTabButton tab="messages" href="/messages">
 									<IonIcon icon={send} />
-									<IonLabel>Map</IonLabel>
+									<IonLabel>Messages</IonLabel>
 								</IonTabButton> */}
               </IonTabBar>
             </IonTabs>

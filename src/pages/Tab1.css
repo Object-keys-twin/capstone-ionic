@@ -96,3 +96,7 @@
   margin-right: auto;
   margin-left: auto;
 }
+
+.favorites-list-name {
+  font-size: 2.7vh;
+}

@@ -30,7 +30,7 @@
   --background-activated: #ffb68e;
 }
 
-#modal-grid {
+.modal-grid {
   width: 100%;
   height: 100%;
   display: flex;
@@ -40,7 +40,7 @@
   padding: 3vh;
 }
 
-#modal-buttons-row {
+.modal-buttons-row {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,7 +53,7 @@
   --background-activated: #6ba486;
 }
 
-#modal-button-back {
+.modal-button-back {
   width: 30%;
   font-size: 2.5vh;
   height: 6vh;
@@ -66,14 +66,14 @@
   margin-bottom: 0;
 }
 
-#modal-button-add {
+.modal-button-add {
   font-size: 3vh;
   height: 7vh;
   width: 90%;
   letter-spacing: 0.3vh;
 }
 
-#modal-info {
+.modal-info {
   background: white;
   display: flex;
   text-align: center;
@@ -82,13 +82,13 @@
   border-radius: 2vh;
 }
 
-#modal-image {
+.modal-image {
   max-height: 42vh;
   margin-top: 3vh;
   margin-bottom: 3vh;
 }
 
-#modal-info-grid {
+.modal-info-grid {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -99,12 +99,12 @@
   font-size: 3vh;
 }
 
-#modal-name {
+.modal-name {
   font-size: 4vh;
   margin-bottom: 1vh;
 }
 
-#modal-price-dollars {
+.modal-price-dollars {
   color: green;
 }
 

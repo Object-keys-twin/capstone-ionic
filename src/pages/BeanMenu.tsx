@@ -29,7 +29,7 @@ const { Storage } = Plugins;
 interface BusinessData {
   id: string;
   name: string;
-  location: object;
+  location: string;
   imageUrl: string;
   categories: Array<object>;
   rating?: number;
@@ -145,7 +145,7 @@ export default class BeanMenu extends Component<Props, State> {
               My Stringbean
             </IonTitle>
           </IonHeader>
-          <IonContent>
+          <IonContent class="modal-content">
             <IonList>
               {this.props.stringbean.map((bean, idx) => {
                 return (
