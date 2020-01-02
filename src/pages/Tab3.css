@@ -55,12 +55,22 @@
 
 #modal-button-back {
   width: 30%;
+  font-size: 2.5vh;
+  height: 6vh;
+  letter-spacing: 0.3vh;
+  --background: #8bceaa;
+  --background-hover: #8bceaa;
+  --background-focused: #8bceaa;
+  --background-activated: #8bceaa;
+  margin-top: 1vh;
+  margin-bottom: 0;
 }
 
 #modal-button-add {
   font-size: 3vh;
-  min-height: 4vh;
+  height: 7vh;
   width: 90%;
+  letter-spacing: 0.3vh;
 }
 
 #modal-info {

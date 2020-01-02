@@ -11,7 +11,6 @@ import {
   IonIcon,
   IonGrid,
   IonCol,
-  IonText,
   IonRow
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
@@ -83,14 +82,15 @@ class PublicTours extends Component<Props, State> {
         });
       });
   };
+
   getCheckpoints = async (tour: any, idx: number) => {
     let checkpointsWithData: any = [];
     for (let i = 0; i < tour.checkpoints.length; i++) {
-      const checkpoints = await db
+      const checkpoint = await db
         .collection("checkpoints")
         .doc(`${tour.checkpoints[i]}`)
         .get();
-      checkpointsWithData.push(checkpoints.data());
+      checkpointsWithData.push(checkpoint.data());
     }
     let tours = this.state.tours;
     tours.forEach((el, i) => {

@@ -98,7 +98,7 @@ export default class SignUp extends Component<Props, State> {
               type="text"
               class="login-signup-input-field"
               name="displayName"
-              placeholder="Username"
+              placeholder="Username (optional)"
               onIonChange={e =>
                 this.handleDisplayName((e.target as HTMLInputElement).value)
               }

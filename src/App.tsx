@@ -288,7 +288,12 @@ class App extends Component<{}, State> {
                 <Route
                   path="/profile"
                   render={props => (
-                    <Profile {...props} user={this.state.user} />
+                    <Profile
+                      {...props}
+                      user={this.state.user}
+                      favorites={this.state.user.favorites}
+                      toggleFavorite={this.toggleFavorite}
+                    />
                   )}
                   exact={true}
                 />

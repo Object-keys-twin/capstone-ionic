@@ -10,6 +10,8 @@
   padding: 2vh;
   background: #fff5ba;
   color: #8d8d8d;
+  font-size: 3vh;
+  letter-spacing: 0.3vh;
 }
 
 #logout-button {
@@ -76,4 +78,11 @@
 
 .favorites-icon {
   color: #ff7a7a;
+}
+
+#favorites-modal {
+}
+
+#favorites-header {
+  height: 9vh;
 }

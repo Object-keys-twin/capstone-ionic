@@ -157,21 +157,23 @@ export default class BeanMenu extends Component<Props, State> {
           </IonHeader>
           <IonContent>
             <IonList>
-              {this.props.stringbean.map((bean, idx) => (
-                <IonItemSliding key={idx}>
-                  <IonItemOptions side="end">
-                    <IonItemOption
-                      color="danger"
-                      onClick={() => {
-                        this.props.removeFromStringBean(bean.id);
-                      }}
-                    >
-                      <IonIcon slot="icon-only" icon={trash}></IonIcon>
-                    </IonItemOption>
-                  </IonItemOptions>
-                  <IonItem lines="none">{bean.name}</IonItem>
-                </IonItemSliding>
-              ))}
+              {this.props.stringbean.map((bean, idx) => {
+                return (
+                  <IonItemSliding key={bean.id}>
+                    <IonItemOptions side="end">
+                      <IonItemOption
+                        color="danger"
+                        onClick={() => {
+                          this.props.removeFromStringBean(bean.id);
+                        }}
+                      >
+                        <IonIcon slot="icon-only" icon={trash}></IonIcon>
+                      </IonItemOption>
+                    </IonItemOptions>
+                    <IonItem lines="none">{bean.name}</IonItem>
+                  </IonItemSliding>
+                );
+              })}
             </IonList>
           </IonContent>
           <IonItem no-padding lines="full" id="bean-menu-button-container">
