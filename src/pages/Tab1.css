@@ -100,3 +100,21 @@
 .favorites-list-name {
   font-size: 2.7vh;
 }
+
+.skeleton-name {
+  height: 6vh;
+}
+
+.skeleton-location {
+  height: 4vh;
+  margin-bottom: 3vh;
+}
+
+.skeleton-image {
+  height: 40vh;
+  margin-bottom: 3vh;
+}
+
+.skeleton-rating-price {
+  height: 4vh;
+}

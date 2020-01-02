@@ -15,7 +15,8 @@ import {
   IonRow,
   IonImg,
   IonText,
-  IonCol
+  IonCol,
+  IonSkeletonText
 } from "@ionic/react";
 import { heart, heartEmpty, search } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
@@ -198,95 +199,127 @@ class CreateStory extends Component<Props, State> {
             )}
           </IonButton>
         </IonCard>
-
-        {businesses.length ? (
-          <IonContent className="beancontent">
-            {businesses.map((business, idx) => (
-              <IonCard className="beancard" key={idx}>
-                <IonGrid item-content class="checkpoint-row">
-                  <IonCol class="list-checkpoint-col">
-                    <IonItem
-                      lines="none"
-                      className="beanitem"
-                      onClick={() => this.setState({ showModal: idx })}
-                    >
-                      {business.name} <br></br>
-                      {business.location}
-                    </IonItem>
-                  </IonCol>
-                  <IonCol class="list-favorites-col">
-                    <IonIcon
-                      class="favorites-icon list-favorites-icon"
-                      onClick={() => {
-                        this.createOrUpdateCheckpoint(business);
-                        this.props.toggleFavorite(business.id);
-                      }}
-                      icon={this.renderHeart(business.id)}
-                    />{" "}
-                  </IonCol>
-                </IonGrid>
-
-                <IonModal isOpen={idx === this.state.showModal}>
-                  <IonGrid class="modal-grid">
-                    <IonRow class="modal-info">
-                      <IonGrid class="modal-info-grid">
-                        <IonRow class="modal-info-text modal-name">
-                          {business.name}
-                        </IonRow>
-                        <IonRow class="modal-info-text">
-                          {business.location}
-                        </IonRow>
-                        <IonRow>
-                          <IonImg
-                            class="modal-image"
-                            src={
-                              business.imageUrl ||
-                              "assets/icon/bean-profile.png"
-                            }
-                          ></IonImg>
-                        </IonRow>
-                        <IonRow class="modal-info-text">
-                          Rating: {business.rating}/5
-                        </IonRow>
-                        <IonRow class="modal-info-text">
-                          Price:&nbsp;
-                          <IonText class="modal-price-dollars">
-                            {business.price || "N/A"}
-                          </IonText>
-                        </IonRow>
-                      </IonGrid>
-                    </IonRow>
-
-                    <IonRow class="modal-buttons-row">
-                      <IonButton
-                        class="modal-button modal-button-add"
-                        size="small"
-                        onClick={() => {
-                          this.props.addToStringBean(business);
-                          this.setState({ showModal: Infinity });
-                        }}
+        <IonContent className="beancontent">
+          {businesses.length ? (
+            <>
+              {businesses.map((business, idx) => (
+                <IonCard className="beancard" key={idx}>
+                  <IonGrid item-content class="checkpoint-row">
+                    <IonCol class="list-checkpoint-col">
+                      <IonItem
+                        lines="none"
+                        className="beanitem"
+                        onClick={() => this.setState({ showModal: idx })}
                       >
-                        Add To Stringbean
-                      </IonButton>
-                      <IonButton
-                        class="modal-button modal-button-back"
+                        {business.name} <br></br>
+                        {business.location}
+                      </IonItem>
+                    </IonCol>
+                    <IonCol class="list-favorites-col">
+                      <IonIcon
+                        class="favorites-icon list-favorites-icon"
                         onClick={() => {
-                          this.setState({ showModal: Infinity });
+                          this.createOrUpdateCheckpoint(business);
+                          this.props.toggleFavorite(business.id);
                         }}
-                      >
-                        Back
-                      </IonButton>
-                    </IonRow>
+                        icon={this.renderHeart(business.id)}
+                      />
+                    </IonCol>
                   </IonGrid>
-                </IonModal>
-              </IonCard>
-            ))}
-          </IonContent>
-        ) : (
-          <IonContent className="beancontent">
-            <IonSpinner class="spinner"></IonSpinner>
-          </IonContent>
-        )}
+
+                  <IonModal isOpen={idx === this.state.showModal}>
+                    <IonGrid class="modal-grid">
+                      <IonRow class="modal-info">
+                        <IonGrid class="modal-info-grid">
+                          <IonRow class="modal-info-text modal-name">
+                            {business.name}
+                          </IonRow>
+                          <IonRow class="modal-info-text">
+                            {business.location}
+                          </IonRow>
+                          <IonRow>
+                            <IonImg
+                              class="modal-image"
+                              src={
+                                business.imageUrl ||
+                                "assets/icon/bean-profile.png"
+                              }
+                            ></IonImg>
+                          </IonRow>
+                          <IonRow class="modal-info-text">
+                            Rating: {business.rating}/5
+                          </IonRow>
+                          <IonRow class="modal-info-text">
+                            Price:&nbsp;
+                            <IonText class="modal-price-dollars">
+                              {business.price || "N/A"}
+                            </IonText>
+                          </IonRow>
+                        </IonGrid>
+                      </IonRow>
+
+                      <IonRow class="modal-buttons-row">
+                        <IonButton
+                          class="modal-button modal-button-add"
+                          size="small"
+                          onClick={() => {
+                            this.props.addToStringBean(business);
+                            this.setState({ showModal: Infinity });
+                          }}
+                        >
+                          Add To Stringbean
+                        </IonButton>
+                        <IonButton
+                          class="modal-button modal-button-back"
+                          onClick={() => {
+                            this.setState({ showModal: Infinity });
+                          }}
+                        >
+                          Back
+                        </IonButton>
+                      </IonRow>
+                    </IonGrid>
+                  </IonModal>
+                </IonCard>
+              ))}
+            </>
+          ) : (
+            <>
+              {[...Array(20)].map((placeholder, idx) => (
+                <IonCard className="beancard" key={idx}>
+                  <IonGrid item-content class="checkpoint-row">
+                    <IonCol class="list-checkpoint-col">
+                      <IonItem lines="none" className="beanitem">
+                        <IonGrid>
+                          <IonRow>
+                            <IonSkeletonText
+                              animated
+                              width="50vw"
+                              class="skeleton-text"
+                            ></IonSkeletonText>
+                          </IonRow>
+                          <IonRow>
+                            <IonSkeletonText
+                              animated
+                              width="70vw"
+                              class="skeleton-text"
+                            ></IonSkeletonText>
+                          </IonRow>
+                        </IonGrid>
+                      </IonItem>
+                    </IonCol>
+                    <IonCol class="list-favorites-col">
+                      <IonIcon
+                        class="skeleton-heart list-favorites-icon"
+                        icon={heart}
+                      />
+                    </IonCol>
+                  </IonGrid>
+                </IonCard>
+              ))}
+            </>
+          )}
+        </IonContent>
       </IonPage>
     );
   }

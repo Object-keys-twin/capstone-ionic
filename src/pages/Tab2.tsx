@@ -14,7 +14,7 @@ import {
   IonRow
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
-import { heartEmpty, heart } from "ionicons/icons";
+import { heartEmpty, heart, walk } from "ionicons/icons";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import db from "../firebase/firebase";
@@ -117,20 +117,29 @@ class PublicTours extends Component<Props, State> {
         <IonContent className="beancontent">
           {tours.map((tour, idx) => (
             <IonCard className="stringbean-card" key={idx}>
-              <Link
-                className="stringbean-link"
-                to={{
-                  pathname: "/map",
-                  state: { checkpoints: tour.checkpoints }
-                }}
-              >
-                <IonItem lines="none" class="stringbean-header-container">
-                  <IonGrid class="stringbean-header">
+              <IonItem lines="none" class="stringbean-header-container">
+                <IonGrid class="checkpoint-row stringbean-header">
+                  <IonCol class="list-checkpoint-col">
                     <IonRow>{tour.name}</IonRow>
                     <IonRow class="stringbean-creator">{tour.user}</IonRow>
-                  </IonGrid>
-                </IonItem>
-              </Link>
+                  </IonCol>
+                  <IonCol class="list-favorites-col">
+                    <Link
+                      className="stringbean-link"
+                      to={{
+                        pathname: "/map",
+                        state: { checkpoints: tour.checkpoints }
+                      }}
+                    >
+                      <IonIcon
+                        class="list-favorites-icon"
+                        icon={walk}
+                      ></IonIcon>
+                    </Link>
+                  </IonCol>
+                </IonGrid>
+              </IonItem>
+
               <IonCardContent class="stringbean-card-content">
                 {tour.checkpoints.map((checkpoint, idx) => {
                   if (checkpoint) {

@@ -20,7 +20,8 @@ import {
   IonItemOptions,
   IonGrid,
   IonRow,
-  IonText
+  IonText,
+  IonSkeletonText
 } from "@ionic/react";
 // import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
@@ -63,6 +64,7 @@ type State = {
   favoritesModal: boolean;
   addCheckpointModal: string;
   currentFavoriteData: object;
+  showSkeleton: boolean;
 };
 
 interface DbData {
@@ -96,7 +98,8 @@ class Profile extends Component<Props, State> {
       latitude: 0,
       longitude: 0,
       price: ""
-    }
+    },
+    showSkeleton: false
   };
 
   componentDidMount() {
@@ -157,6 +160,7 @@ class Profile extends Component<Props, State> {
   };
 
   getBusinessFromYelp = async (businessId: string) => {
+    this.setState({ showSkeleton: true });
     const api = axios.create({
       baseURL: "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3",
       headers: {
@@ -179,7 +183,7 @@ class Profile extends Component<Props, State> {
       categories: data.categories,
       rating: data.rating
     };
-    this.setState({ currentFavoriteData: businessObj });
+    this.setState({ currentFavoriteData: businessObj, showSkeleton: false });
   };
 
   render() {
@@ -304,36 +308,76 @@ class Profile extends Component<Props, State> {
                       >
                         <IonGrid class="modal-grid">
                           <IonRow class="modal-info">
-                            <IonGrid class="modal-info-grid">
-                              <IonRow class="modal-info-text modal-name">
-                                {this.state.currentFavoriteData.name}
-                              </IonRow>
-                              <IonRow class="modal-info-text">
-                                {this.state.currentFavoriteData.location}
-                              </IonRow>
-                              <IonRow>
-                                <IonImg
-                                  class="modal-image"
-                                  src={
-                                    this.state.currentFavoriteData.imageUrl ||
-                                    "assets/icon/bean-profile.png"
-                                  }
-                                ></IonImg>
-                              </IonRow>
-                              <IonRow class="modal-info-text">
-                                Rating: {this.state.currentFavoriteData.rating}
-                                /5
-                              </IonRow>
-                              <IonRow class="modal-info-text">
-                                Price:&nbsp;
-                                <IonText class="modal-price-dollars">
-                                  {this.state.currentFavoriteData.price ||
-                                    "N/A"}
-                                </IonText>
-                              </IonRow>
-                            </IonGrid>
+                            {this.state.showSkeleton ? (
+                              <IonGrid class="modal-info-grid">
+                                <IonRow class="modal-info-text modal-name">
+                                  <IonSkeletonText
+                                    animated
+                                    width="70vw"
+                                    class="skeleton-name"
+                                  ></IonSkeletonText>
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  <IonSkeletonText
+                                    animated
+                                    width="50vw"
+                                    class="skeleton-location"
+                                  ></IonSkeletonText>
+                                </IonRow>
+                                <IonRow>
+                                  <IonSkeletonText
+                                    animated
+                                    width="60vw"
+                                    class="skeleton-image"
+                                  ></IonSkeletonText>
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  <IonSkeletonText
+                                    animated
+                                    width="35vw"
+                                    class="skeleton-rating-price"
+                                  ></IonSkeletonText>
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  <IonSkeletonText
+                                    animated
+                                    width="30vw"
+                                    class="skeleton-rating-price"
+                                  ></IonSkeletonText>
+                                </IonRow>
+                              </IonGrid>
+                            ) : (
+                              <IonGrid class="modal-info-grid">
+                                <IonRow class="modal-info-text modal-name">
+                                  {this.state.currentFavoriteData.name}
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  {this.state.currentFavoriteData.location}
+                                </IonRow>
+                                <IonRow>
+                                  <IonImg
+                                    class="modal-image"
+                                    src={
+                                      this.state.currentFavoriteData.imageUrl ||
+                                      "assets/icon/bean-profile.png"
+                                    }
+                                  ></IonImg>
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  Rating:{" "}
+                                  {this.state.currentFavoriteData.rating}
+                                  /5
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  Price:&nbsp;
+                                  <IonText class="modal-price-dollars">
+                                    {this.state.currentFavoriteData.price ||
+                                      "N/A"}
+                                  </IonText>
+                                </IonRow>
+                              </IonGrid>
+                            )}
                           </IonRow>
-
                           <IonRow class="modal-buttons-row">
                             <IonButton
                               class="modal-button modal-button-add"
@@ -344,6 +388,7 @@ class Profile extends Component<Props, State> {
                                 );
                                 this.setState({ addCheckpointModal: "" });
                               }}
+                              disabled={this.state.showSkeleton}
                             >
                               Add To Stringbean
                             </IonButton>
