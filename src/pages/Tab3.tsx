@@ -29,7 +29,11 @@ const { Geolocation, Storage } = Plugins;
 
 type Props = {
   favorites: { [key: string]: any };
+  stringbean: Array<BusinessData>;
   toggleFavorite: (checkpointId: string) => void;
+  addToStringBean: (business: object) => void;
+  removeFromStringBean: (id: string) => void;
+  clearStorageOnPublish: () => void;
 };
 
 interface BusinessData {
@@ -50,7 +54,7 @@ type State = {
   businesses: Array<BusinessData>;
   search: string;
   showModal: number;
-  stringbean: Array<BusinessData>;
+  // stringbean: Array<BusinessData>;
   searchSpinner: boolean;
 };
 
@@ -61,34 +65,30 @@ class CreateStory extends Component<Props, State> {
     businesses: Array<BusinessData>(),
     search: "",
     showModal: Infinity,
-    stringbean: Array<BusinessData>(),
+    // stringbean: Array<BusinessData>(),
     searchSpinner: false
   };
 
   componentDidMount() {
     this.getCurrentPosition();
-    this.getStringBeanOnMount();
+    // this.getStringBeanOnMount();
   }
 
   getCurrentPosition = async () => {
     const coordinates = await Geolocation.getCurrentPosition();
-    this.setState(
-      {
-        latitude: coordinates.coords.latitude,
-        longitude: coordinates.coords.longitude
-      },
-      () => {
-        this.getYelp(this.state.latitude, this.state.longitude);
-      }
-    );
+    this.setState({
+      latitude: coordinates.coords.latitude,
+      longitude: coordinates.coords.longitude
+    });
+    this.getYelp(this.state.latitude, this.state.longitude);
   };
 
-  getStringBeanOnMount = async () => {
-    const data = await Storage.get({ key: "stringbean" });
-    if (data.value) {
-      this.setState({ stringbean: JSON.parse(data.value) });
-    }
-  };
+  // getStringBeanOnMount = async () => {
+  //   const data = await Storage.get({ key: "stringbean" });
+  //   if (data.value) {
+  //     this.setState({ stringbean: JSON.parse(data.value) });
+  //   }
+  // };
 
   keyUpHandler = (e: any) => {
     if (e.key === "Enter") {
@@ -101,24 +101,24 @@ class CreateStory extends Component<Props, State> {
     }
   };
 
-  removeFromStringBean = async (id: string) => {
-    let storage: any;
-    let parsedStorage: any;
-    storage = await Storage.get({
-      key: "stringbean"
-    });
-    parsedStorage = JSON.parse(storage.value);
-    const removedBean = parsedStorage.filter(
-      (item: BusinessData) => item.id !== id
-    );
-    this.setState({
-      stringbean: removedBean
-    });
-    await Storage.set({
-      key: "stringbean",
-      value: JSON.stringify(removedBean)
-    });
-  };
+  // removeFromStringBean = async (id: string) => {
+  //   let storage: any;
+  //   let parsedStorage: any;
+  //   storage = await Storage.get({
+  //     key: "stringbean"
+  //   });
+  //   parsedStorage = JSON.parse(storage.value);
+  //   const removedBean = parsedStorage.filter(
+  //     (item: BusinessData) => item.id !== id
+  //   );
+  //   this.setState({
+  //     stringbean: removedBean
+  //   });
+  //   await Storage.set({
+  //     key: "stringbean",
+  //     value: JSON.stringify(removedBean)
+  //   });
+  // };
 
   getYelp = async (latitude: number, longitude: number, term?: string) => {
     const api = axios.create({
@@ -158,19 +158,21 @@ class CreateStory extends Component<Props, State> {
     this.setState({ search: e });
   };
 
-  addToStringBean = async (business: object) => {
-    let stringBeanArray = [];
-    const localStorage = await Storage.get({ key: "stringbean" });
-    if (localStorage.value) {
-      stringBeanArray = JSON.parse(localStorage.value);
-    }
-    stringBeanArray.push(business);
-    this.setState({ stringbean: stringBeanArray });
-    await Storage.set({
-      key: "stringbean",
-      value: JSON.stringify(stringBeanArray)
-    });
-  };
+  // addToStringBean = async (business: object) => {
+  //   let stringBeanArray = [];
+
+  //   const localStorage = await Storage.get({ key: "stringbean" });
+  //   if (localStorage.value) {
+  //     stringBeanArray = JSON.parse(localStorage.value);
+  //   }
+  //   stringBeanArray.push(business);
+
+  //   this.setState({ stringbean: stringBeanArray });
+  //   await Storage.set({
+  //     key: "stringbean",
+  //     value: JSON.stringify(stringBeanArray)
+  //   });
+  // };
 
   createOrUpdateCheckpoint = async (bean: BusinessData) => {
     let beanRef = db.collection("checkpoints").doc(bean.id);
@@ -205,8 +207,9 @@ class CreateStory extends Component<Props, State> {
           </IonTitle>
         </IonHeader>
         <BeanMenu
-          stringbean={this.state.stringbean}
-          removeFromStringBean={this.removeFromStringBean}
+          stringbean={this.props.stringbean}
+          removeFromStringBean={this.props.removeFromStringBean}
+          clearStorageOnPublish={this.props.clearStorageOnPublish}
         />
         <IonCard id="search-bar">
           <IonInput
@@ -220,13 +223,14 @@ class CreateStory extends Component<Props, State> {
           <IonButton
             id="search-button"
             size="small"
-            onClick={() =>
+            onClick={() => {
               this.getYelp(
                 this.state.latitude,
                 this.state.longitude,
                 this.state.search
-              )
-            }
+              );
+              this.setState({ searchSpinner: true });
+            }}
           >
             {this.state.searchSpinner ? (
               <IonSpinner id="search-spinner"></IonSpinner>
@@ -300,7 +304,7 @@ class CreateStory extends Component<Props, State> {
                         size="small"
                         id="modal-button-add"
                         onClick={() => {
-                          this.addToStringBean(business);
+                          this.props.addToStringBean(business);
                           this.setState({ showModal: Infinity });
                         }}
                       >

@@ -47,6 +47,7 @@ type State = {
 type Props = {
   stringbean: Array<BusinessData>;
   removeFromStringBean: (id: string) => void;
+  clearStorageOnPublish: () => void;
 };
 
 export default class BeanMenu extends Component<Props, State> {
@@ -122,7 +123,7 @@ export default class BeanMenu extends Component<Props, State> {
         console.log("Added document with ID: ", ref.id);
       });
 
-    await Storage.remove({ key: "stringbean" });
+    this.props.clearStorageOnPublish();
   };
 
   render() {

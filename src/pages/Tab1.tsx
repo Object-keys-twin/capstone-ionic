@@ -24,13 +24,28 @@ import React, { Component } from "react";
 
 import { create, heart, logOut, settings, trash } from "ionicons/icons";
 import { Link } from "react-router-dom";
-import "./Tab1.css";
+import axios from "axios";
 import firebase from "firebase";
 import db from "../firebase/firebase";
+import { yelpApiKey } from "../secrets";
+
+import "./Tab1.css";
 
 interface FavoriteObj {
   id: string;
   name: string;
+}
+
+interface BusinessData {
+  id: string;
+  name: string;
+  location: object;
+  imageUrl: string;
+  categories: Array<object>;
+  rating?: number;
+  latitude: number;
+  longitude: number;
+  price?: string | undefined;
 }
 
 type Props = {
@@ -42,6 +57,8 @@ type Props = {
 type State = {
   tours: Array<DbData>;
   favoritesModal: boolean;
+  addCheckpointModal: boolean;
+  currentFavoriteData: BusinessData;
 };
 
 interface DbData {
@@ -63,7 +80,19 @@ interface userData {
 class Profile extends Component<Props, State> {
   state = {
     tours: Array<DbData>(),
-    favoritesModal: false
+    favoritesModal: false,
+    addCheckpointModal: false,
+    currentFavoriteData: {
+      id: "",
+      name: "",
+      location: {},
+      imageUrl: "",
+      categories: [],
+      rating: 0,
+      latitude: 0,
+      longitude: 0,
+      price: ""
+    }
   };
 
   componentDidMount() {
@@ -121,6 +150,37 @@ class Profile extends Component<Props, State> {
       .catch(function(error) {
         // An error happened.
       });
+  };
+
+  getBusinessFromYelp = async (businessId: string) => {
+    const api = axios.create({
+      baseURL: "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3",
+      headers: {
+        Authorization: `Bearer ${yelpApiKey}`
+      }
+    });
+    const { data } = await api.get("/businesses/{id}", {
+      params: {
+        id: businessId
+      }
+    });
+
+    const info = data.businesses.map((business: any) => ({
+      id: business.id,
+      name: business.name,
+      location:
+        business.location.display_address[0] +
+        ", " +
+        business.location.display_address[1],
+      latitude: business.coordinates.latitude,
+      longitude: business.coordinates.longitude,
+      price: business.price,
+      imageUrl: business.image_url,
+      categories: business.categories,
+      rating: business.rating
+    }));
+
+    this.setState({ currentFavoriteData: info });
   };
 
   render() {
@@ -246,6 +306,17 @@ class Profile extends Component<Props, State> {
             >
               Back To My Profile
             </IonButton>
+          </IonModal>
+          <IonModal isOpen={this.state.addCheckpointModal}>
+            <IonHeader>
+              <IonTitle
+                size="small"
+                class="tab-header header-font"
+                id="favorites-header"
+              >
+                My Favorites
+              </IonTitle>
+            </IonHeader>
           </IonModal>
         </IonContent>
       </IonPage>

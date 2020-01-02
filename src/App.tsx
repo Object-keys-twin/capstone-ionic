@@ -9,7 +9,7 @@ import {
   IonTabButton,
   IonTabs
 } from "@ionic/react";
-// import { Plugins } from "@capacitor/core";
+import { Plugins } from "@capacitor/core";
 import { IonReactRouter } from "@ionic/react-router";
 import { apps, person, add } from "ionicons/icons";
 import firebase from "firebase";
@@ -41,7 +41,7 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 
-// const { Storage } = Plugins;
+const { Storage } = Plugins;
 
 interface FavoriteObj {
   id: string;
@@ -58,11 +58,24 @@ interface UserData {
   favoritesArray: Array<FavoriteObj>;
 }
 
+interface BusinessData {
+  id: string;
+  name: string;
+  location: object;
+  imageUrl: string;
+  categories: Array<object>;
+  rating?: number;
+  latitude: number;
+  longitude: number;
+  price?: string | undefined;
+}
+
 type State = {
   user: UserData | null;
   loggedIn: boolean;
   logInSignUpError: boolean;
   toastMessage: string;
+  stringbean: Array<BusinessData>;
 };
 
 class App extends Component<{}, State> {
@@ -78,11 +91,13 @@ class App extends Component<{}, State> {
     },
     loggedIn: false,
     logInSignUpError: false,
-    toastMessage: ""
+    toastMessage: "",
+    stringbean: Array<BusinessData>()
   };
 
   componentDidMount = () => {
     // this.getUser();
+    this.getStringBeanOnMount();
     firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         console.log("Currently logged in!");
@@ -129,6 +144,13 @@ class App extends Component<{}, State> {
         // });
       }
     });
+  };
+
+  getStringBeanOnMount = async () => {
+    const data = await Storage.get({ key: "stringbean" });
+    if (data.value) {
+      this.setState({ stringbean: JSON.parse(data.value) });
+    }
   };
 
   // getUser = async () => {
@@ -321,6 +343,46 @@ class App extends Component<{}, State> {
     }
   };
 
+  addToStringBean = async (business: object) => {
+    let stringBeanArray = [];
+
+    const localStorage = await Storage.get({ key: "stringbean" });
+    if (localStorage.value) {
+      stringBeanArray = JSON.parse(localStorage.value);
+    }
+    stringBeanArray.push(business);
+
+    this.setState({ stringbean: stringBeanArray });
+    await Storage.set({
+      key: "stringbean",
+      value: JSON.stringify(stringBeanArray)
+    });
+  };
+
+  removeFromStringBean = async (id: string) => {
+    let storage: any;
+    let parsedStorage: any;
+    storage = await Storage.get({
+      key: "stringbean"
+    });
+    parsedStorage = JSON.parse(storage.value);
+    const removedBean = parsedStorage.filter(
+      (item: BusinessData) => item.id !== id
+    );
+    this.setState({
+      stringbean: removedBean
+    });
+    await Storage.set({
+      key: "stringbean",
+      value: JSON.stringify(removedBean)
+    });
+  };
+
+  clearStorageOnPublish = async () => {
+    await Storage.remove({ key: "stringbean" });
+    this.setState({ stringbean: Array<BusinessData>() });
+  };
+
   render() {
     if (this.state.loggedIn) {
       return (
@@ -357,7 +419,11 @@ class App extends Component<{}, State> {
                     <CreateStory
                       {...props}
                       favorites={this.state.user.favorites}
+                      stringbean={this.state.stringbean}
                       toggleFavorite={this.toggleFavorite}
+                      addToStringBean={this.addToStringBean}
+                      removeFromStringBean={this.removeFromStringBean}
+                      clearStorageOnPublish={this.clearStorageOnPublish}
                     />
                   )}
                 />
