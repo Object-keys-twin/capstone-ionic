@@ -23,18 +23,24 @@ enum PasswordVisibility {
   Text = "text"
 }
 
-interface userData {
+interface FavoriteObj {
+  id: string;
+  name: string;
+}
+
+interface UserData {
   email: string;
   uid?: string;
   displayName: string;
   photoURL: string;
   password: string;
   favorites: object;
+  favoritesArray: Array<FavoriteObj>;
 }
 
 type Props = {
   handleGoogle: () => void;
-  handleSubmit: (user: userData, type?: string) => void;
+  handleSubmit: (user: UserData, type?: string) => void;
   resetLogInSignUpError: () => void;
   logInSignUpError: boolean;
   toastMessage: string;
@@ -82,7 +88,8 @@ class Login extends Component<Props, State> {
       displayName: "",
       photoURL: "",
       password: this.state.password,
-      favorites: {}
+      favorites: {},
+      favoritesArray: Array<FavoriteObj>()
     };
     this.props.handleSubmit(tryLogIn);
   };

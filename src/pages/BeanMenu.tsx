@@ -39,10 +39,7 @@ interface BusinessData {
 }
 
 type State = {
-  stringbean: Array<BusinessData>;
   showAlert: boolean;
-  name: string;
-  description: string;
   publishError: boolean;
   toastMessage: string;
 };
@@ -54,10 +51,7 @@ type Props = {
 
 export default class BeanMenu extends Component<Props, State> {
   state = {
-    stringbean: Array<BusinessData>(),
     showAlert: false,
-    name: "",
-    description: "",
     publishError: false,
     toastMessage: ""
   };
@@ -109,11 +103,6 @@ export default class BeanMenu extends Component<Props, State> {
     });
 
     let username: string | null = "";
-    // const data = await Storage.get({ key: "user" });
-    // if (data.value) {
-    //   userEmail = JSON.parse(data.value).email;
-    // }
-
     let user = firebase.auth().currentUser;
     if (user) username = user.displayName || user.email;
     // the case of currentUser being null does not need to be handled because of the sign-in observer (onAuthStateChanged in App.tsx)

@@ -80,9 +80,19 @@
   color: #ff7a7a;
 }
 
-#favorites-modal {
-}
-
 #favorites-header {
   height: 9vh;
+}
+
+#favorites-modal-button-back {
+  width: 98%;
+  font-size: 2.5vh;
+  height: 6vh;
+  letter-spacing: 0.3vh;
+  --background: #8bceaa;
+  --background-hover: #8bceaa;
+  --background-focused: #8bceaa;
+  --background-activated: #8bceaa;
+  margin-right: auto;
+  margin-left: auto;
 }

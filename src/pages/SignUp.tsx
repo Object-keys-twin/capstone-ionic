@@ -19,6 +19,11 @@ enum PasswordVisibility {
   Text = "text"
 }
 
+interface FavoriteObj {
+  id: string;
+  name: string;
+}
+
 interface userData {
   email: string;
   uid?: string;
@@ -26,6 +31,7 @@ interface userData {
   photoURL: string;
   password: string;
   favorites: object;
+  favoritesArray: Array<FavoriteObj>;
 }
 
 type Props = {
@@ -78,7 +84,8 @@ export default class SignUp extends Component<Props, State> {
       displayName: this.state.displayName,
       photoURL: "",
       password: this.state.password,
-      favorites: {}
+      favorites: {},
+      favoritesArray: Array<FavoriteObj>()
     };
     this.props.handleSubmit(newUser, "signup");
   };

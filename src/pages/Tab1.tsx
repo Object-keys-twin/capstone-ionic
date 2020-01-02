@@ -20,7 +20,7 @@ import {
   IonItemOptions
 } from "@ionic/react";
 // import { RefresherEventDetail } from "@ionic/core";
-import React, { Component, useRef } from "react";
+import React, { Component } from "react";
 
 import { create, heart, logOut, settings, trash } from "ionicons/icons";
 import { Link } from "react-router-dom";
@@ -28,16 +28,20 @@ import "./Tab1.css";
 import firebase from "firebase";
 import db from "../firebase/firebase";
 
+interface FavoriteObj {
+  id: string;
+  name: string;
+}
+
 type Props = {
   user: userData;
-  favorites: { [key: string]: any };
   toggleFavorite: (checkpointId: string) => void;
+  favoritesArray: Array<FavoriteObj>;
 };
 
 type State = {
   tours: Array<DbData>;
   favoritesModal: boolean;
-  favoritesArray: Array<object>;
 };
 
 interface DbData {
@@ -59,13 +63,14 @@ interface userData {
 class Profile extends Component<Props, State> {
   state = {
     tours: Array<DbData>(),
-    favoritesModal: false,
-    favoritesArray: Array<any>()
+    favoritesModal: false
   };
 
   componentDidMount() {
-    // this.getTours();
+    this.getUserTours();
+  }
 
+  getUserTours = () => {
     db.collection("tours")
       .where("user", "==", this.props.user.displayName || this.props.user.email)
       .onSnapshot(querySnapshot => {
@@ -80,42 +85,14 @@ class Profile extends Component<Props, State> {
             user: doc.data().user
           });
         });
+
         this.setState({ tours: tourData });
+
         this.state.tours.forEach((tour, id) => {
           this.getCheckpoints(tour, id);
         });
       });
-  }
-
-  // refresh = (e: CustomEvent<RefresherEventDetail>) => {
-  //   setTimeout(() => {
-  //     this.getTours();
-  //     e.detail.complete();
-  //   }, 2000);
-  // };
-
-  // getTours = () => {
-  //   let tourData = Array<DbData>();
-  //   db.collection("tours")
-  //     .where("user", "==", this.props.user.email)
-  //     .get()
-  //     .then(docs => {
-  //       docs.forEach(doc => {
-  //         tourData.push({
-  //           checkpoints: doc.data().checkpoints,
-  //           description: doc.data().description,
-  //           name: doc.data().name,
-  //           created: doc.data().timestamp,
-  //           upvotes: doc.data().upvotes,
-  //           user: doc.data().user
-  //         });
-  //       });
-  //       this.setState({ tours: tourData });
-  //       this.state.tours.forEach((tour, id) => {
-  //         this.getCheckpoints(tour, id);
-  //       });
-  //     });
-  // };
+  };
 
   getCheckpoints = async (tour: any, idx: number) => {
     let checkpointsWithData: any = [];
@@ -126,6 +103,7 @@ class Profile extends Component<Props, State> {
         .get();
       checkpointsWithData.push(checkpoint.data());
     }
+
     let tours = this.state.tours;
     tours.forEach((el, i) => {
       if (i === idx) el.checkpoints = checkpointsWithData;
@@ -145,38 +123,7 @@ class Profile extends Component<Props, State> {
       });
   };
 
-  fetchFavoritesData = async () => {
-    let favoritesArray = [];
-    for (let favorite in this.props.favorites) {
-      const checkpoint = await db
-        .collection("checkpoints")
-        .doc(favorite)
-        .get();
-      const checkpointData = checkpoint.data();
-
-      if (checkpointData) {
-        const checkpointName = checkpointData.name;
-        const favoriteObj = {
-          id: favorite,
-          name: checkpointName
-        };
-        favoritesArray.push(favoriteObj);
-      } else {
-        console.log("Could not find favorite in database checkpoints.");
-      }
-    }
-    this.setState({ favoritesArray });
-  };
-
-  deleteFavorite = (favoriteId: string) => {
-    const shortenedFavorites = this.state.favoritesArray.filter(
-      favorite => favorite.id !== favoriteId
-    );
-    this.setState({ favoritesArray: shortenedFavorites });
-  };
-
   render() {
-    this.fetchFavoritesData();
     return (
       <IonPage>
         <IonHeader class="tab-header-block">
@@ -257,7 +204,7 @@ class Profile extends Component<Props, State> {
             </IonCard>
           ))}
 
-          <IonModal isOpen={this.state.favoritesModal} id="favorites-modal">
+          <IonModal isOpen={this.state.favoritesModal}>
             <IonHeader>
               <IonTitle
                 size="small"
@@ -267,48 +214,37 @@ class Profile extends Component<Props, State> {
                 My Favorites
               </IonTitle>
             </IonHeader>
-            {this.state.favoritesArray.length ? (
-              <IonContent>
-                <IonList>
-                  {this.state.favoritesArray.map(favorite => {
-                    let ref: any;
-                    return (
-                      <IonItemSliding
-                        key={favorite.id}
-                        ref={element => {
-                          ref = element;
-                        }}
-                      >
-                        <IonItem lines="none">{favorite.name}</IonItem>
-                        <IonItemOptions side="end">
-                          <IonItemOption
-                            color="danger"
-                            onClick={() => {
-                              this.deleteFavorite(favorite.id);
-                              this.props.toggleFavorite(favorite.id);
 
-                              // ref.close();
-                            }}
-                          >
-                            <IonIcon slot="icon-only" icon={trash}></IonIcon>
-                          </IonItemOption>
-                        </IonItemOptions>
-                      </IonItemSliding>
-                    );
-                  })}
-                  {/* I can't map because favorites is an object not an array. so i need to iterate through the favorites object, look up each id in the database's checkpoints and grab the checkpoint name. then push the name and the id into an array of objects, where each object has two keys, name and id. then i can map through the array to render it. each list item in the array will have a heart, and onclick it will need to use the id to call toggleFavorite. but then it will also need to live update the heart icon. i guess when toggleFavorite is called in App.tsx, it will re-render everything? and the iterating through favorites object function might be called automatically? */}
-                </IonList>
-              </IonContent>
-            ) : (
-              <IonContent></IonContent>
-            )}
+            <IonContent>
+              <IonList>
+                {this.props.favoritesArray.map(favorite => {
+                  return (
+                    <IonItemSliding key={favorite.id}>
+                      <IonItem lines="none">{favorite.name}</IonItem>
+                      <IonItemOptions side="end">
+                        <IonItemOption
+                          color="danger"
+                          onClick={() => {
+                            this.props.toggleFavorite(favorite.id);
+                          }}
+                        >
+                          <IonIcon slot="icon-only" icon={trash}></IonIcon>
+                        </IonItemOption>
+                      </IonItemOptions>
+                    </IonItemSliding>
+                  );
+                })}
+              </IonList>
+            </IonContent>
+
             <IonButton
               class="modal-button"
+              id="favorites-modal-button-back"
               onClick={() => {
                 this.setState({ favoritesModal: false });
               }}
             >
-              Back
+              Back To My Profile
             </IonButton>
           </IonModal>
         </IonContent>

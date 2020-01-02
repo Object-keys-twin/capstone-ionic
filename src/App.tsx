@@ -43,21 +43,27 @@ import "./theme/variables.css";
 
 // const { Storage } = Plugins;
 
-type State = {
-  user: userData | null;
-  loggedIn: boolean;
-  logInSignUpError: boolean;
-  toastMessage: string;
-};
+interface FavoriteObj {
+  id: string;
+  name: string;
+}
 
-interface userData {
+interface UserData {
   email: string;
   uid?: string;
   displayName: string;
   photoURL: string;
   password: string;
   favorites: object;
+  favoritesArray: Array<FavoriteObj>;
 }
+
+type State = {
+  user: UserData | null;
+  loggedIn: boolean;
+  logInSignUpError: boolean;
+  toastMessage: string;
+};
 
 class App extends Component<{}, State> {
   state = {
@@ -67,7 +73,8 @@ class App extends Component<{}, State> {
       displayName: "",
       photoURL: "",
       password: "",
-      favorites: {}
+      favorites: {},
+      favoritesArray: Array<FavoriteObj>()
     },
     loggedIn: false,
     logInSignUpError: false,
@@ -96,8 +103,17 @@ class App extends Component<{}, State> {
         if (userData) {
           favorites = userData.favorites;
         }
+
+        let favoritesArray = [];
+        for (let favorite in favorites) {
+          const favoriteObj = await this.fetchFavoriteData(favorite);
+          if (favoriteObj) {
+            favoritesArray.push(favoriteObj);
+          }
+        }
+
         this.setState({
-          user: { ...this.state.user, ...userObj, favorites },
+          user: { ...this.state.user, ...userObj, favorites, favoritesArray },
           loggedIn: true
         });
         // Storage.set({
@@ -129,7 +145,7 @@ class App extends Component<{}, State> {
   //   }
   // };
 
-  handleSubmit = (user: userData, type?: string) => {
+  handleSubmit = (user: UserData, type?: string) => {
     if (!user.email) {
       this.setState({
         logInSignUpError: true,
@@ -260,21 +276,48 @@ class App extends Component<{}, State> {
     const user = userData.data();
     if (user) {
       let favorites = user.favorites;
+      let favoritesArray = this.state.user.favoritesArray;
 
       if (!favorites[checkpointId]) {
         favorites[checkpointId] = 1;
         console.log("Added favorite.");
+        const favoriteObj = await this.fetchFavoriteData(checkpointId);
+        if (favoriteObj) {
+          favoritesArray.push(favoriteObj);
+        }
       } else {
         delete favorites[checkpointId];
         console.log("Deleted favorite.");
+        favoritesArray = favoritesArray.filter(
+          favorite => favorite.id !== checkpointId
+        );
       }
+
       userRef.update({
         favorites
       });
 
       this.setState({
-        user: { ...this.state.user, favorites }
+        user: { ...this.state.user, favorites, favoritesArray }
       });
+    }
+  };
+
+  fetchFavoriteData = async (checkpointId: string) => {
+    const checkpoint = await db
+      .collection("checkpoints")
+      .doc(checkpointId)
+      .get();
+    const checkpointData = checkpoint.data();
+
+    if (checkpointData) {
+      const checkpointName: string = checkpointData.name;
+      return {
+        id: checkpointId,
+        name: checkpointName
+      };
+    } else {
+      console.log("Could not find favorite in database checkpoints.");
     }
   };
 
@@ -291,7 +334,7 @@ class App extends Component<{}, State> {
                     <Profile
                       {...props}
                       user={this.state.user}
-                      favorites={this.state.user.favorites}
+                      favoritesArray={this.state.user.favoritesArray}
                       toggleFavorite={this.toggleFavorite}
                     />
                   )}
