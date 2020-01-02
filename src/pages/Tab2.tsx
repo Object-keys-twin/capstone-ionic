@@ -14,7 +14,7 @@ import {
   IonRow
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
-import { heartEmpty, heart, walk } from "ionicons/icons";
+import { heartEmpty, heart, arrowDroprightCircle } from "ionicons/icons";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import db from "../firebase/firebase";
@@ -133,7 +133,7 @@ class PublicTours extends Component<Props, State> {
                     >
                       <IonIcon
                         class="list-favorites-icon"
-                        icon={walk}
+                        icon={arrowDroprightCircle}
                       ></IonIcon>
                     </Link>
                   </IonCol>

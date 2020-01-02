@@ -21,12 +21,20 @@ import {
   IonGrid,
   IonRow,
   IonText,
-  IonSkeletonText
+  IonSkeletonText,
+  IonCol
 } from "@ionic/react";
 // import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
 
-import { create, heart, logOut, settings, trash } from "ionicons/icons";
+import {
+  create,
+  heart,
+  logOut,
+  settings,
+  trash,
+  arrowDroprightCircle
+} from "ionicons/icons";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import firebase from "firebase";
@@ -241,29 +249,39 @@ class Profile extends Component<Props, State> {
           </IonCard>
           {this.state.tours.map((tour, i) => (
             <IonCard className="stringbean-card" key={i}>
-              <Link
-                className="stringbean-link"
-                to={{
-                  pathname: "/map",
-                  state: { checkpoints: tour.checkpoints }
-                }}
-              >
-                <IonItem lines="none" className="stringbean-header-container">
-                  {tour.name}
-                </IonItem>
+              <IonItem lines="none" class="stringbean-header-container">
+                <IonGrid class="checkpoint-row stringbean-header">
+                  <IonCol class="list-checkpoint-col">
+                    <IonRow>{tour.name}</IonRow>
+                  </IonCol>
+                  <IonCol class="list-favorites-col">
+                    <Link
+                      className="stringbean-link"
+                      to={{
+                        pathname: "/map",
+                        state: { checkpoints: tour.checkpoints }
+                      }}
+                    >
+                      <IonIcon
+                        class="list-favorites-icon"
+                        icon={arrowDroprightCircle}
+                      ></IonIcon>
+                    </Link>
+                  </IonCol>
+                </IonGrid>
+              </IonItem>
 
-                <IonCardContent>
-                  {tour.checkpoints.map((checkpoint, i) => {
-                    if (checkpoint) {
-                      return (
-                        <IonItem lines="none" key={i}>
-                          {checkpoint.name}
-                        </IonItem>
-                      );
-                    }
-                  })}
-                </IonCardContent>
-              </Link>
+              <IonCardContent class="stringbean-card-content">
+                {tour.checkpoints.map((checkpoint, i) => {
+                  if (checkpoint) {
+                    return (
+                      <IonItem lines="none" key={i}>
+                        {checkpoint.name}
+                      </IonItem>
+                    );
+                  }
+                })}
+              </IonCardContent>
             </IonCard>
           ))}
 
