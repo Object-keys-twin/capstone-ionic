@@ -1,7 +1,6 @@
 import {
   IonCard,
   IonCardContent,
-  IonCardHeader,
   IonCardTitle,
   IonContent,
   IonHeader,
@@ -9,31 +8,71 @@ import {
   IonPage,
   IonTitle,
   IonIcon,
-  IonRefresher,
-  IonRefresherContent,
   IonImg,
   IonFab,
   IonFabButton,
   IonFabList,
-  IonLabel
+  IonModal,
+  IonButton,
+  IonList,
+  IonItemSliding,
+  IonItemOption,
+  IonItemOptions,
+  IonGrid,
+  IonRow,
+  IonText,
+  IonSkeletonText,
+  IonCol
 } from "@ionic/react";
-import { RefresherEventDetail } from "@ionic/core";
+// import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
-// import { Plugins } from "@capacitor/core";
-import { create, heart, logOut, settings } from "ionicons/icons";
+
+import {
+  create,
+  heart,
+  logOut,
+  settings,
+  trash,
+  arrowDroprightCircle
+} from "ionicons/icons";
 import { Link } from "react-router-dom";
-import "./Tab1.css";
+import axios from "axios";
 import firebase from "firebase";
 import db from "../firebase/firebase";
+import { yelpApiKey } from "../secrets";
 
-// const { Storage } = Plugins;
+import "./Tab1.css";
+
+interface FavoriteObj {
+  id: string;
+  name: string;
+}
+
+interface BusinessData {
+  id: string;
+  name: string;
+  location: string;
+  imageUrl: string;
+  categories: Array<object>;
+  rating?: number;
+  latitude: number;
+  longitude: number;
+  price?: string | undefined;
+}
 
 type Props = {
   user: userData;
+  toggleFavorite: (checkpointId: string) => void;
+  favoritesArray: Array<FavoriteObj>;
+  addToStringBean: (business: object) => void;
 };
 
 type State = {
   tours: Array<DbData>;
+  favoritesModal: boolean;
+  addCheckpointModal: string;
+  currentFavoriteData: object;
+  showSkeleton: boolean;
 };
 
 interface DbData {
@@ -53,40 +92,34 @@ interface userData {
 }
 
 class Profile extends Component<Props, State> {
-  state = { tours: Array<DbData>() };
-
-  componentDidMount() {
-    this.getTours();
-  }
-
-  refresh = (e: CustomEvent<RefresherEventDetail>) => {
-    setTimeout(() => {
-      this.getTours();
-      console.log("Async operation has ended");
-      e.detail.complete();
-    }, 2000);
+  state = {
+    tours: Array<DbData>(),
+    favoritesModal: false,
+    addCheckpointModal: "",
+    currentFavoriteData: {
+      id: "",
+      name: "",
+      location: "",
+      imageUrl: "",
+      categories: [],
+      rating: 0,
+      latitude: 0,
+      longitude: 0,
+      price: ""
+    },
+    showSkeleton: false
   };
 
-  getTours = () => {
-    let tourData = Array<DbData>();
+  componentDidMount() {
+    this.getUserTours();
+  }
+
+  getUserTours = () => {
     db.collection("tours")
-      .where("user", "==", this.props.user.email)
-      .get()
-      .then(docs => {
-        docs.forEach(doc => {
-          // this.setState({
-          // 	tours: [
-          // 		...this.state.tours,
-          // 		{
-          // 			checkpoints: doc.data().checkpoints,
-          // 			description: doc.data().description,
-          // 			name: doc.data().name,
-          // 			created: doc.data().timestamp,
-          // 			upvotes: doc.data().upvotes,
-          // 			user: doc.data().user
-          // 		}
-          // 	]
-          // });
+      .where("user", "==", this.props.user.displayName || this.props.user.email)
+      .onSnapshot(querySnapshot => {
+        let tourData = Array<DbData>();
+        querySnapshot.forEach(doc => {
           tourData.push({
             checkpoints: doc.data().checkpoints,
             description: doc.data().description,
@@ -96,7 +129,9 @@ class Profile extends Component<Props, State> {
             user: doc.data().user
           });
         });
+
         this.setState({ tours: tourData });
+
         this.state.tours.forEach((tour, id) => {
           this.getCheckpoints(tour, id);
         });
@@ -106,12 +141,13 @@ class Profile extends Component<Props, State> {
   getCheckpoints = async (tour: any, idx: number) => {
     let checkpointsWithData: any = [];
     for (let i = 0; i < tour.checkpoints.length; i++) {
-      const checkpoints = await db
+      const checkpoint = await db
         .collection("checkpoints")
         .doc(`${tour.checkpoints[i]}`)
         .get();
-      checkpointsWithData.push(checkpoints.data());
+      checkpointsWithData.push(checkpoint.data());
     }
+
     let tours = this.state.tours;
     tours.forEach((el, i) => {
       if (i === idx) el.checkpoints = checkpointsWithData;
@@ -131,6 +167,33 @@ class Profile extends Component<Props, State> {
       });
   };
 
+  getBusinessFromYelp = async (businessId: string) => {
+    this.setState({ showSkeleton: true });
+    const api = axios.create({
+      baseURL: "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3",
+      headers: {
+        Authorization: `Bearer ${yelpApiKey}`
+      }
+    });
+    const { data } = await api.get(`/businesses/${businessId}`);
+
+    const businessObj = {
+      id: data.id,
+      name: data.name,
+      location:
+        data.location.display_address[0] +
+        ", " +
+        data.location.display_address[1],
+      latitude: data.coordinates.latitude,
+      longitude: data.coordinates.longitude,
+      price: data.price,
+      imageUrl: data.image_url,
+      categories: data.categories,
+      rating: data.rating
+    };
+    this.setState({ currentFavoriteData: businessObj, showSkeleton: false });
+  };
+
   render() {
     return (
       <IonPage>
@@ -138,59 +201,18 @@ class Profile extends Component<Props, State> {
           <IonTitle size="small" class="tab-header header-font">
             My Profile
           </IonTitle>
-        </IonHeader>
-        <IonContent className="beancontent">
-          <IonCard class="profile-card">
-            <IonImg
-              id="profile-photo"
-              src={this.props.user.photoURL || "assets/icon/bean-profile.png"}
-            />
-            <IonCardHeader>
-              <IonCardTitle id="profile-text" class="header">
-                Welcome, {this.props.user.displayName || this.props.user.email}!
-              </IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent></IonCardContent>
-          </IonCard>
-          <IonCard id="string-bean-title-card">
-            <IonCardTitle className="string-bean-title">
-              My Stringbeans
-            </IonCardTitle>
-          </IonCard>
-          {this.state.tours.map((tour, i) => (
-            <IonCard className="stringbean-card" key={i}>
-              <Link
-                className="stringbean-link"
-                to={{
-                  pathname: "/map",
-                  state: { checkpoints: tour.checkpoints }
-                }}
-              >
-                <IonItem lines="none" className="stringbean-title">
-                  {tour.name}
-                </IonItem>
-
-                <IonCardContent>
-                  {tour.checkpoints.map((checkpoint, i) => {
-                    if (checkpoint) {
-                      return (
-                        <IonItem lines="none" key={i}>
-                          {checkpoint.name}
-                        </IonItem>
-                      );
-                    }
-                  })}
-                </IonCardContent>
-              </Link>
-            </IonCard>
-          ))}
-
-          <IonFab vertical="top" horizontal="end" slot="fixed">
+          <IonFab vertical="top" horizontal="end">
             <IonFabButton id="settings-button">
               <IonIcon class="settings-tray-icon" icon={settings} />
             </IonFabButton>
             <IonFabList side="bottom" id="profile-settings-tray">
-              <IonFabButton class="settings-tray-button" id="favorites-button">
+              <IonFabButton
+                class="settings-tray-button"
+                id="favorites-button"
+                onClick={() => {
+                  this.setState({ favoritesModal: true });
+                }}
+              >
                 <IonIcon
                   class="settings-tray-icon favorites-icon"
                   icon={heart}
@@ -208,14 +230,213 @@ class Profile extends Component<Props, State> {
               </IonFabButton>
             </IonFabList>
           </IonFab>
-          <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
-            <IonRefresherContent
-              pullingIcon="arrow-dropdown"
-              pullingText="Pull to refresh"
-              refreshingSpinner="circles"
-              refreshingText="Refreshing..."
-            ></IonRefresherContent>
-          </IonRefresher>
+        </IonHeader>
+        <IonContent className="beancontent">
+          <IonCard class="profile-card">
+            <IonImg
+              id="profile-photo"
+              src={this.props.user.photoURL || "assets/icon/bean-profile.png"}
+            />
+
+            <IonCardTitle id="profile-text">
+              Welcome, {this.props.user.displayName || this.props.user.email}!
+            </IonCardTitle>
+          </IonCard>
+          <IonCard id="string-bean-title-card">
+            <IonCardTitle className="string-bean-title">
+              My Stringbeans
+            </IonCardTitle>
+          </IonCard>
+          {this.state.tours.map((tour, i) => (
+            <IonCard className="stringbean-card" key={i}>
+              <IonItem lines="none" class="stringbean-header-container">
+                <IonGrid class="checkpoint-row stringbean-header">
+                  <IonCol class="list-checkpoint-col">
+                    <IonRow>{tour.name}</IonRow>
+                  </IonCol>
+                  <IonCol class="list-favorites-col">
+                    <Link
+                      className="stringbean-link"
+                      to={{
+                        pathname: "/map",
+                        state: { checkpoints: tour.checkpoints }
+                      }}
+                    >
+                      <IonIcon
+                        class="list-favorites-icon"
+                        icon={arrowDroprightCircle}
+                      ></IonIcon>
+                    </Link>
+                  </IonCol>
+                </IonGrid>
+              </IonItem>
+
+              <IonCardContent class="stringbean-card-content">
+                {tour.checkpoints.map((checkpoint, i) => {
+                  if (checkpoint) {
+                    return (
+                      <IonItem lines="none" key={i}>
+                        {checkpoint.name}
+                      </IonItem>
+                    );
+                  }
+                })}
+              </IonCardContent>
+            </IonCard>
+          ))}
+
+          <IonModal isOpen={this.state.favoritesModal}>
+            <IonHeader>
+              <IonTitle
+                size="small"
+                class="tab-header header-font"
+                id="favorites-header"
+              >
+                My Favorites
+              </IonTitle>
+            </IonHeader>
+
+            <IonContent class="modal-content">
+              <IonList>
+                {this.props.favoritesArray.map(favorite => {
+                  return (
+                    <IonItemSliding key={favorite.id}>
+                      <IonItem
+                        class="favorites-list-name"
+                        lines="none"
+                        onClick={() => {
+                          this.setState({ addCheckpointModal: favorite.id });
+                          this.getBusinessFromYelp(favorite.id);
+                        }}
+                      >
+                        {favorite.name}
+                      </IonItem>
+                      <IonItemOptions side="end">
+                        <IonItemOption
+                          color="danger"
+                          onClick={() => {
+                            this.props.toggleFavorite(favorite.id);
+                          }}
+                        >
+                          <IonIcon slot="icon-only" icon={trash}></IonIcon>
+                        </IonItemOption>
+                      </IonItemOptions>
+                      <IonModal
+                        isOpen={favorite.id === this.state.addCheckpointModal}
+                      >
+                        <IonGrid class="modal-grid">
+                          <IonRow class="modal-info">
+                            {this.state.showSkeleton ? (
+                              <IonGrid class="modal-info-grid">
+                                <IonRow class="modal-info-text modal-name">
+                                  <IonSkeletonText
+                                    animated
+                                    width="70vw"
+                                    class="skeleton-name"
+                                  ></IonSkeletonText>
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  <IonSkeletonText
+                                    animated
+                                    width="50vw"
+                                    class="skeleton-location"
+                                  ></IonSkeletonText>
+                                </IonRow>
+                                <IonRow>
+                                  <IonSkeletonText
+                                    animated
+                                    width="60vw"
+                                    class="skeleton-image"
+                                  ></IonSkeletonText>
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  <IonSkeletonText
+                                    animated
+                                    width="35vw"
+                                    class="skeleton-rating-price"
+                                  ></IonSkeletonText>
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  <IonSkeletonText
+                                    animated
+                                    width="30vw"
+                                    class="skeleton-rating-price"
+                                  ></IonSkeletonText>
+                                </IonRow>
+                              </IonGrid>
+                            ) : (
+                              <IonGrid class="modal-info-grid">
+                                <IonRow class="modal-info-text modal-name">
+                                  {this.state.currentFavoriteData.name}
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  {this.state.currentFavoriteData.location}
+                                </IonRow>
+                                <IonRow>
+                                  <IonImg
+                                    class="modal-image"
+                                    src={
+                                      this.state.currentFavoriteData.imageUrl ||
+                                      "assets/icon/bean-profile.png"
+                                    }
+                                  ></IonImg>
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  Rating:{" "}
+                                  {this.state.currentFavoriteData.rating}
+                                  /5
+                                </IonRow>
+                                <IonRow class="modal-info-text">
+                                  Price:&nbsp;
+                                  <IonText class="modal-price-dollars">
+                                    {this.state.currentFavoriteData.price ||
+                                      "N/A"}
+                                  </IonText>
+                                </IonRow>
+                              </IonGrid>
+                            )}
+                          </IonRow>
+                          <IonRow class="modal-buttons-row">
+                            <IonButton
+                              class="modal-button modal-button-add"
+                              size="small"
+                              onClick={() => {
+                                this.props.addToStringBean(
+                                  this.state.currentFavoriteData
+                                );
+                                this.setState({ addCheckpointModal: "" });
+                              }}
+                              disabled={this.state.showSkeleton}
+                            >
+                              Add To Stringbean
+                            </IonButton>
+                            <IonButton
+                              class="modal-button  modal-button-back"
+                              onClick={() => {
+                                this.setState({ addCheckpointModal: "" });
+                              }}
+                            >
+                              Back
+                            </IonButton>
+                          </IonRow>
+                        </IonGrid>
+                      </IonModal>
+                    </IonItemSliding>
+                  );
+                })}
+              </IonList>
+            </IonContent>
+
+            <IonButton
+              class="modal-button"
+              id="favorites-modal-button-back"
+              onClick={() => {
+                this.setState({ favoritesModal: false });
+              }}
+            >
+              Back To My Profile
+            </IonButton>
+          </IonModal>
         </IonContent>
       </IonPage>
     );

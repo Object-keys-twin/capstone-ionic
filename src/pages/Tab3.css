@@ -1,15 +1,12 @@
 #search-bar {
   display: flex;
+  align-items: center;
   height: 7vh;
   font-size: 2.5vh;
-  padding: 2vh;
+  padding-left: 2vh;
+  padding-right: 0.7vh;
   margin: 2vh;
   --background: white;
-}
-
-.beancontent {
-  --background: #ade4ca;
-  background-color: #ade4ca;
 }
 
 .beancard {
@@ -20,12 +17,11 @@
 }
 
 .beanitem {
-  font-size: 2.2vh;
+  font-size: 2.3vh;
   --background: clear;
 }
 
 #search-button {
-  margin: -1vh;
   text-transform: none;
   font-size: 2.5vh;
   --background: #ffb68e;
@@ -34,8 +30,9 @@
   --background-activated: #ffb68e;
 }
 
-#modal-grid {
+.modal-grid {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -43,7 +40,7 @@
   padding: 3vh;
 }
 
-#modal-buttons-row {
+.modal-buttons-row {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,19 +48,32 @@
 
 .modal-button {
   --background: #6ba486;
+  --background-hover: #6ba486;
+  --background-focused: #6ba486;
+  --background-activated: #6ba486;
 }
 
-#modal-button-back {
+.modal-button-back {
   width: 30%;
+  font-size: 2.5vh;
+  height: 6vh;
+  letter-spacing: 0.3vh;
+  --background: #8bceaa;
+  --background-hover: #8bceaa;
+  --background-focused: #8bceaa;
+  --background-activated: #8bceaa;
+  margin-top: 1vh;
+  margin-bottom: 0;
 }
 
-#modal-button-add {
+.modal-button-add {
   font-size: 3vh;
-  min-height: 4vh;
+  height: 7vh;
   width: 90%;
+  letter-spacing: 0.3vh;
 }
 
-#modal-info {
+.modal-info {
   background: white;
   display: flex;
   text-align: center;
@@ -72,13 +82,13 @@
   border-radius: 2vh;
 }
 
-#modal-image {
-  max-height: 50vh;
+.modal-image {
+  max-height: 42vh;
   margin-top: 3vh;
   margin-bottom: 3vh;
 }
 
-#modal-info-grid {
+.modal-info-grid {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -89,11 +99,24 @@
   font-size: 3vh;
 }
 
-#modal-name {
+.modal-name {
   font-size: 4vh;
   margin-bottom: 1vh;
 }
 
-#modal-price-dollars {
+.modal-price-dollars {
   color: green;
+}
+
+#search-spinner {
+  height: 3.5vh;
+  width: 3.5vh;
+}
+
+.skeleton-text {
+  height: 1.7vh;
+}
+
+.skeleton-heart {
+  color: #ebebeb;
 }

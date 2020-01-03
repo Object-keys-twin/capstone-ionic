@@ -19,19 +19,26 @@ enum PasswordVisibility {
   Text = "text"
 }
 
+interface FavoriteObj {
+  id: string;
+  name: string;
+}
+
 interface userData {
-  email: string | null;
-  uid?: string | null;
-  displayName: string | null;
-  photoURL: string | null;
+  email: string;
+  uid?: string;
+  displayName: string;
+  photoURL: string;
   password: string;
+  favorites: object;
+  favoritesArray: Array<FavoriteObj>;
 }
 
 type Props = {
   handleSubmit: (user: userData, type?: string) => void;
   showSignUp: () => void;
-  resetLogInError: () => void;
-  signUpError: boolean;
+  resetLogInSignUpError: () => void;
+  logInSignUpError: boolean;
   toastMessage: string;
 };
 
@@ -76,7 +83,9 @@ export default class SignUp extends Component<Props, State> {
       uid: "",
       displayName: this.state.displayName,
       photoURL: "",
-      password: this.state.password
+      password: this.state.password,
+      favorites: {},
+      favoritesArray: Array<FavoriteObj>()
     };
     this.props.handleSubmit(newUser, "signup");
   };
@@ -96,7 +105,7 @@ export default class SignUp extends Component<Props, State> {
               type="text"
               class="login-signup-input-field"
               name="displayName"
-              placeholder="Username"
+              placeholder="Username (optional)"
               onIonChange={e =>
                 this.handleDisplayName((e.target as HTMLInputElement).value)
               }
@@ -146,9 +155,7 @@ export default class SignUp extends Component<Props, State> {
             ) : null}
           </IonItem>
         </IonCardContent>
-        {/* {this.props.signUpError ? (
-          <IonItem>Password must be at least 6 characters!</IonItem>
-        ) : null} */}
+
         <IonGrid class="login-signup-button-container">
           <IonRow class="signup-button-row">
             <IonButton
@@ -164,11 +171,11 @@ export default class SignUp extends Component<Props, State> {
         </IonGrid>
         <IonToast
           cssClass="login-signup-toast"
-          isOpen={this.props.signUpError}
+          isOpen={this.props.logInSignUpError}
           message={this.props.toastMessage}
           duration={2000}
           onDidDismiss={() => {
-            this.props.resetLogInError();
+            this.props.resetLogInSignUpError();
           }}
         />
       </>

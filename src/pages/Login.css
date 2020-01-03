@@ -5,11 +5,7 @@
 
 video {
   position: fixed;
-  left: -100%;
-  /* top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%; */
+  /* left: -100%; */
   width: auto;
   height: 100%;
 }
@@ -41,11 +37,12 @@ video {
   --background-hover: #ffb68e;
   --background-focused: #ffb68e;
   --background-activated: #ffb68e;
-  font-size: 2vh;
+  font-size: 2.2vh;
 }
 
 .login-signup-toast {
   text-align: center;
+  font-size: 2.5vh;
 }
 
 .login-button-row {
@@ -83,6 +80,7 @@ video {
   height: 3vh;
   width: 3vh;
   margin: 1vh;
+  color: #8d8d8d;
 }
 
 .login-signup-input-nestedcontainer {
@@ -90,9 +88,14 @@ video {
 }
 
 #signup-button {
-  font-size: 4vh;
+  font-size: 3.5vh;
   color: #fff7ca;
   font-family: "Lobster Two", cursive;
-  margin-bottom: -2vh;
-  margin-top: -2vh;
+  --background: #b7e7c3;
+  --background-hover: #b7e7c3;
+  --background-focused: #b7e7c3;
+  --background-activated: #b7e7c3;
+  margin-top: 2vh;
+  margin-right: 1vh;
+  --border-radius: 2vh;
 }

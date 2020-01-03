@@ -1,0 +1,67 @@
+.bean-alert {
+  --background: #6ba486;
+}
+
+.alert-wrapper.sc-ion-alert-md {
+  border-radius: 8vh 3vh 8vh 3vh;
+}
+.alert-wrapper.sc-ion-alert-ios {
+  border-radius: 8vh 3vh 8vh 3vh;
+}
+
+.alert-title.sc-ion-alert-md {
+  text-align: center;
+  font-size: 4vh;
+  font-family: "Lobster Two", cursive;
+  color: #fff5ba;
+}
+.alert-title.sc-ion-alert-ios {
+  font-size: 4vh;
+  font-family: "Lobster Two", cursive;
+  color: #fff5ba;
+  font-weight: normal;
+}
+
+.alert-input-group.sc-ion-alert-md {
+  padding-top: 0vh;
+  padding-bottom: 0vh;
+}
+.alert-input-group.sc-ion-alert-ios {
+  padding-top: 0vh;
+  padding-bottom: 0vh;
+}
+
+.alert-input.sc-ion-alert-md {
+  background-color: white;
+  padding: 1.5vh;
+  font-size: 2.5vh;
+}
+.alert-input.sc-ion-alert-ios {
+  background-color: white;
+  padding: 1.5vh;
+  font-size: 2.5vh;
+}
+
+.alert-button-group.sc-ion-alert-md {
+  display: flex;
+  justify-content: space-around;
+  width: 97%;
+}
+.alert-button-group.sc-ion-alert-ios {
+  display: flex;
+  justify-content: space-around;
+  width: 95%;
+  margin-top: 2vh;
+  margin-bottom: 1vh;
+}
+
+.alert-button.sc-ion-alert-md {
+  color: #fff5ba;
+  text-transform: none;
+  font-size: 2.5vh;
+}
+.alert-button.sc-ion-alert-ios {
+  color: #fff5ba;
+  text-transform: none;
+  font-size: 2.5vh;
+}

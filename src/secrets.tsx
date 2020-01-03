@@ -1,4 +1,0 @@
-export const yelpApiKey =
-	"zbczWecavwX-PEqu2ZY9Nji3l8hmfiBgSBgaOElh8q_XS-izyIPL1IWRiI77e-z6PXvZIWq6WI3oujk8_cui6_2Xs2IP4sksuRv9zow3ynMHGZBWcywWbOPs3XvNXXYx";
-
-export const googleApiKey = "AIzaSyBGyFLYgJF7ExIR7XYs6i2ew3h8VEFQoIM";

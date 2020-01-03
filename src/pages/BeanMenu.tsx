@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import {
   IonMenu,
   IonHeader,
-  IonToolbar,
   IonTitle,
   IonContent,
   IonList,
@@ -14,7 +13,8 @@ import {
   IonIcon,
   IonItemSliding,
   IonItemOption,
-  IonItemOptions
+  IonItemOptions,
+  IonToast
 } from "@ionic/react";
 
 import { list, trash } from "ionicons/icons";
@@ -29,7 +29,7 @@ const { Storage } = Plugins;
 interface BusinessData {
   id: string;
   name: string;
-  location: object;
+  location: string;
   imageUrl: string;
   categories: Array<object>;
   rating?: number;
@@ -39,23 +39,22 @@ interface BusinessData {
 }
 
 type State = {
-  stringbean: Array<BusinessData>;
   showAlert: boolean;
-  name: string;
-  description: string;
+  publishError: boolean;
+  toastMessage: string;
 };
 
 type Props = {
   stringbean: Array<BusinessData>;
   removeFromStringBean: (id: string) => void;
+  clearStorageOnPublish: () => void;
 };
 
 export default class BeanMenu extends Component<Props, State> {
   state = {
-    stringbean: Array<BusinessData>(),
     showAlert: false,
-    name: "",
-    description: ""
+    publishError: false,
+    toastMessage: ""
   };
 
   toggleAlert = () => {
@@ -70,14 +69,30 @@ export default class BeanMenu extends Component<Props, State> {
         bean.price = "not available";
       }
       await beanRef.set(bean);
+      console.log("Created checkpoint in Firestore:", bean.name);
     }
+    //this only creates. need to add update functionality, so as yelp data update in the future, firestore will also be updated
   };
 
   publishTour = async (name: string, description: string) => {
     if (!this.props.stringbean.length) {
+      this.setState({
+        publishError: true,
+        toastMessage: "No beans to string!"
+      });
       console.log("No beans to string!");
       return;
     }
+
+    if (name === "") {
+      this.setState({
+        publishError: true,
+        toastMessage: "Please name your stringbean!"
+      });
+      console.log("Please name your stringbean!");
+      return;
+    }
+
     let checkpoints = Array<string>();
 
     this.props.stringbean.forEach(async bean => {
@@ -88,18 +103,17 @@ export default class BeanMenu extends Component<Props, State> {
       checkpoints.push(bean.id);
     });
 
-    let userEmail: string = "";
-    const data = await Storage.get({ key: "user" });
-    if (data.value) {
-      userEmail = JSON.parse(data.value).email;
-    }
+    let username: string | null = "";
+    let user = firebase.auth().currentUser;
+    if (user) username = user.displayName || user.email;
+    // the case of currentUser being null does not need to be handled because of the sign-in observer (onAuthStateChanged in App.tsx)
 
     let tour = {
       checkpoints,
-      name: name,
-      description: description,
+      name,
+      description,
       created: firebase.firestore.Timestamp.fromDate(new Date()),
-      user: userEmail
+      user: username
     };
 
     await db
@@ -109,52 +123,64 @@ export default class BeanMenu extends Component<Props, State> {
         console.log("Added document with ID: ", ref.id);
       });
 
-    await Storage.remove({ key: "stringbean" });
+    this.props.clearStorageOnPublish();
   };
 
   render() {
     return (
       <>
-        <IonMenu side="end" contentId="main" type="overlay" swipeGesture={true}>
+        <IonMenu
+          id="beanmenu"
+          side="end"
+          contentId="main"
+          type="overlay"
+          swipeGesture={true}
+        >
           <IonHeader>
-            <IonToolbar class="bean-menu-toolbar" color="primary">
-              <IonTitle class="header-font bean-menu-header">
-                My Stringbean
-              </IonTitle>
-            </IonToolbar>
+            <IonTitle
+              size="small"
+              class="tab-header header-font"
+              id="bean-menu-header"
+            >
+              My Stringbean
+            </IonTitle>
           </IonHeader>
-          <IonContent>
+          <IonContent class="modal-content">
             <IonList>
-              {this.props.stringbean.map((bean, idx) => (
-                <IonItemSliding key={idx}>
-                  <IonItemOptions side="end">
-                    <IonItemOption
-                      color="danger"
-                      onClick={() => {
-                        this.props.removeFromStringBean(bean.id);
-                      }}
-                    >
-                      <IonIcon slot="icon-only" icon={trash}></IonIcon>
-                    </IonItemOption>
-                  </IonItemOptions>
-                  <IonItem lines="none">{bean.name}</IonItem>
-                </IonItemSliding>
-              ))}
+              {this.props.stringbean.map((bean, idx) => {
+                return (
+                  <IonItemSliding key={bean.id}>
+                    <IonItemOptions side="end">
+                      <IonItemOption
+                        color="danger"
+                        onClick={() => {
+                          this.props.removeFromStringBean(bean.id);
+                        }}
+                      >
+                        <IonIcon slot="icon-only" icon={trash}></IonIcon>
+                      </IonItemOption>
+                    </IonItemOptions>
+                    <IonItem lines="none">{bean.name}</IonItem>
+                  </IonItemSliding>
+                );
+              })}
             </IonList>
           </IonContent>
-          <IonButton
-            id="publish-button"
-            onClick={() => {
-              this.toggleAlert();
-            }}
-          >
-            Publish Stringbean
-          </IonButton>
+          <IonItem no-padding lines="full" id="bean-menu-button-container">
+            <IonButton
+              id="publish-button"
+              onClick={() => {
+                this.toggleAlert();
+              }}
+            >
+              Publish Stringbean
+            </IonButton>
+          </IonItem>
+
           <BeanMenuForm
             showAlert={this.state.showAlert}
             toggleAlert={this.toggleAlert}
             publishTour={this.publishTour}
-            // handleChange={this.handleChange}
           />
         </IonMenu>
         <IonFab id="menu-button" vertical="bottom" horizontal="end">
@@ -168,6 +194,15 @@ export default class BeanMenu extends Component<Props, State> {
         </IonFab>
 
         <IonRouterOutlet id="main"></IonRouterOutlet>
+        <IonToast
+          cssClass="publish-toast"
+          isOpen={this.state.publishError}
+          message={this.state.toastMessage}
+          duration={2000}
+          onDidDismiss={() => {
+            this.setState({ publishError: false, toastMessage: "" });
+          }}
+        />
       </>
     );
   }

@@ -16,9 +16,9 @@ import firebase from "firebase";
 import Profile from "./pages/Tab1";
 import Home from "./pages/Tab2";
 import CreateStory from "./pages/Tab3";
-import Details from "./pages/Details";
 import MapPage from "./pages/Map";
 import Login from "./pages/Login";
+import db from "./firebase/firebase";
 
 import "./App.css";
 
@@ -43,21 +43,40 @@ import "./theme/variables.css";
 
 const { Storage } = Plugins;
 
-type State = {
-  user: userData | null;
-  loggedIn: boolean;
-  logInError: boolean;
-  signUpError: boolean;
-  toastMessage: string;
-};
-
-interface userData {
-  email: string | null;
-  uid?: string | null;
-  displayName: string | null;
-  photoURL: string | null;
-  password: string;
+interface FavoriteObj {
+  id: string;
+  name: string;
 }
+
+interface UserData {
+  email: string;
+  uid?: string;
+  displayName: string;
+  photoURL: string;
+  password: string;
+  favorites: object;
+  favoritesArray: Array<FavoriteObj>;
+}
+
+interface BusinessData {
+  id: string;
+  name: string;
+  location: string;
+  imageUrl: string;
+  categories: Array<object>;
+  rating?: number;
+  latitude: number;
+  longitude: number;
+  price?: string | undefined;
+}
+
+type State = {
+  user: UserData | null;
+  loggedIn: boolean;
+  logInSignUpError: boolean;
+  toastMessage: string;
+  stringbean: Array<BusinessData>;
+};
 
 class App extends Component<{}, State> {
   state = {
@@ -66,107 +85,164 @@ class App extends Component<{}, State> {
       uid: "",
       displayName: "",
       photoURL: "",
-      password: ""
+      password: "",
+      favorites: {},
+      favoritesArray: Array<FavoriteObj>()
     },
     loggedIn: false,
-    logInError: false,
-    signUpError: false,
-    toastMessage: ""
+    logInSignUpError: false,
+    toastMessage: "",
+    stringbean: Array<BusinessData>()
   };
 
   componentDidMount = () => {
-    this.getUser();
-    firebase.auth().onAuthStateChanged(user => {
+    // this.getUser();
+    this.getStringBeanOnMount();
+    firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         console.log("Currently logged in!");
         let userObj = {
-          ...this.state.user
-        };
-        userObj = {
           email: user.email || "",
           uid: user.uid || "",
-          displayName: user.displayName || "",
+          displayName: this.state.user.displayName || user.displayName || "",
           photoURL: user.photoURL || "",
           password: ""
         };
+
+        let favorites = {};
+        const getUser = await db
+          .collection("users")
+          .doc(user.uid)
+          .get();
+        const userData = getUser.data();
+        if (userData) {
+          favorites = userData.favorites;
+        }
+
+        let favoritesArray = [];
+        for (let favorite in favorites) {
+          const favoriteObj = await this.fetchFavoriteData(favorite);
+          if (favoriteObj) {
+            favoritesArray.push(favoriteObj);
+          }
+        }
+
         this.setState({
-          user: userObj,
-          loggedIn: true,
-          logInError: false,
-          signUpError: false
+          user: { ...this.state.user, ...userObj, favorites, favoritesArray },
+          loggedIn: true
         });
-        Storage.set({
-          key: "user",
-          value: JSON.stringify(user)
-        });
-        console.log("logged in user", user);
+        // Storage.set({
+        //   key: "user",
+        //   value: JSON.stringify(user)
+        // });
+        console.log("Logged in firebase user:", user);
       } else {
         console.log("Not logged in.");
         this.setState({ loggedIn: false });
-        Storage.remove({
-          key: "user"
-        });
+        // Storage.remove({
+        //   key: "user"
+        // });
       }
     });
   };
 
-  getUser = async () => {
-    const data = await Storage.get({
-      key: "user"
-    });
-
+  getStringBeanOnMount = async () => {
+    const data = await Storage.get({ key: "stringbean" });
     if (data.value) {
-      const user = JSON.parse(data.value);
-      this.setState({
-        user: user,
-        loggedIn: true
-      });
+      this.setState({ stringbean: JSON.parse(data.value) });
     }
   };
 
-  handleSubmit = (user: userData, type?: string) => {
+  //leaving this here. not using local storage means that the login page will flash upon refresh as it waits for authentication
+  //maybe for the sake of appearance we should end up using local storage just to not have the login page flash.
+
+  // getUser = async () => {
+  //   const data = await Storage.get({
+  //     key: "user"
+  //   });
+
+  //   if (data.value) {
+  //     const user = JSON.parse(data.value);
+  //     this.setState({
+  //       user: user,
+  //       loggedIn: true
+  //     });
+  //   }
+  // };
+
+  handleSubmit = (user: UserData, type?: string) => {
     if (!user.email) {
       this.setState({
-        logInError: true,
-        signUpError: true,
+        logInSignUpError: true,
         toastMessage: "Please enter an email address."
       });
     } else if (!user.password) {
       this.setState({
-        logInError: true,
-        signUpError: true,
+        logInSignUpError: true,
         toastMessage: "Please enter a password."
       });
-    }
-    // if (user.email && user.password)
-    else {
+      //do a lookup in firebase to make sure the displayName isn't already taken, and maybe email too? or is that builtin
+    } else {
       if (type === "signup") {
-        this.createUserOnFirestore(user.email, user.password);
+        this.createUserOnFirestore(user.email, user.password, user.displayName);
       } else {
         this.signInOnFirestore(user.email, user.password);
       }
     }
   };
 
-  resetLogInError = () => {
-    this.setState({ logInError: false, signUpError: false, toastMessage: "" });
+  resetLogInSignUpError = () => {
+    this.setState({ logInSignUpError: false, toastMessage: "" });
   };
 
-  createUserOnFirestore = (email: string, password: string) => {
+  createUserOnFirestore = (
+    email: string,
+    password: string,
+    displayName: string
+  ) => {
     if (email && password) {
       firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
-        .catch(function(error) {
+
+        .catch(error => {
           const errorCode = error.code;
           const errorMessage = error.message;
           console.log("Sign-up error:", errorCode, errorMessage);
+          this.setState({
+            logInSignUpError: true,
+            toastMessage:
+              "Invalid email and/or password! Passwords must be at least 6 characters."
+          });
+        })
+        .then(async () => {
+          let user = firebase.auth().currentUser;
+          if (user) {
+            //updateProfile takes longer than setState and the onAuthStateChanged listener reaction, so in onAuthStateChanged, need to grab the displayName from state instead of the firebase user data when updating state
+            if (displayName) {
+              user.updateProfile({
+                displayName: displayName
+              });
+              this.setState({
+                user: { ...this.state.user, displayName: displayName }
+              });
+            }
+
+            let newUser = {
+              email,
+              favorites: {},
+              friends: {}
+            };
+
+            await db
+              .collection("users")
+              .doc(user.uid)
+              .set(newUser)
+              .then(() => {
+                console.log("Added new user.");
+              });
+          }
         });
-      this.setState({
-        signUpError: true,
-        toastMessage:
-          "Invalid email and/or password! Passwords must be at least 6 characters."
-      });
     }
   };
 
@@ -180,7 +256,7 @@ class App extends Component<{}, State> {
           var errorMessage = error.message;
           console.log("Log-in error:", errorCode, errorMessage);
           this.setState({
-            logInError: true,
+            logInSignUpError: true,
             toastMessage: "Wrong username and/or password!"
           });
         });
@@ -196,31 +272,118 @@ class App extends Component<{}, State> {
         console.log("Google login success");
         if (result.user) {
           const { uid, displayName, email, photoURL } = result.user;
-          const user = {
-            uid: uid,
-            displayName: displayName,
-            email: email,
-            photoURL: photoURL
-          };
+
           this.setState({
             user: {
               ...this.state.user,
-              uid: uid,
-              displayName: displayName,
-              email: email,
-              photoURL: photoURL
+              uid: uid || "",
+              displayName: displayName || "",
+              email: email || "",
+              photoURL: photoURL || ""
             }
           });
-          Storage.set({
-            key: "user",
-            value: JSON.stringify(user)
-          });
+          // Storage.set({
+          //   key: "user",
+          //   value: JSON.stringify(user)
+          // });
         }
       })
       .catch(function(error) {
         var errorMessage = error.message;
         alert("Google sign in error: " + errorMessage);
       });
+  };
+
+  toggleFavorite = async (checkpointId: string) => {
+    const userRef = db.collection("users").doc(this.state.user.uid);
+
+    const userData = await userRef.get();
+    const user = userData.data();
+    if (user) {
+      let favorites = user.favorites;
+      let favoritesArray = this.state.user.favoritesArray;
+
+      if (!favorites[checkpointId]) {
+        favorites[checkpointId] = 1;
+        console.log("Added favorite.");
+        const favoriteObj = await this.fetchFavoriteData(checkpointId);
+        if (favoriteObj) {
+          favoritesArray.push(favoriteObj);
+        }
+      } else {
+        delete favorites[checkpointId];
+        console.log("Deleted favorite.");
+        favoritesArray = favoritesArray.filter(
+          favorite => favorite.id !== checkpointId
+        );
+      }
+
+      userRef.update({
+        favorites
+      });
+
+      this.setState({
+        user: { ...this.state.user, favorites, favoritesArray }
+      });
+    }
+  };
+
+  fetchFavoriteData = async (checkpointId: string) => {
+    const checkpoint = await db
+      .collection("checkpoints")
+      .doc(checkpointId)
+      .get();
+    const checkpointData = checkpoint.data();
+
+    if (checkpointData) {
+      const checkpointName: string = checkpointData.name;
+      return {
+        id: checkpointId,
+        name: checkpointName
+      };
+    } else {
+      console.log("Could not find favorite in database checkpoints.");
+    }
+  };
+
+  addToStringBean = async (business: object) => {
+    let stringBeanArray = [];
+
+    const localStorage = await Storage.get({ key: "stringbean" });
+    if (localStorage.value) {
+      stringBeanArray = JSON.parse(localStorage.value);
+    }
+    stringBeanArray.push(business);
+
+    this.setState({ stringbean: stringBeanArray });
+    await Storage.set({
+      key: "stringbean",
+      value: JSON.stringify(stringBeanArray)
+    });
+  };
+
+  removeFromStringBean = async (id: string) => {
+    let storage: any;
+    let parsedStorage: any;
+    storage = await Storage.get({
+      key: "stringbean"
+    });
+    parsedStorage = JSON.parse(storage.value);
+    const removedBean = parsedStorage.filter(
+      (item: BusinessData) => item.id !== id
+    );
+    this.setState({
+      stringbean: removedBean
+    });
+    await Storage.set({
+      key: "stringbean",
+      value: JSON.stringify(removedBean)
+    });
+  };
+
+  clearStorageOnPublish = async () => {
+    await Storage.remove({ key: "stringbean" });
+    this.setState({ stringbean: Array<BusinessData>() });
   };
 
   render() {
@@ -233,15 +396,42 @@ class App extends Component<{}, State> {
                 <Route
                   path="/profile"
                   render={props => (
-                    <Profile {...props} user={this.state.user} />
+                    <Profile
+                      {...props}
+                      user={this.state.user}
+                      favoritesArray={this.state.user.favoritesArray}
+                      toggleFavorite={this.toggleFavorite}
+                      addToStringBean={this.addToStringBean}
+                    />
                   )}
                   exact={true}
                 />
-                <Route path="/explore" component={Home} exact={true} />
-                <Route path="/tab2/details" component={Details} />
-                <Route path="/create" component={CreateStory} />
+                <Route
+                  path="/explore"
+                  render={props => (
+                    <Home
+                      {...props}
+                      favorites={this.state.user.favorites}
+                      toggleFavorite={this.toggleFavorite}
+                    />
+                  )}
+                  exact={true}
+                />
+                <Route
+                  path="/create"
+                  render={props => (
+                    <CreateStory
+                      {...props}
+                      favorites={this.state.user.favorites}
+                      stringbean={this.state.stringbean}
+                      toggleFavorite={this.toggleFavorite}
+                      addToStringBean={this.addToStringBean}
+                      removeFromStringBean={this.removeFromStringBean}
+                      clearStorageOnPublish={this.clearStorageOnPublish}
+                    />
+                  )}
+                />
                 <Route path="/map" component={MapPage} exact={true} />
-                {/* <Route path="/signup" component={SignUp} exact={true} /> */}
                 <Route
                   path="/"
                   render={() => <Redirect to="/explore" />}
@@ -261,9 +451,9 @@ class App extends Component<{}, State> {
                   <IonIcon icon={add} />
                   <IonLabel>Create</IonLabel>
                 </IonTabButton>
-                {/* <IonTabButton tab="map" href="/map">
+                {/* <IonTabButton tab="messages" href="/messages">
 									<IonIcon icon={send} />
-									<IonLabel>Map</IonLabel>
+									<IonLabel>Messages</IonLabel>
 								</IonTabButton> */}
               </IonTabBar>
             </IonTabs>
@@ -275,9 +465,8 @@ class App extends Component<{}, State> {
       <Login
         handleGoogle={this.handleGoogle}
         handleSubmit={this.handleSubmit}
-        resetLogInError={this.resetLogInError}
-        logInError={this.state.logInError}
-        signUpError={this.state.signUpError}
+        resetLogInSignUpError={this.resetLogInSignUpError}
+        logInSignUpError={this.state.logInSignUpError}
         toastMessage={this.state.toastMessage}
       />
     );

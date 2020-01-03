@@ -9,7 +9,7 @@ type Props = {
 interface BusinessData {
   id: string;
   name: string;
-  location: object;
+  location: string;
   imageUrl: string;
   categories: Array<object>;
   rating?: number;

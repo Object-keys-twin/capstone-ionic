@@ -1,13 +1,3 @@
-.tours {
-  --background: red;
-}
-
-.tourname {
-  --background: blue;
-  text-align: center;
-  font-size: 18pt;
-}
-
 .stringbean-card {
   display: flex;
   flex-direction: column;
@@ -15,10 +5,15 @@
   --background: white;
 }
 
-.stringbean-title {
-  --color: #fffadc;
+.stringbean-header-container {
+  --color: #fff4b7;
   --background: #89c2a3;
   font-size: 3vh;
+}
+
+.stringbean-creator {
+  color: #ffffff;
+  font-size: 2.2vh;
 }
 
 .stringbean-link {
@@ -28,15 +23,24 @@
 
 .stringbean-card-content {
   --color: white;
+  padding: 1vh;
 }
 
 .checkpoint-row {
   display: flex;
   justify-content: space-between;
+  padding: 0;
+  align-items: center;
+}
+
+.stringbean-header {
+  padding-top: 1vh;
+  padding-bottom: 1vh;
 }
 
 .list-checkpoint-col {
   flex: 10;
+  padding-left: 0vh;
 }
 
 .list-favorites-col {
@@ -46,5 +50,15 @@
 }
 
 .list-favorites-icon {
+  font-size: 4vh;
+}
+
+.refresher-content {
+  --color: #fff5ba;
+  height: 12vh;
+}
+
+.refresher-pulling-icon {
+  color: #fff5ba !important;
   font-size: 4vh;
 }
