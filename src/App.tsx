@@ -126,22 +126,13 @@ class App extends Component<{}, State> {
             favoritesArray.push(favoriteObj);
           }
         }
-
         this.setState({
           user: { ...this.state.user, ...userObj, favorites, favoritesArray },
           loggedIn: true
         });
-        // Storage.set({
-        //   key: "user",
-        //   value: JSON.stringify(user)
-        // });
-        console.log("Logged in firebase user:", user);
       } else {
         console.log("Not logged in.");
         this.setState({ loggedIn: false });
-        // Storage.remove({
-        //   key: "user"
-        // });
       }
     });
   };
