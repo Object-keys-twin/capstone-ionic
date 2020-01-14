@@ -22,7 +22,8 @@ import {
   IonRow,
   IonText,
   IonSkeletonText,
-  IonCol
+  IonCol,
+  IonInput
 } from "@ionic/react";
 import React, { Component } from "react";
 
@@ -38,7 +39,7 @@ import { Link } from "react-router-dom";
 import firebase from "firebase";
 import db from "../firebase/firebase";
 
-import "./Tab1.css";
+import "./Profile.css";
 
 interface FavoriteObj {
   id: string;
@@ -58,7 +59,7 @@ interface FavoriteObj {
 // }
 
 type Props = {
-  user: userData;
+  user: UserData;
   toggleFavorite: (checkpointId: string) => void;
   favoritesArray: Array<FavoriteObj>;
   addToStringBean: (business: object) => void;
@@ -66,10 +67,12 @@ type Props = {
 
 type State = {
   tours: Array<DbData>;
-  favoritesModal: boolean;
+  showFavoritesModal: boolean;
   addCheckpointModal: string;
   currentFavoriteData: object;
   showSkeleton: boolean;
+  showEditAccountModal: boolean;
+  editAccountData: object;
 };
 
 interface DbData {
@@ -81,7 +84,7 @@ interface DbData {
   user: string;
 }
 
-interface userData {
+interface UserData {
   email: string;
   uid: string;
   displayName: string;
@@ -91,7 +94,7 @@ interface userData {
 class Profile extends Component<Props, State> {
   state = {
     tours: Array<DbData>(),
-    favoritesModal: false,
+    showFavoritesModal: false,
     addCheckpointModal: "",
     currentFavoriteData: {
       id: "",
@@ -104,7 +107,13 @@ class Profile extends Component<Props, State> {
       longitude: 0,
       price: ""
     },
-    showSkeleton: false
+    showSkeleton: false,
+    showEditAccountModal: false,
+    editAccountData: {
+      displayName: "",
+      email: "",
+      password: ""
+    }
   };
 
   componentDidMount() {
@@ -194,7 +203,7 @@ class Profile extends Component<Props, State> {
                 class="settings-tray-button"
                 id="favorites-button"
                 onClick={() => {
-                  this.setState({ favoritesModal: true });
+                  this.setState({ showFavoritesModal: true });
                 }}
               >
                 <IonIcon
@@ -202,7 +211,13 @@ class Profile extends Component<Props, State> {
                   icon={heart}
                 />
               </IonFabButton>
-              <IonFabButton class="settings-tray-button" id="edit-button">
+              <IonFabButton
+                class="settings-tray-button"
+                id="edit-button"
+                onClick={() => {
+                  this.setState({ showEditAccountModal: true });
+                }}
+              >
                 <IonIcon class="settings-tray-icon" icon={create} />
               </IonFabButton>
               <IonFabButton
@@ -269,7 +284,7 @@ class Profile extends Component<Props, State> {
             </IonCard>
           ))}
 
-          <IonModal isOpen={this.state.favoritesModal}>
+          <IonModal isOpen={this.state.showFavoritesModal}>
             <IonHeader>
               <IonTitle
                 size="small"
@@ -415,11 +430,49 @@ class Profile extends Component<Props, State> {
               class="modal-button"
               id="favorites-modal-button-back"
               onClick={() => {
-                this.setState({ favoritesModal: false });
+                this.setState({ showFavoritesModal: false });
               }}
             >
               Back To My Profile
             </IonButton>
+          </IonModal>
+          <IonModal isOpen={this.state.showEditAccountModal}>
+            <IonHeader>
+              <IonTitle
+                size="small"
+                class="tab-header header-font"
+                id="favorites-header"
+              >
+                Edit Account
+              </IonTitle>
+            </IonHeader>
+            <IonInput
+              class="login-signup-input-field"
+              clearInput
+              type="email"
+              placeholder="Email"
+              // onIonChange={e =>
+              //   this.handleEmail((e.target as HTMLInputElement).value)
+              // }
+            ></IonInput>
+            <IonInput
+              class="login-signup-input-field"
+              clearInput
+              type="email"
+              placeholder="Email"
+              // onIonChange={e =>
+              //   this.handleEmail((e.target as HTMLInputElement).value)
+              // }
+            ></IonInput>
+            <IonInput
+              class="login-signup-input-field"
+              clearInput
+              type="email"
+              placeholder="Email"
+              // onIonChange={e =>
+              //   this.handleEmail((e.target as HTMLInputElement).value)
+              // }
+            ></IonInput>
           </IonModal>
         </IonContent>
       </IonPage>

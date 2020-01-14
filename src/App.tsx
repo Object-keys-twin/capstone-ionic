@@ -13,9 +13,9 @@ import { Plugins } from "@capacitor/core";
 import { IonReactRouter } from "@ionic/react-router";
 import { apps, person, add } from "ionicons/icons";
 import firebase from "firebase";
-import Profile from "./pages/Tab1";
-import Home from "./pages/Tab2";
-import CreateStory from "./pages/Tab3";
+import Profile from "./pages/Profile";
+import Explore from "./pages/Explore";
+import Create from "./pages/Create";
 import MapPage from "./pages/Map";
 import Login from "./pages/Login";
 import db from "./firebase/firebase";
@@ -433,7 +433,7 @@ class App extends Component<{}, State> {
                 <Route
                   path="/explore"
                   render={props => (
-                    <Home
+                    <Explore
                       {...props}
                       favorites={this.state.user.favorites}
                       toggleFavorite={this.toggleFavorite}
@@ -444,7 +444,7 @@ class App extends Component<{}, State> {
                 <Route
                   path="/create"
                   render={props => (
-                    <CreateStory
+                    <Create
                       {...props}
                       favorites={this.state.user.favorites}
                       stringbean={this.state.stringbean}

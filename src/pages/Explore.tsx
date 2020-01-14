@@ -18,7 +18,7 @@ import { heartEmpty, heart, arrowDroprightCircle } from "ionicons/icons";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import db from "../firebase/firebase";
-import "./Tab2.css";
+import "./Explore.css";
 
 type Props = {
   favorites: { [key: string]: any };
@@ -48,7 +48,7 @@ interface DbData {
 type State = {
   tours: Array<DbData>;
 };
-class PublicTours extends Component<Props, State> {
+class Explore extends Component<Props, State> {
   state = { tours: Array<DbData>() };
   componentDidMount() {
     this.getTours();
@@ -173,4 +173,4 @@ class PublicTours extends Component<Props, State> {
     );
   }
 }
-export default PublicTours;
+export default Explore;

@@ -24,7 +24,7 @@ import axios from "axios";
 import BeanMenu from "./BeanMenu";
 import { yelpApiKey } from "../secrets";
 import db from "../firebase/firebase";
-import "./Tab3.css";
+import "./Create.css";
 
 const { Geolocation } = Plugins;
 
@@ -58,7 +58,7 @@ type State = {
   searchSpinner: boolean;
 };
 
-class CreateStory extends Component<Props, State> {
+class Create extends Component<Props, State> {
   state = {
     latitude: 0,
     longitude: 0,
@@ -325,4 +325,4 @@ class CreateStory extends Component<Props, State> {
   }
 }
 
-export default CreateStory;
+export default Create;
