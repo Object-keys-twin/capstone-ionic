@@ -107,6 +107,7 @@ class App extends Component<{}, State> {
     firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         console.log("Currently logged in!");
+
         let userObj = {
           email: user.email || "",
           uid: user.uid || "",
@@ -114,29 +115,14 @@ class App extends Component<{}, State> {
           photoURL: user.photoURL || "",
           password: ""
         };
-
-        let favorites = {};
-        const getUser = await db
-          .collection("users")
-          .doc(user.uid)
-          .get();
-        const userData = getUser.data();
-        if (userData) {
-          favorites = userData.favorites;
-        }
-
-        let favoritesArray = [];
-        for (let favorite in favorites) {
-          const favoriteObj = await this.fetchFavoriteData(favorite);
-          if (favoriteObj) {
-            favoritesArray.push(favoriteObj);
-          }
-        }
+        const favorites = await this.fetchFavoritesHashTable(user.uid);
+        const favoritesArray = await this.generateFavoritesArray(favorites);
 
         this.setState({
           user: { ...this.state.user, ...userObj, favorites, favoritesArray },
           loggedIn: true
         });
+
         // Storage.set({
         //   key: "user",
         //   value: JSON.stringify(user)
@@ -160,6 +146,28 @@ class App extends Component<{}, State> {
         // });
       }
     });
+  };
+
+  fetchFavoritesHashTable = async (userId: string) => {
+    const getUser = await db
+      .collection("users")
+      .doc(userId)
+      .get();
+    const userData = getUser.data();
+    if (userData) {
+      return userData.favorites;
+    }
+  };
+
+  generateFavoritesArray = async (favorites: object) => {
+    let favoritesArray = [];
+    for (let favorite in favorites) {
+      const favoriteObj = await this.fetchFavoriteData(favorite);
+      if (favoriteObj) {
+        favoritesArray.push(favoriteObj);
+      }
+    }
+    return favoritesArray;
   };
 
   getStringBeanOnMount = async () => {
