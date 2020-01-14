@@ -23,7 +23,8 @@ import {
   IonText,
   IonSkeletonText,
   IonCol,
-  IonInput
+  IonInput,
+  IonToast
 } from "@ionic/react";
 import React, { Component } from "react";
 
@@ -73,6 +74,9 @@ type State = {
   showSkeleton: boolean;
   showEditAccountModal: boolean;
   editAccountData: object;
+  showErrorToast: boolean;
+  toastMessage: string;
+  passwordMismatchColor: string;
 };
 
 interface DbData {
@@ -112,12 +116,22 @@ class Profile extends Component<Props, State> {
     editAccountData: {
       displayName: "",
       email: "",
-      password: ""
-    }
+      password: "",
+      passwordCheck: ""
+    },
+    showErrorToast: false,
+    toastMessage: "",
+    passwordMismatchColor: ""
   };
 
   componentDidMount() {
     this.getUserTours();
+    this.setState({
+      editAccountData: {
+        displayName: this.props.user.displayName,
+        email: this.props.user.email
+      }
+    });
   }
 
   getUserTours = () => {
@@ -194,6 +208,73 @@ class Profile extends Component<Props, State> {
         [event.name]: event.value
       }
     });
+    console.log(this.state.editAccountData);
+  };
+
+  updateUserOnFirestore = async () => {
+    let error = false;
+    error =
+      this.checkPasswordComplexity() ||
+      this.checkForPasswordMatch() ||
+      (await this.checkForDuplicateDisplayName());
+
+    if (error) return;
+
+    console.log("Updated user on Firebase and Firestore.");
+    this.setState({ showEditAccountModal: false });
+  };
+
+  checkPasswordComplexity = () => {
+    let password = this.state.editAccountData.password;
+    if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/)) {
+      this.setState({
+        showErrorToast: true,
+        toastMessage:
+          "Passwords must be at least 6 characters long & contain a lowercase letter, uppercase letter, and number."
+      });
+      return true;
+    }
+    return false;
+  };
+
+  checkForPasswordMatch = () => {
+    if (
+      this.state.editAccountData.password !==
+      this.state.editAccountData.passwordCheck
+    ) {
+      this.setState({
+        showErrorToast: true,
+        toastMessage: "Passwords don't match!",
+        passwordMismatchColor: "input-error"
+      });
+      return true;
+    }
+    return false;
+  };
+
+  checkForDuplicateDisplayName = async () => {
+    let displayName = this.state.editAccountData.displayName;
+    if (displayName === this.props.user.displayName || !displayName) {
+      return false;
+    }
+
+    const duplicateName = await db
+      .collection("users")
+      .where("displayName", "==", `${displayName}`)
+      .get();
+
+    if (duplicateName.empty === false) {
+      this.setState({
+        showErrorToast: true,
+        toastMessage: "Username already taken!"
+      });
+      return true;
+    }
+    return false;
+  };
+
+  resetErrorToast = () => {
+    this.setState({ showErrorToast: false, toastMessage: "" });
   };
 
   render() {
@@ -480,14 +561,49 @@ class Profile extends Component<Props, State> {
             <IonInput
               class="login-signup-input-field"
               clearInput
-              type="email"
+              clearOnEdit={false}
+              type="password"
               value={this.state.editAccountData.password}
-              placeholder="password"
+              placeholder="New Password"
               name="password"
+              onIonBlur={this.checkPasswordComplexity}
               onIonChange={e =>
                 this.handleEditAccountField(e.target as HTMLInputElement)
               }
             ></IonInput>
+            <IonInput
+              class={
+                "login-signup-input-field " + this.state.passwordMismatchColor
+              }
+              clearInput
+              clearOnEdit={false}
+              type="password"
+              value={this.state.editAccountData.passwordCheck}
+              placeholder="Re-type Password"
+              name="passwordCheck"
+              onIonBlur={this.checkForPasswordMatch}
+              onIonChange={e =>
+                this.handleEditAccountField(e.target as HTMLInputElement)
+              }
+            ></IonInput>
+            <IonButton
+              class="modal-button modal-button-add"
+              size="small"
+              onClick={() => {
+                this.updateUserOnFirestore();
+              }}
+            >
+              Submit Changes
+            </IonButton>
+            <IonToast
+              cssClass="login-signup-toast"
+              isOpen={this.state.showErrorToast}
+              message={this.state.toastMessage}
+              duration={2000}
+              onDidDismiss={() => {
+                this.resetErrorToast();
+              }}
+            />
           </IonModal>
         </IonContent>
       </IonPage>

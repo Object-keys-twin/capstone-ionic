@@ -254,6 +254,7 @@ class App extends Component<{}, State> {
 
             let newUser = {
               email,
+              displayName: displayName || "",
               favorites: {},
               friends: {}
             };

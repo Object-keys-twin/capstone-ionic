@@ -118,3 +118,7 @@
 .skeleton-rating-price {
   height: 4vh;
 }
+
+.input-error {
+  background-color: #ff6d6d;
+}
