@@ -41,6 +41,7 @@ import firebase from "firebase";
 import db from "../firebase/firebase";
 
 import "./Profile.css";
+import { eventNames } from "cluster";
 
 interface FavoriteObj {
   id: string;
@@ -76,7 +77,9 @@ type State = {
   editAccountData: object;
   showErrorToast: boolean;
   toastMessage: string;
-  passwordMismatchColor: string;
+  passwordConfirmColor: string;
+  displayNameColor: string;
+  passwordColor: string;
 };
 
 interface DbData {
@@ -121,13 +124,16 @@ class Profile extends Component<Props, State> {
     },
     showErrorToast: false,
     toastMessage: "",
-    passwordMismatchColor: ""
+    passwordConfirmColor: "",
+    displayNameColor: "",
+    passwordColor: ""
   };
 
   componentDidMount() {
     this.getUserTours();
     this.setState({
       editAccountData: {
+        ...this.state.editAccountData,
         displayName: this.props.user.displayName,
         email: this.props.user.email
       }
@@ -208,50 +214,39 @@ class Profile extends Component<Props, State> {
         [event.name]: event.value
       }
     });
-    console.log(this.state.editAccountData);
-  };
 
-  updateUserOnFirestore = async () => {
-    let error = false;
-    error =
-      this.checkPasswordComplexity() ||
-      this.checkForPasswordMatch() ||
-      (await this.checkForDuplicateDisplayName());
+    if (event.name === "password") {
+      this.toggleConfirmPasswordColor();
 
-    if (error) return;
-
-    console.log("Updated user on Firebase and Firestore.");
-    this.setState({ showEditAccountModal: false });
-  };
-
-  checkPasswordComplexity = () => {
-    let password = this.state.editAccountData.password;
-    if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/)) {
-      this.setState({
-        showErrorToast: true,
-        toastMessage:
-          "Passwords must be at least 6 characters long & contain a lowercase letter, uppercase letter, and number."
-      });
-      return true;
+      this.togglePasswordColor();
+      console.log(
+        "typing in password, state password:",
+        this.state.editAccountData.password
+      );
+      console.log(
+        "typing in password, state confirm:",
+        this.state.editAccountData.passwordCheck
+      );
+    } else if (event.name === "passwordCheck") {
+      this.toggleConfirmPasswordColor();
+      console.log("typing in confirm:", this.state.editAccountData);
+    } else if (event.name === "displayName") {
+      this.toggleDisplayNameColor();
+      console.log("typing in displayName:", this.state.editAccountData);
     }
-    return false;
   };
 
-  checkForPasswordMatch = () => {
-    if (
-      this.state.editAccountData.password !==
-      this.state.editAccountData.passwordCheck
-    ) {
-      this.setState({
-        showErrorToast: true,
-        toastMessage: "Passwords don't match!",
-        passwordMismatchColor: "input-error"
-      });
-      return true;
+  //------TOGGLERS FOR INPUT FIELD WARNING COLOR-------------------
+  toggleDisplayNameColor = async () => {
+    let duplicate = await this.checkForDuplicateDisplayName();
+    if (duplicate) {
+      this.setState({ displayNameColor: "input-error" });
+    } else {
+      this.setState({ displayNameColor: "" });
     }
-    return false;
   };
 
+  //helper function for toggleDisplayNameColor
   checkForDuplicateDisplayName = async () => {
     let displayName = this.state.editAccountData.displayName;
     if (displayName === this.props.user.displayName || !displayName) {
@@ -263,7 +258,60 @@ class Profile extends Component<Props, State> {
       .where("displayName", "==", `${displayName}`)
       .get();
 
-    if (duplicateName.empty === false) {
+    return duplicateName.empty === false;
+  };
+
+  togglePasswordColor = () => {
+    let password = this.state.editAccountData.password;
+    if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/)) {
+      this.setState({
+        passwordColor: "input-error"
+      });
+    } else {
+      this.setState({ passwordColor: "" });
+    }
+  };
+
+  toggleConfirmPasswordColor = () => {
+    if (
+      this.state.editAccountData.password !==
+      this.state.editAccountData.passwordCheck
+    ) {
+      this.setState({
+        passwordConfirmColor: "input-error"
+      });
+    } else {
+      this.setState({ passwordConfirmColor: "" });
+    }
+  };
+  //-----------------------------------------------------------------
+
+  //-----FINAL VALIDATIONS BEFORE UPDATING FIRESTORE---------------
+  checkPasswordComplexityStatus = () => {
+    if (this.state.passwordColor === "input-error") {
+      this.setState({
+        showErrorToast: true,
+        toastMessage:
+          "Passwords must be at least 6 characters & contain a lowercase, uppercase, and number."
+      });
+      return true;
+    }
+    return false;
+  };
+
+  checkPasswordMatchStatus = () => {
+    if (this.state.passwordConfirmColor === "input-error") {
+      this.setState({
+        showErrorToast: true,
+        toastMessage: "Passwords don't match!"
+      });
+      return true;
+    }
+    return false;
+  };
+
+  checkDisplayNameStatus = () => {
+    if (this.state.displayNameColor === "input-error") {
       this.setState({
         showErrorToast: true,
         toastMessage: "Username already taken!"
@@ -271,6 +319,20 @@ class Profile extends Component<Props, State> {
       return true;
     }
     return false;
+  };
+  //----------------------------------------------------------------
+
+  updateUserOnFirestore = async () => {
+    let error = false;
+    error =
+      this.checkPasswordComplexityStatus() ||
+      this.checkPasswordMatchStatus() ||
+      this.checkDisplayNameStatus();
+
+    if (error) return;
+
+    console.log("Updated user on Firebase and Firestore.");
+    this.setState({ showEditAccountModal: false });
   };
 
   resetErrorToast = () => {
@@ -537,7 +599,7 @@ class Profile extends Component<Props, State> {
               </IonTitle>
             </IonHeader>
             <IonInput
-              class="login-signup-input-field"
+              class={"login-signup-input-field " + this.state.displayNameColor}
               clearInput
               type="text"
               value={this.state.editAccountData.displayName}
@@ -559,29 +621,27 @@ class Profile extends Component<Props, State> {
               }
             ></IonInput>
             <IonInput
-              class="login-signup-input-field"
+              class={"login-signup-input-field " + this.state.passwordColor}
               clearInput
               clearOnEdit={false}
               type="password"
               value={this.state.editAccountData.password}
               placeholder="New Password"
               name="password"
-              onIonBlur={this.checkPasswordComplexity}
               onIonChange={e =>
                 this.handleEditAccountField(e.target as HTMLInputElement)
               }
             ></IonInput>
             <IonInput
               class={
-                "login-signup-input-field " + this.state.passwordMismatchColor
+                "login-signup-input-field " + this.state.passwordConfirmColor
               }
               clearInput
               clearOnEdit={false}
               type="password"
               value={this.state.editAccountData.passwordCheck}
-              placeholder="Re-type Password"
+              placeholder="Confirm Password"
               name="passwordCheck"
-              onIonBlur={this.checkForPasswordMatch}
               onIonChange={e =>
                 this.handleEditAccountField(e.target as HTMLInputElement)
               }
