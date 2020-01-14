@@ -24,7 +24,6 @@ import {
   IonSkeletonText,
   IonCol
 } from "@ionic/react";
-// import { RefresherEventDetail } from "@ionic/core";
 import React, { Component } from "react";
 
 import {
@@ -33,14 +32,11 @@ import {
   logOut,
   settings,
   trash,
-  arrowDroprightCircle,
-  business
+  arrowDroprightCircle
 } from "ionicons/icons";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import firebase from "firebase";
 import db from "../firebase/firebase";
-import { yelpApiKey } from "../secrets";
 
 import "./Tab1.css";
 
@@ -49,17 +45,17 @@ interface FavoriteObj {
   name: string;
 }
 
-interface BusinessData {
-  id: string;
-  name: string;
-  location: string;
-  imageUrl: string;
-  categories: Array<object>;
-  rating?: number;
-  latitude: number;
-  longitude: number;
-  price?: string | undefined;
-}
+// interface BusinessData {
+//   id: string;
+//   name: string;
+//   location: string;
+//   imageUrl: string;
+//   categories: Array<object>;
+//   rating?: number;
+//   latitude: number;
+//   longitude: number;
+//   price?: string | undefined;
+// }
 
 type Props = {
   user: userData;
@@ -170,6 +166,7 @@ class Profile extends Component<Props, State> {
 
   getBusinessFromFirestore = async (businessId: string) => {
     this.setState({ showSkeleton: true });
+
     const business = await db
       .collection("checkpoints")
       .doc(`${businessId}`)

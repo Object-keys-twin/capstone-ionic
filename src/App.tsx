@@ -48,6 +48,12 @@ interface FavoriteObj {
   name: string;
 }
 
+interface LogInSignUpData {
+  email: string;
+  displayName: string;
+  password: string;
+}
+
 interface UserData {
   email: string;
   uid?: string;
@@ -135,10 +141,20 @@ class App extends Component<{}, State> {
         //   key: "user",
         //   value: JSON.stringify(user)
         // });
-        console.log("Logged in firebase user:", user);
       } else {
         console.log("Not logged in.");
-        this.setState({ loggedIn: false });
+        this.setState({
+          user: {
+            email: "",
+            uid: "",
+            displayName: "",
+            photoURL: "",
+            password: "",
+            favorites: {},
+            favoritesArray: Array<FavoriteObj>()
+          },
+          loggedIn: false
+        });
         // Storage.remove({
         //   key: "user"
         // });
@@ -170,7 +186,7 @@ class App extends Component<{}, State> {
   //   }
   // };
 
-  handleSubmit = (user: UserData, type?: string) => {
+  handleSubmit = (user: LogInSignUpData, type?: string) => {
     if (!user.email) {
       this.setState({
         logInSignUpError: true,
@@ -218,7 +234,7 @@ class App extends Component<{}, State> {
         .then(async () => {
           let user = firebase.auth().currentUser;
           if (user) {
-            //updateProfile takes longer than setState and the onAuthStateChanged listener reaction, so in onAuthStateChanged, need to grab the displayName from state instead of the firebase user data when updating state
+            //updateProfile takes longer than setState and the onAuthStateChanged listener reaction, so in onAuthStateChanged, when updating state, need to grab the displayName from state instead of the firebase user data
             if (displayName) {
               user.updateProfile({
                 displayName: displayName

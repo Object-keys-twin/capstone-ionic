@@ -19,23 +19,14 @@ enum PasswordVisibility {
   Text = "text"
 }
 
-interface FavoriteObj {
-  id: string;
-  name: string;
-}
-
-interface userData {
+interface LogInSignUpData {
   email: string;
-  uid?: string;
   displayName: string;
-  photoURL: string;
   password: string;
-  favorites: object;
-  favoritesArray: Array<FavoriteObj>;
 }
 
 type Props = {
-  handleSubmit: (user: userData, type?: string) => void;
+  handleSubmit: (user: LogInSignUpData, type?: string) => void;
   showSignUp: () => void;
   resetLogInSignUpError: () => void;
   logInSignUpError: boolean;
@@ -80,12 +71,8 @@ export default class SignUp extends Component<Props, State> {
   createAccount = () => {
     let newUser = {
       email: this.state.email,
-      uid: "",
       displayName: this.state.displayName,
-      photoURL: "",
-      password: this.state.password,
-      favorites: {},
-      favoritesArray: Array<FavoriteObj>()
+      password: this.state.password
     };
     this.props.handleSubmit(newUser, "signup");
   };
