@@ -33,7 +33,8 @@ import {
   logOut,
   settings,
   trash,
-  arrowDroprightCircle
+  arrowDroprightCircle,
+  business
 } from "ionicons/icons";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -167,31 +168,17 @@ class Profile extends Component<Props, State> {
       });
   };
 
-  getBusinessFromYelp = async (businessId: string) => {
+  getBusinessFromFirestore = async (businessId: string) => {
     this.setState({ showSkeleton: true });
-    const api = axios.create({
-      baseURL: "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3",
-      headers: {
-        Authorization: `Bearer ${yelpApiKey}`
-      }
-    });
-    const { data } = await api.get(`/businesses/${businessId}`);
+    const business = await db
+      .collection("checkpoints")
+      .doc(`${businessId}`)
+      .get();
+    const businessObj = business.data();
 
-    const businessObj = {
-      id: data.id,
-      name: data.name,
-      location:
-        data.location.display_address[0] +
-        ", " +
-        data.location.display_address[1],
-      latitude: data.coordinates.latitude,
-      longitude: data.coordinates.longitude,
-      price: data.price,
-      imageUrl: data.image_url,
-      categories: data.categories,
-      rating: data.rating
-    };
-    this.setState({ currentFavoriteData: businessObj, showSkeleton: false });
+    if (businessObj) {
+      this.setState({ currentFavoriteData: businessObj, showSkeleton: false });
+    }
   };
 
   render() {
@@ -306,7 +293,7 @@ class Profile extends Component<Props, State> {
                         lines="none"
                         onClick={() => {
                           this.setState({ addCheckpointModal: favorite.id });
-                          this.getBusinessFromYelp(favorite.id);
+                          this.getBusinessFromFirestore(favorite.id);
                         }}
                       >
                         {favorite.name}
