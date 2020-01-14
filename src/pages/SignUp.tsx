@@ -50,16 +50,8 @@ export default class SignUp extends Component<Props, State> {
     showSignUp: false
   };
 
-  handleEmail = (e: string) => {
-    this.setState({ email: e });
-  };
-
-  handlePassword = (e: string) => {
-    this.setState({ password: e });
-  };
-
-  handleDisplayName = (e: string) => {
-    this.setState({ displayName: e });
+  handleSignUpField = (event: HTMLInputElement) => {
+    this.setState({ ...this.state, [event.name]: event.value });
   };
 
   togglePassword = () => {
@@ -94,7 +86,7 @@ export default class SignUp extends Component<Props, State> {
               name="displayName"
               placeholder="Username (optional)"
               onIonChange={e =>
-                this.handleDisplayName((e.target as HTMLInputElement).value)
+                this.handleSignUpField(e.target as HTMLInputElement)
               }
             ></IonInput>
           </IonItem>
@@ -108,7 +100,7 @@ export default class SignUp extends Component<Props, State> {
               placeholder="Email"
               name="email"
               onIonChange={e =>
-                this.handleEmail((e.target as HTMLInputElement).value)
+                this.handleSignUpField(e.target as HTMLInputElement)
               }
             ></IonInput>
           </IonItem>
@@ -121,16 +113,16 @@ export default class SignUp extends Component<Props, State> {
             <IonInput
               class="login-signup-input-field"
               clearInput
+              name="password"
+              placeholder="Password"
               onIonChange={e =>
-                this.handlePassword((e.target as HTMLInputElement).value)
+                this.handleSignUpField(e.target as HTMLInputElement)
               }
               type={
                 this.state.passwordVisibility === false
                   ? PasswordVisibility.Password
                   : PasswordVisibility.Text
               }
-              placeholder="Password"
-              name="password"
             ></IonInput>
 
             {this.state.password ? (

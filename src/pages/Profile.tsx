@@ -187,6 +187,15 @@ class Profile extends Component<Props, State> {
     }
   };
 
+  handleEditAccountField = (event: HTMLInputElement) => {
+    this.setState({
+      editAccountData: {
+        ...this.state.editAccountData,
+        [event.name]: event.value
+      }
+    });
+  };
+
   render() {
     return (
       <IonPage>
@@ -449,29 +458,35 @@ class Profile extends Component<Props, State> {
             <IonInput
               class="login-signup-input-field"
               clearInput
-              type="email"
-              placeholder="Email"
-              // onIonChange={e =>
-              //   this.handleEmail((e.target as HTMLInputElement).value)
-              // }
+              type="text"
+              value={this.state.editAccountData.displayName}
+              placeholder="displayName"
+              name="displayName"
+              onIonChange={e =>
+                this.handleEditAccountField(e.target as HTMLInputElement)
+              }
             ></IonInput>
             <IonInput
               class="login-signup-input-field"
               clearInput
               type="email"
+              value={this.state.editAccountData.email}
               placeholder="Email"
-              // onIonChange={e =>
-              //   this.handleEmail((e.target as HTMLInputElement).value)
-              // }
+              name="email"
+              onIonChange={e =>
+                this.handleEditAccountField(e.target as HTMLInputElement)
+              }
             ></IonInput>
             <IonInput
               class="login-signup-input-field"
               clearInput
               type="email"
-              placeholder="Email"
-              // onIonChange={e =>
-              //   this.handleEmail((e.target as HTMLInputElement).value)
-              // }
+              value={this.state.editAccountData.password}
+              placeholder="password"
+              name="password"
+              onIonChange={e =>
+                this.handleEditAccountField(e.target as HTMLInputElement)
+              }
             ></IonInput>
           </IonModal>
         </IonContent>

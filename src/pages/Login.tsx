@@ -39,7 +39,6 @@ type Props = {
 
 type State = {
   passwordVisibility: boolean;
-  displayName: string;
   email: string;
   password: string;
   showSignUp: boolean;
@@ -48,7 +47,6 @@ type State = {
 class Login extends Component<Props, State> {
   state = {
     passwordVisibility: false,
-    displayName: "",
     email: "",
     password: "",
     showSignUp: false
@@ -60,12 +58,8 @@ class Login extends Component<Props, State> {
     });
   };
 
-  handleEmail = (e: string) => {
-    this.setState({ email: e });
-  };
-
-  handlePassword = (e: string) => {
-    this.setState({ password: e });
+  handleLoginField = (event: HTMLInputElement) => {
+    this.setState({ ...this.state, [event.name]: event.value });
   };
 
   showSignUp = () => {
@@ -115,10 +109,9 @@ class Login extends Component<Props, State> {
                           clearInput
                           type="email"
                           placeholder="Email"
+                          name="email"
                           onIonChange={e =>
-                            this.handleEmail(
-                              (e.target as HTMLInputElement).value
-                            )
+                            this.handleLoginField(e.target as HTMLInputElement)
                           }
                         ></IonInput>
                       </IonItem>
@@ -131,10 +124,9 @@ class Login extends Component<Props, State> {
                         <IonInput
                           class="login-signup-input-field"
                           clearInput
+                          name="password"
                           onIonChange={e =>
-                            this.handlePassword(
-                              (e.target as HTMLInputElement).value
-                            )
+                            this.handleLoginField(e.target as HTMLInputElement)
                           }
                           type={
                             this.state.passwordVisibility === false
