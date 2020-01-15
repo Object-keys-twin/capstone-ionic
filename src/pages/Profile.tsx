@@ -41,7 +41,6 @@ import firebase from "firebase";
 import db from "../firebase/firebase";
 
 import "./Profile.css";
-import { eventNames } from "cluster";
 
 interface FavoriteObj {
   id: string;
@@ -65,6 +64,7 @@ type Props = {
   toggleFavorite: (checkpointId: string) => void;
   favoritesArray: Array<FavoriteObj>;
   addToStringBean: (business: object) => void;
+  updateDisplayNameOrEmail: (displayNameOrEmail: string, type: string) => void;
 };
 
 type State = {
@@ -215,28 +215,17 @@ class Profile extends Component<Props, State> {
       }
     });
 
-    if (event.name === "password") {
+    if (event.name === "password" || event.name === "passwordCheck") {
       this.toggleConfirmPasswordColor();
-
-      this.togglePasswordColor();
-      console.log(
-        "typing in password, state password:",
-        this.state.editAccountData.password
-      );
-      console.log(
-        "typing in password, state confirm:",
-        this.state.editAccountData.passwordCheck
-      );
-    } else if (event.name === "passwordCheck") {
-      this.toggleConfirmPasswordColor();
-      console.log("typing in confirm:", this.state.editAccountData);
+      if (event.name === "password") {
+        this.togglePasswordColor();
+      }
     } else if (event.name === "displayName") {
       this.toggleDisplayNameColor();
-      console.log("typing in displayName:", this.state.editAccountData);
     }
   };
 
-  //------TOGGLERS FOR INPUT FIELD WARNING COLOR-------------------
+  //------TOGGLERS FOR INPUT FIELD ERROR - RED BACKGROUND-------------
   toggleDisplayNameColor = async () => {
     let duplicate = await this.checkForDuplicateDisplayName();
     if (duplicate) {
@@ -263,6 +252,7 @@ class Profile extends Component<Props, State> {
 
   togglePasswordColor = () => {
     let password = this.state.editAccountData.password;
+    //password needs to contain at least one number, one uppercase, one lowercase, and be at least 6 characters
     if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/)) {
       this.setState({
         passwordColor: "input-error"
@@ -322,18 +312,43 @@ class Profile extends Component<Props, State> {
   };
   //----------------------------------------------------------------
 
+  //--------UPDATE FIREBASE AND FIRESTORE--------------------------
   updateUserOnFirestore = async () => {
-    let error = false;
-    error =
+    let error =
       this.checkPasswordComplexityStatus() ||
       this.checkPasswordMatchStatus() ||
       this.checkDisplayNameStatus();
-
     if (error) return;
 
+    this.updateFirebaseAndFirestore();
     console.log("Updated user on Firebase and Firestore.");
     this.setState({ showEditAccountModal: false });
   };
+
+  updateFirebaseAndFirestore = () => {
+    const user = firebase.auth().currentUser;
+    const userRef = db.collection("users").doc(this.props.user.uid);
+    const { displayName, email, password } = this.state.editAccountData;
+    if (user) {
+      if (displayName !== user.displayName) {
+        user.updateProfile({
+          displayName
+        });
+        userRef.update({ displayName });
+        this.props.updateDisplayNameOrEmail(displayName, "displayName");
+      }
+      if (email !== user.email) {
+        user.updateEmail(email);
+        userRef.update({ email });
+        this.props.updateDisplayNameOrEmail(email, "email");
+      }
+      if (password) {
+        user.updatePassword(password);
+      }
+    }
+  };
+
+  //----------------------------------------------------------------
 
   resetErrorToast = () => {
     this.setState({ showErrorToast: false, toastMessage: "" });

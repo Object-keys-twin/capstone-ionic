@@ -411,6 +411,19 @@ class App extends Component<{}, State> {
     this.setState({ stringbean: Array<BusinessData>() });
   };
 
+  updateDisplayNameOrEmail = (displayNameOrEmail: string, type: string) => {
+    if (type === "displayName") {
+      this.setState({
+        user: { ...this.state.user, displayName: displayNameOrEmail }
+      });
+    }
+    if (type === "email") {
+      this.setState({
+        user: { ...this.state.user, email: displayNameOrEmail }
+      });
+    }
+  };
+
   render() {
     if (this.state.loggedIn) {
       return (
@@ -427,6 +440,7 @@ class App extends Component<{}, State> {
                       favoritesArray={this.state.user.favoritesArray}
                       toggleFavorite={this.toggleFavorite}
                       addToStringBean={this.addToStringBean}
+                      updateDisplayNameOrEmail={this.updateDisplayNameOrEmail}
                     />
                   )}
                   exact={true}
