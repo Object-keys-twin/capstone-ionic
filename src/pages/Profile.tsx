@@ -34,7 +34,9 @@ import {
   logOut,
   settings,
   trash,
-  arrowDroprightCircle
+  arrowDroprightCircle,
+  eye,
+  eyeOff
 } from "ionicons/icons";
 import { Link } from "react-router-dom";
 import firebase from "firebase";
@@ -74,13 +76,27 @@ type State = {
   currentFavoriteData: object;
   showSkeleton: boolean;
   showEditAccountModal: boolean;
-  editAccountData: object;
+  editAccountData: EditAccountData;
   showErrorToast: boolean;
   toastMessage: string;
+};
+
+interface EditAccountData {
+  displayName: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
   passwordConfirmColor: string;
   displayNameColor: string;
   passwordColor: string;
-};
+  passwordVisibility: boolean;
+  passwordConfirmVisibility: boolean;
+}
+
+enum PasswordVisibility {
+  Password = "password",
+  Text = "text"
+}
 
 interface DbData {
   checkpoints: Array<any>;
@@ -120,13 +136,15 @@ class Profile extends Component<Props, State> {
       displayName: "",
       email: "",
       password: "",
-      passwordCheck: ""
+      passwordConfirm: "",
+      passwordConfirmColor: "",
+      displayNameColor: "",
+      passwordColor: "",
+      passwordVisibility: false,
+      passwordConfirmVisibility: false
     },
     showErrorToast: false,
-    toastMessage: "",
-    passwordConfirmColor: "",
-    displayNameColor: "",
-    passwordColor: ""
+    toastMessage: ""
   };
 
   componentDidMount() {
@@ -215,8 +233,8 @@ class Profile extends Component<Props, State> {
       }
     });
 
-    if (event.name === "password" || event.name === "passwordCheck") {
-      this.toggleConfirmPasswordColor();
+    if (event.name === "password" || event.name === "passwordConfirm") {
+      this.togglePasswordConfirmColor();
       if (event.name === "password") {
         this.togglePasswordColor();
       }
@@ -225,13 +243,40 @@ class Profile extends Component<Props, State> {
     }
   };
 
+  //------TOGGLERS FOR PASSWORDS VISIBILITIES--------------
+  togglePasswordVisibility = () => {
+    this.setState({
+      editAccountData: {
+        ...this.state.editAccountData,
+        passwordVisibility: !this.state.editAccountData.passwordVisibility
+      }
+    });
+  };
+
+  togglePasswordConfirmVisibility = () => {
+    this.setState({
+      editAccountData: {
+        ...this.state.editAccountData,
+        passwordConfirmVisibility: !this.state.editAccountData
+          .passwordConfirmVisibility
+      }
+    });
+  };
+
   //------TOGGLERS FOR INPUT FIELD ERROR - RED BACKGROUND-------------
   toggleDisplayNameColor = async () => {
     let duplicate = await this.checkForDuplicateDisplayName();
     if (duplicate) {
-      this.setState({ displayNameColor: "input-error" });
+      this.setState({
+        editAccountData: {
+          ...this.state.editAccountData,
+          displayNameColor: "input-error"
+        }
+      });
     } else {
-      this.setState({ displayNameColor: "" });
+      this.setState({
+        editAccountData: { ...this.state.editAccountData, displayNameColor: "" }
+      });
     }
   };
 
@@ -253,32 +298,45 @@ class Profile extends Component<Props, State> {
   togglePasswordColor = () => {
     let password = this.state.editAccountData.password;
     //password needs to contain at least one number, one uppercase, one lowercase, and be at least 6 characters
-    if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/)) {
+    if (password && !password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/)) {
       this.setState({
-        passwordColor: "input-error"
+        editAccountData: {
+          ...this.state.editAccountData,
+          passwordColor: "input-error"
+        }
       });
     } else {
-      this.setState({ passwordColor: "" });
+      this.setState({
+        editAccountData: { ...this.state.editAccountData, passwordColor: "" }
+      });
     }
   };
 
-  toggleConfirmPasswordColor = () => {
+  togglePasswordConfirmColor = () => {
     if (
       this.state.editAccountData.password !==
-      this.state.editAccountData.passwordCheck
+      this.state.editAccountData.passwordConfirm
     ) {
       this.setState({
-        passwordConfirmColor: "input-error"
+        editAccountData: {
+          ...this.state.editAccountData,
+          passwordConfirmColor: "input-error"
+        }
       });
     } else {
-      this.setState({ passwordConfirmColor: "" });
+      this.setState({
+        editAccountData: {
+          ...this.state.editAccountData,
+          passwordConfirmColor: ""
+        }
+      });
     }
   };
   //-----------------------------------------------------------------
 
   //-----FINAL VALIDATIONS BEFORE UPDATING FIRESTORE---------------
   checkPasswordComplexityStatus = () => {
-    if (this.state.passwordColor === "input-error") {
+    if (this.state.editAccountData.passwordColor === "input-error") {
       this.setState({
         showErrorToast: true,
         toastMessage:
@@ -290,7 +348,7 @@ class Profile extends Component<Props, State> {
   };
 
   checkPasswordMatchStatus = () => {
-    if (this.state.passwordConfirmColor === "input-error") {
+    if (this.state.editAccountData.passwordConfirmColor === "input-error") {
       this.setState({
         showErrorToast: true,
         toastMessage: "Passwords don't match!"
@@ -301,7 +359,7 @@ class Profile extends Component<Props, State> {
   };
 
   checkDisplayNameStatus = () => {
-    if (this.state.displayNameColor === "input-error") {
+    if (this.state.editAccountData.displayNameColor === "input-error") {
       this.setState({
         showErrorToast: true,
         toastMessage: "Username already taken!"
@@ -344,7 +402,8 @@ class Profile extends Component<Props, State> {
       }
       if (password) {
         user.updatePassword(password);
-      }
+      } //need to cause re-verification thing to happen when changing password and email
+      //also allow peeking at password entries
     }
   };
 
@@ -614,7 +673,10 @@ class Profile extends Component<Props, State> {
               </IonTitle>
             </IonHeader>
             <IonInput
-              class={"login-signup-input-field " + this.state.displayNameColor}
+              class={
+                "login-signup-input-field " +
+                this.state.editAccountData.displayNameColor
+              }
               clearInput
               type="text"
               value={this.state.editAccountData.displayName}
@@ -635,32 +697,74 @@ class Profile extends Component<Props, State> {
                 this.handleEditAccountField(e.target as HTMLInputElement)
               }
             ></IonInput>
-            <IonInput
-              class={"login-signup-input-field " + this.state.passwordColor}
-              clearInput
-              clearOnEdit={false}
-              type="password"
-              value={this.state.editAccountData.password}
-              placeholder="New Password"
-              name="password"
-              onIonChange={e =>
-                this.handleEditAccountField(e.target as HTMLInputElement)
-              }
-            ></IonInput>
-            <IonInput
-              class={
-                "login-signup-input-field " + this.state.passwordConfirmColor
-              }
-              clearInput
-              clearOnEdit={false}
-              type="password"
-              value={this.state.editAccountData.passwordCheck}
-              placeholder="Confirm Password"
-              name="passwordCheck"
-              onIonChange={e =>
-                this.handleEditAccountField(e.target as HTMLInputElement)
-              }
-            ></IonInput>
+            <IonItem
+              lines="none"
+              class="login-signup-input-nestedcontainer login-ionitem"
+            >
+              <IonInput
+                class={
+                  "login-signup-input-field " +
+                  this.state.editAccountData.passwordColor
+                }
+                clearInput
+                clearOnEdit={false}
+                type={
+                  this.state.editAccountData.passwordVisibility === false
+                    ? PasswordVisibility.Password
+                    : PasswordVisibility.Text
+                }
+                value={this.state.editAccountData.password}
+                placeholder="New Password"
+                name="password"
+                onIonChange={e =>
+                  this.handleEditAccountField(e.target as HTMLInputElement)
+                }
+              ></IonInput>
+              {this.state.editAccountData.password ? (
+                <IonIcon
+                  class="password-icon"
+                  icon={
+                    this.state.editAccountData.passwordVisibility ? eyeOff : eye
+                  }
+                  onClick={this.togglePasswordVisibility}
+                />
+              ) : null}
+            </IonItem>
+            <IonItem
+              lines="none"
+              class="login-signup-input-nestedcontainer login-ionitem"
+            >
+              <IonInput
+                class={
+                  "login-signup-input-field " +
+                  this.state.editAccountData.passwordConfirmColor
+                }
+                clearInput
+                clearOnEdit={false}
+                type={
+                  this.state.editAccountData.passwordConfirmVisibility === false
+                    ? PasswordVisibility.Password
+                    : PasswordVisibility.Text
+                }
+                value={this.state.editAccountData.passwordConfirm}
+                placeholder="Confirm Password"
+                name="passwordConfirm"
+                onIonChange={e =>
+                  this.handleEditAccountField(e.target as HTMLInputElement)
+                }
+              ></IonInput>
+              {this.state.editAccountData.passwordConfirm ? (
+                <IonIcon
+                  class="password-icon"
+                  icon={
+                    this.state.editAccountData.passwordConfirmVisibility
+                      ? eyeOff
+                      : eye
+                  }
+                  onClick={this.togglePasswordConfirmVisibility}
+                />
+              ) : null}
+            </IonItem>
             <IonButton
               class="modal-button modal-button-add"
               size="small"
@@ -668,7 +772,16 @@ class Profile extends Component<Props, State> {
                 this.updateUserOnFirestore();
               }}
             >
-              Submit Changes
+              Submit
+            </IonButton>
+            <IonButton
+              class="modal-button modal-button-add"
+              size="small"
+              onClick={() => {
+                this.setState({ showEditAccountModal: false });
+              }}
+            >
+              Back
             </IonButton>
             <IonToast
               cssClass="login-signup-toast"
