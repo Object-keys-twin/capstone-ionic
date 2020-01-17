@@ -19,6 +19,11 @@ enum PasswordVisibility {
   Text = "text"
 }
 
+enum PasswordOrConfirm {
+  Password = "passwordVisibility",
+  Confirm = "passwordConfirmVisibility"
+}
+
 interface LogInSignUpData {
   email: string;
   displayName: string;
@@ -35,18 +40,22 @@ type Props = {
 
 type State = {
   passwordVisibility: boolean;
+  passwordConfirmVisibility: boolean;
   displayName: string;
   email: string;
   password: string;
+  passwordConfirm: string;
   showSignUp: boolean;
 };
 
 export default class SignUp extends Component<Props, State> {
   state = {
     passwordVisibility: false,
+    passwordConfirmVisibility: false,
     displayName: "",
     email: "",
     password: "",
+    passwordConfirm: "",
     showSignUp: false
   };
 
@@ -54,11 +63,13 @@ export default class SignUp extends Component<Props, State> {
     this.setState({ ...this.state, [event.name]: event.value });
   };
 
-  togglePassword = () => {
-    this.setState({
-      passwordVisibility: !this.state.passwordVisibility
+  toggleVisibility = (passwordOrConfirm: PasswordOrConfirm) => {
+    this.setState<never>({
+      [passwordOrConfirm]: !this.state[passwordOrConfirm]
     });
   };
+
+  //add toggling of colors
 
   createAccount = () => {
     let newUser = {
@@ -106,10 +117,7 @@ export default class SignUp extends Component<Props, State> {
           </IonItem>
         </IonCardContent>
         <IonCardContent class="login-signup-input-container">
-          <IonItem
-            lines="none"
-            class="login-signup-input-nestedcontainer login-ionitem"
-          >
+          <IonItem class="login-signup-input-nestedcontainer login-ionitem">
             <IonInput
               class="login-signup-input-field"
               clearInput
@@ -129,7 +137,38 @@ export default class SignUp extends Component<Props, State> {
               <IonIcon
                 class="password-icon"
                 icon={this.state.passwordVisibility ? eyeOff : eye}
-                onClick={this.togglePassword}
+                onClick={() =>
+                  this.toggleVisibility(PasswordOrConfirm.Password)
+                }
+              />
+            ) : null}
+          </IonItem>
+        </IonCardContent>
+        <IonCardContent class="login-signup-input-container">
+          <IonItem
+            lines="none"
+            class="login-signup-input-nestedcontainer login-ionitem"
+          >
+            <IonInput
+              class="login-signup-input-field"
+              clearInput
+              name="passwordConfirm"
+              placeholder="Confirm Password"
+              onIonChange={e =>
+                this.handleSignUpField(e.target as HTMLInputElement)
+              }
+              type={
+                this.state.passwordConfirmVisibility === false
+                  ? PasswordVisibility.Password
+                  : PasswordVisibility.Text
+              }
+            ></IonInput>
+
+            {this.state.passwordConfirm ? (
+              <IonIcon
+                class="password-icon"
+                icon={this.state.passwordConfirmVisibility ? eyeOff : eye}
+                onClick={() => this.toggleVisibility(PasswordOrConfirm.Confirm)}
               />
             ) : null}
           </IonItem>

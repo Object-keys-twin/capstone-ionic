@@ -672,6 +672,7 @@ class Profile extends Component<Props, State> {
                 Edit Account
               </IonTitle>
             </IonHeader>
+            <IonItem>USERNAME</IonItem>
             <IonInput
               class={
                 "login-signup-input-field " +
@@ -686,6 +687,7 @@ class Profile extends Component<Props, State> {
                 this.handleEditAccountField(e.target as HTMLInputElement)
               }
             ></IonInput>
+            <IonItem>EMAIL</IonItem>
             <IonInput
               class="login-signup-input-field"
               clearInput
@@ -697,6 +699,7 @@ class Profile extends Component<Props, State> {
                 this.handleEditAccountField(e.target as HTMLInputElement)
               }
             ></IonInput>
+            <IonItem>PASSWORD</IonItem>
             <IonItem
               lines="none"
               class="login-signup-input-nestedcontainer login-ionitem"
@@ -764,6 +767,10 @@ class Profile extends Component<Props, State> {
                   onClick={this.togglePasswordConfirmVisibility}
                 />
               ) : null}
+            </IonItem>
+            <IonItem>
+              Passwords must be at least 6 characters long and contain an
+              uppercase letter, a lowercase letter, and a number.
             </IonItem>
             <IonButton
               class="modal-button modal-button-add"
