@@ -205,7 +205,6 @@ class App extends Component<{}, State> {
         logInSignUpError: true,
         toastMessage: "Please enter a password."
       });
-      //do a lookup in firebase to make sure the displayName isn't already taken, and maybe email too? or is that builtin
     } else {
       if (type === "signup") {
         this.createUserOnFirestore(user.email, user.password, user.displayName);
@@ -228,7 +227,6 @@ class App extends Component<{}, State> {
       firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
-
         .catch(error => {
           const errorCode = error.code;
           const errorMessage = error.message;
@@ -236,10 +234,11 @@ class App extends Component<{}, State> {
           this.setState({
             logInSignUpError: true,
             toastMessage:
-              "Invalid email and/or password! Passwords must be at least 6 characters."
+              "Invalid email and/or password! Passwords must be at least 6 characters and contain a lowercase, uppercase, and number."
           });
         })
         .then(async () => {
+          console.log("Created new user on Firebase.");
           let user = firebase.auth().currentUser;
           if (user) {
             //updateProfile takes longer than setState and the onAuthStateChanged listener reaction, so in onAuthStateChanged, when updating state, need to grab the displayName from state instead of the firebase user data
@@ -264,7 +263,7 @@ class App extends Component<{}, State> {
               .doc(user.uid)
               .set(newUser)
               .then(() => {
-                console.log("Added new user.");
+                console.log("Added new user to Firestore.");
               });
           }
         });

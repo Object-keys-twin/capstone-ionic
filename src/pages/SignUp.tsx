@@ -42,6 +42,8 @@ type Props = {
 type State = {
   accountData: AccountData;
   showSignUp: boolean;
+  showErrorToast: boolean;
+  toastMessage: string;
 };
 
 interface AccountData {
@@ -69,7 +71,9 @@ export default class SignUp extends Component<Props, State> {
       passwordConfirmColor: "",
       passwordConfirmVisibility: false
     },
-    showSignUp: false
+    showSignUp: false,
+    showErrorToast: false,
+    toastMessage: ""
   };
 
   handleSignUpField = (event: HTMLInputElement) => {
@@ -83,7 +87,6 @@ export default class SignUp extends Component<Props, State> {
         this.togglePasswordColor();
       }
     } else if (event.name === "displayName") {
-      console.log("ahh");
       this.toggleDisplayNameColor();
     }
   };
@@ -167,13 +170,58 @@ export default class SignUp extends Component<Props, State> {
   };
   //-----------------------------------------------------------------
 
+  //-----FINAL VALIDATIONS BEFORE CREATING ON FIREBASE AND FIRESTORE------
+  checkPasswordComplexityStatus = () => {
+    if (this.state.accountData.passwordColor === "input-error") {
+      this.setState({
+        showErrorToast: true,
+        toastMessage:
+          "Passwords must be at least 6 characters & contain a lowercase, uppercase, and number."
+      });
+      return true;
+    }
+    return false;
+  };
+
+  checkPasswordMatchStatus = () => {
+    if (this.state.accountData.passwordConfirmColor === "input-error") {
+      this.setState({
+        showErrorToast: true,
+        toastMessage: "Passwords don't match!"
+      });
+      return true;
+    }
+    return false;
+  };
+
+  checkDisplayNameStatus = () => {
+    if (this.state.accountData.displayNameColor === "input-error") {
+      this.setState({
+        showErrorToast: true,
+        toastMessage: "Username already taken!"
+      });
+      return true;
+    }
+    return false;
+  };
+  //----------------------------------------------------------------
   createAccount = () => {
+    let error =
+      this.checkPasswordComplexityStatus() ||
+      this.checkPasswordMatchStatus() ||
+      this.checkDisplayNameStatus();
+    if (error) return;
+
     let newUser = {
       email: this.state.accountData.email,
       displayName: this.state.accountData.displayName,
       password: this.state.accountData.password
     };
     this.props.handleSubmit(newUser, "signup");
+  };
+
+  resetErrorToast = () => {
+    this.setState({ showErrorToast: false, toastMessage: "" });
   };
 
   render() {
@@ -304,11 +352,12 @@ export default class SignUp extends Component<Props, State> {
         </IonGrid>
         <IonToast
           cssClass="login-signup-toast"
-          isOpen={this.props.logInSignUpError}
-          message={this.props.toastMessage}
+          isOpen={this.props.logInSignUpError || this.state.showErrorToast}
+          message={this.props.toastMessage || this.state.toastMessage}
           duration={2000}
           onDidDismiss={() => {
             this.props.resetLogInSignUpError();
+            this.resetErrorToast();
           }}
         />
       </>
