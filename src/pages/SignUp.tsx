@@ -11,6 +11,7 @@ import {
   IonCardContent,
   IonToast
 } from "@ionic/react";
+import db from "../firebase/firebase";
 import { eye, eyeOff, arrowRoundBack } from "ionicons/icons";
 import "./SignUp.css";
 
@@ -40,14 +41,6 @@ type Props = {
 
 type State = {
   accountData: AccountData;
-  // displayName: string;
-  // email: string;
-  // password: string;
-  // passwordColor: string;
-  // passwordVisibility: boolean;
-  // passwordConfirm: string;
-  // passwordConfirmColor: string;
-  // passwordConfirmVisibility: boolean;
   showSignUp: boolean;
 };
 
@@ -83,6 +76,16 @@ export default class SignUp extends Component<Props, State> {
     this.setState({
       accountData: { ...this.state.accountData, [event.name]: event.value }
     });
+
+    if (event.name === "password" || event.name === "passwordConfirm") {
+      this.togglePasswordConfirmColor();
+      if (event.name === "password") {
+        this.togglePasswordColor();
+      }
+    } else if (event.name === "displayName") {
+      console.log("ahh");
+      this.toggleDisplayNameColor();
+    }
   };
 
   toggleVisibility = (passwordOrConfirm: PasswordOrConfirm) => {
@@ -94,7 +97,75 @@ export default class SignUp extends Component<Props, State> {
     });
   };
 
-  //add toggling of colors
+  //------TOGGLERS FOR INPUT FIELD ERROR - RED BACKGROUND-------------
+  toggleDisplayNameColor = async () => {
+    let duplicate = await this.checkForDuplicateDisplayName();
+    if (duplicate) {
+      this.setState({
+        accountData: {
+          ...this.state.accountData,
+          displayNameColor: "input-error"
+        }
+      });
+    } else {
+      this.setState({
+        accountData: { ...this.state.accountData, displayNameColor: "" }
+      });
+    }
+  };
+
+  //helper function for toggleDisplayNameColor
+  checkForDuplicateDisplayName = async () => {
+    let displayName = this.state.accountData.displayName;
+    if (!displayName) {
+      return false;
+    }
+
+    const duplicateName = await db
+      .collection("users")
+      .where("displayName", "==", `${displayName}`)
+      .get();
+
+    return duplicateName.empty === false;
+  };
+
+  togglePasswordColor = () => {
+    let password = this.state.accountData.password;
+    //password needs to contain at least one number, one uppercase, one lowercase, and be at least 6 characters
+    if (password && !password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/)) {
+      this.setState({
+        accountData: {
+          ...this.state.accountData,
+          passwordColor: "input-error"
+        }
+      });
+    } else {
+      this.setState({
+        accountData: { ...this.state.accountData, passwordColor: "" }
+      });
+    }
+  };
+
+  togglePasswordConfirmColor = () => {
+    if (
+      this.state.accountData.password !== this.state.accountData.passwordConfirm
+    ) {
+      this.setState({
+        accountData: {
+          ...this.state.accountData,
+          passwordConfirmColor: "input-error"
+        }
+      });
+    } else {
+      this.setState({
+        accountData: {
+          ...this.state.accountData,
+          passwordConfirmColor: ""
+        }
+      });
+    }
+  };
+  //-----------------------------------------------------------------
 
   createAccount = () => {
     let newUser = {
@@ -114,7 +185,12 @@ export default class SignUp extends Component<Props, State> {
           </IonCardTitle>
         </IonCardHeader>
         <IonCardContent class="login-signup-input-container">
-          <IonItem class="login-signup-input-nestedcontainer login-ionitem">
+          <IonItem
+            class={
+              "login-signup-input-nestedcontainer login-ionitem " +
+              this.state.accountData.displayNameColor
+            }
+          >
             <IonInput
               clearInput
               type="text"
@@ -142,10 +218,16 @@ export default class SignUp extends Component<Props, State> {
           </IonItem>
         </IonCardContent>
         <IonCardContent class="login-signup-input-container">
-          <IonItem class="login-signup-input-nestedcontainer login-ionitem">
+          <IonItem
+            class={
+              "login-signup-input-nestedcontainer login-ionitem " +
+              this.state.accountData.passwordColor
+            }
+          >
             <IonInput
               class="login-signup-input-field"
               clearInput
+              clearOnEdit={false}
               name="password"
               placeholder="Password"
               onIonChange={e =>
@@ -172,11 +254,15 @@ export default class SignUp extends Component<Props, State> {
         <IonCardContent class="login-signup-input-container">
           <IonItem
             lines="none"
-            class="login-signup-input-nestedcontainer login-ionitem"
+            class={
+              "login-signup-input-nestedcontainer login-ionitem " +
+              this.state.accountData.passwordConfirmColor
+            }
           >
             <IonInput
               class="login-signup-input-field"
               clearInput
+              clearOnEdit={false}
               name="passwordConfirm"
               placeholder="Confirm Password"
               onIonChange={e =>
