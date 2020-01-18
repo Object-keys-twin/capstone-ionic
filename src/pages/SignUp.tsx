@@ -39,33 +39,58 @@ type Props = {
 };
 
 type State = {
-  passwordVisibility: boolean;
-  passwordConfirmVisibility: boolean;
-  displayName: string;
-  email: string;
-  password: string;
-  passwordConfirm: string;
+  accountData: AccountData;
+  // displayName: string;
+  // email: string;
+  // password: string;
+  // passwordColor: string;
+  // passwordVisibility: boolean;
+  // passwordConfirm: string;
+  // passwordConfirmColor: string;
+  // passwordConfirmVisibility: boolean;
   showSignUp: boolean;
 };
 
+interface AccountData {
+  displayName: string;
+  displayNameColor: string;
+  email: string;
+  password: string;
+  passwordColor: string;
+  passwordVisibility: boolean;
+  passwordConfirm: string;
+  passwordConfirmColor: string;
+  passwordConfirmVisibility: boolean;
+}
+
 export default class SignUp extends Component<Props, State> {
   state = {
-    passwordVisibility: false,
-    passwordConfirmVisibility: false,
-    displayName: "",
-    email: "",
-    password: "",
-    passwordConfirm: "",
+    accountData: {
+      displayName: "",
+      displayNameColor: "",
+      email: "",
+      password: "",
+      passwordColor: "",
+      passwordVisibility: false,
+      passwordConfirm: "",
+      passwordConfirmColor: "",
+      passwordConfirmVisibility: false
+    },
     showSignUp: false
   };
 
   handleSignUpField = (event: HTMLInputElement) => {
-    this.setState({ ...this.state, [event.name]: event.value });
+    this.setState({
+      accountData: { ...this.state.accountData, [event.name]: event.value }
+    });
   };
 
   toggleVisibility = (passwordOrConfirm: PasswordOrConfirm) => {
     this.setState<never>({
-      [passwordOrConfirm]: !this.state[passwordOrConfirm]
+      accountData: {
+        ...this.state.accountData,
+        [passwordOrConfirm]: !this.state.accountData[passwordOrConfirm]
+      }
     });
   };
 
@@ -73,9 +98,9 @@ export default class SignUp extends Component<Props, State> {
 
   createAccount = () => {
     let newUser = {
-      email: this.state.email,
-      displayName: this.state.displayName,
-      password: this.state.password
+      email: this.state.accountData.email,
+      displayName: this.state.accountData.displayName,
+      password: this.state.accountData.password
     };
     this.props.handleSubmit(newUser, "signup");
   };
@@ -127,16 +152,16 @@ export default class SignUp extends Component<Props, State> {
                 this.handleSignUpField(e.target as HTMLInputElement)
               }
               type={
-                this.state.passwordVisibility === false
+                this.state.accountData.passwordVisibility === false
                   ? PasswordVisibility.Password
                   : PasswordVisibility.Text
               }
             ></IonInput>
 
-            {this.state.password ? (
+            {this.state.accountData.password ? (
               <IonIcon
                 class="password-icon"
-                icon={this.state.passwordVisibility ? eyeOff : eye}
+                icon={this.state.accountData.passwordVisibility ? eyeOff : eye}
                 onClick={() =>
                   this.toggleVisibility(PasswordOrConfirm.Password)
                 }
@@ -158,16 +183,20 @@ export default class SignUp extends Component<Props, State> {
                 this.handleSignUpField(e.target as HTMLInputElement)
               }
               type={
-                this.state.passwordConfirmVisibility === false
+                this.state.accountData.passwordConfirmVisibility === false
                   ? PasswordVisibility.Password
                   : PasswordVisibility.Text
               }
             ></IonInput>
 
-            {this.state.passwordConfirm ? (
+            {this.state.accountData.passwordConfirm ? (
               <IonIcon
                 class="password-icon"
-                icon={this.state.passwordConfirmVisibility ? eyeOff : eye}
+                icon={
+                  this.state.accountData.passwordConfirmVisibility
+                    ? eyeOff
+                    : eye
+                }
                 onClick={() => this.toggleVisibility(PasswordOrConfirm.Confirm)}
               />
             ) : null}
