@@ -122,3 +122,9 @@
 .input-error {
   background-color: #ff7a7a;
 }
+
+.profile-skeleton-text {
+  margin-top: 1.8vh;
+  margin-bottom: 1.8vh;
+  height: 2.2vh;
+}

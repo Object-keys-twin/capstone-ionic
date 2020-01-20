@@ -583,10 +583,20 @@ class Profile extends Component<Props, State> {
 
               <IonCardContent class="stringbean-card-content">
                 {tour.checkpoints.map((checkpoint, i) => {
-                  if (checkpoint) {
+                  if (checkpoint.name) {
                     return (
                       <IonItem lines="none" key={i}>
                         {checkpoint.name}
+                      </IonItem>
+                    );
+                  } else {
+                    return (
+                      <IonItem lines="none" key={i}>
+                        <IonSkeletonText
+                          animated
+                          width="70vw"
+                          class="profile-skeleton-text"
+                        />
                       </IonItem>
                     );
                   }
