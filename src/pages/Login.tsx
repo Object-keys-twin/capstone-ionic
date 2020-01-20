@@ -107,6 +107,7 @@ class Login extends Component<Props, State> {
                         <IonInput
                           class="login-signup-input-field"
                           clearInput
+                          clearOnEdit={false}
                           type="email"
                           placeholder="Email"
                           name="email"
@@ -124,6 +125,7 @@ class Login extends Component<Props, State> {
                         <IonInput
                           class="login-signup-input-field"
                           clearInput
+                          clearOnEdit={false}
                           name="password"
                           onIonChange={e =>
                             this.handleLoginField(e.target as HTMLInputElement)

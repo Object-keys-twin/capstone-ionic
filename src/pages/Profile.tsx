@@ -44,16 +44,6 @@ import db from "../firebase/firebase";
 
 import "./Profile.css";
 
-enum PasswordOrConfirm {
-  Password = "passwordVisibility",
-  Confirm = "passwordConfirmVisibility"
-}
-
-interface FavoriteObj {
-  id: string;
-  name: string;
-}
-
 // interface BusinessData {
 //   id: string;
 //   name: string;
@@ -74,33 +64,35 @@ type Props = {
   updateDisplayNameOrEmail: (displayNameOrEmail: string, type: string) => void;
 };
 
-type State = {
-  tours: Array<DbData>;
-  showFavoritesModal: boolean;
-  addCheckpointModal: string;
-  currentFavoriteData: object;
-  showSkeleton: boolean;
-  showEditAccountModal: boolean;
-  accountData: AccountData;
-  showErrorToast: boolean;
-  toastMessage: string;
-};
+enum PasswordOrConfirm {
+  CurrentPassword = "currentPasswordVisibility",
+  Password = "passwordVisibility",
+  Confirm = "passwordConfirmVisibility"
+}
+
+enum PasswordVisibility {
+  Password = "password",
+  Text = "text"
+}
+
+interface FavoriteObj {
+  id: string;
+  name: string;
+}
 
 interface AccountData {
   displayName: string;
   displayNameColor: string;
   email: string;
+  currentPassword: string;
+  currentPasswordColor: string;
+  currentPasswordVisibility: boolean;
   password: string;
   passwordColor: string;
   passwordVisibility: boolean;
   passwordConfirm: string;
   passwordConfirmColor: string;
   passwordConfirmVisibility: boolean;
-}
-
-enum PasswordVisibility {
-  Password = "password",
-  Text = "text"
 }
 
 interface DbData {
@@ -118,6 +110,18 @@ interface UserData {
   displayName: string;
   photoURL: string;
 }
+
+type State = {
+  tours: Array<DbData>;
+  showFavoritesModal: boolean;
+  addCheckpointModal: string;
+  currentFavoriteData: object;
+  showSkeleton: boolean;
+  showEditAccountModal: boolean;
+  accountData: AccountData;
+  showErrorToast: boolean;
+  toastMessage: string;
+};
 
 class Profile extends Component<Props, State> {
   state = {
@@ -141,6 +145,9 @@ class Profile extends Component<Props, State> {
       displayName: "",
       displayNameColor: "",
       email: "",
+      currentPassword: "",
+      currentPasswordColor: "",
+      currentPasswordVisibility: false,
       password: "",
       passwordColor: "",
       passwordVisibility: false,
@@ -212,7 +219,7 @@ class Profile extends Component<Props, State> {
         // Sign-out successful.
       })
       .catch(function(error) {
-        // An error happened.
+        console.log("Sign-out failed.");
       });
   };
 
@@ -242,9 +249,13 @@ class Profile extends Component<Props, State> {
       this.togglePasswordConfirmColor();
       if (event.name === "password") {
         this.togglePasswordColor();
+        this.toggleCurrentPasswordColor();
       }
     } else if (event.name === "displayName") {
       this.toggleDisplayNameColor();
+    } else {
+      //only other option is changing the email or currentpassword fields
+      this.toggleCurrentPasswordColor();
     }
   };
 
@@ -287,6 +298,28 @@ class Profile extends Component<Props, State> {
       .get();
 
     return duplicateName.empty === false;
+  };
+
+  toggleCurrentPasswordColor = () => {
+    if (
+      (this.state.accountData.email !== this.props.user.email ||
+        this.state.accountData.password) &&
+      !this.state.accountData.currentPassword
+    ) {
+      this.setState({
+        accountData: {
+          ...this.state.accountData,
+          currentPasswordColor: "input-error"
+        }
+      });
+    } else {
+      this.setState({
+        accountData: {
+          ...this.state.accountData,
+          currentPasswordColor: ""
+        }
+      });
+    }
   };
 
   togglePasswordColor = () => {
@@ -387,16 +420,47 @@ class Profile extends Component<Props, State> {
         });
         userRef.update({ displayName });
         this.props.updateDisplayNameOrEmail(displayName, "displayName");
+        //edit tours created by this user, and update the 'user' field in the tours' documents
+        //search tours where user equals the old username, and then update
       }
-      if (email !== user.email) {
-        user.updateEmail(email);
+      if (email !== user.email && user.email) {
+        user
+          .reauthenticateWithCredential(
+            firebase.auth.EmailAuthProvider.credential(
+              user.email,
+              this.state.accountData.currentPassword
+            )
+          )
+          .then(() => {
+            user.updateEmail(email);
+          });
+
         userRef.update({ email });
         this.props.updateDisplayNameOrEmail(email, "email");
+        //edit tours created by this user, and update the 'user' field in the tours' documents
+        //search tours where use equals the old email, and then update. however, if there is now a displayName, update 'user' field to that instead.
       }
-      if (password) {
-        user.updatePassword(password);
-      } //need to cause re-verification thing to happen when changing password and email
-      //also allow peeking at password entries
+      if (password && user.email) {
+        user
+          .reauthenticateWithCredential(
+            firebase.auth.EmailAuthProvider.credential(
+              user.email,
+              this.state.accountData.currentPassword
+            )
+          )
+          .then(() => {
+            user.updatePassword(password);
+          });
+
+        this.setState({
+          accountData: {
+            ...this.state.accountData,
+            currentPassword: "",
+            password: "",
+            passwordConfirm: ""
+          }
+        });
+      }
     }
   };
 
@@ -693,6 +757,43 @@ class Profile extends Component<Props, State> {
               }
             ></IonInput>
             <IonItem>PASSWORD</IonItem>
+            <IonItem
+              lines="none"
+              class="login-signup-input-nestedcontainer login-ionitem"
+            >
+              <IonInput
+                class={
+                  "login-signup-input-field " +
+                  this.state.accountData.currentPasswordColor
+                }
+                clearInput
+                clearOnEdit={false}
+                type={
+                  this.state.accountData.currentPasswordVisibility === false
+                    ? PasswordVisibility.Password
+                    : PasswordVisibility.Text
+                }
+                value={this.state.accountData.currentPassword}
+                placeholder="Current Password"
+                name="currentPassword"
+                onIonChange={e =>
+                  this.handleEditAccountField(e.target as HTMLInputElement)
+                }
+              ></IonInput>
+              {this.state.accountData.currentPassword ? (
+                <IonIcon
+                  class="password-icon"
+                  icon={
+                    this.state.accountData.currentPasswordVisibility
+                      ? eyeOff
+                      : eye
+                  }
+                  onClick={() =>
+                    this.toggleVisibility(PasswordOrConfirm.CurrentPassword)
+                  }
+                />
+              ) : null}
+            </IonItem>
             <IonItem
               lines="none"
               class="login-signup-input-nestedcontainer login-ionitem"
