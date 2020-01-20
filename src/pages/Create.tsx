@@ -200,7 +200,8 @@ class Create extends Component<Props, State> {
           </IonButton>
         </IonCard>
         <IonContent className="beancontent">
-          {businesses.length ? (
+          {businesses.length &&
+          Object.entries(this.props.favorites).length !== 0 ? (
             <>
               {businesses.map((business, idx) => (
                 <IonCard className="beancard" key={idx}>

@@ -163,18 +163,19 @@ class Explore extends Component<Props, State> {
                           </IonItem>
                         </IonCol>
                         <IonCol class="list-favorites-col">
-                          {Object.entries(this.props.favorites).length === 0 ? (
-                            <IonIcon
-                              class="skeleton-heart list-favorites-icon"
-                              icon={heart}
-                            />
-                          ) : (
+                          {checkpoint.name &&
+                          Object.entries(this.props.favorites).length !== 0 ? (
                             <IonIcon
                               onClick={() =>
                                 this.props.toggleFavorite(checkpoint.id)
                               }
                               class="favorites-icon list-favorites-icon"
                               icon={this.renderHeart(checkpoint.id)}
+                            />
+                          ) : (
+                            <IonIcon
+                              class="skeleton-heart list-favorites-icon"
+                              icon={heart}
                             />
                           )}
                         </IonCol>
