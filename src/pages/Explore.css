@@ -62,3 +62,9 @@
   color: #fff5ba !important;
   font-size: 4vh;
 }
+
+.explore-skeleton-text {
+  margin-top: 1.9vh;
+  margin-bottom: 1.9vh;
+  height: 2vh;
+}

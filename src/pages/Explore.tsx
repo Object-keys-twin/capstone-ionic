@@ -11,10 +11,11 @@ import {
   IonIcon,
   IonGrid,
   IonCol,
-  IonRow
+  IonRow,
+  IonSkeletonText
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
-import { heartEmpty, heart, arrowDroprightCircle } from "ionicons/icons";
+import { heartEmpty, heart, arrowDroprightCircle, walk } from "ionicons/icons";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import db from "../firebase/firebase";
@@ -101,6 +102,7 @@ class Explore extends Component<Props, State> {
 
   renderHeart = (checkpointId: string) => {
     let favorites = this.props.favorites;
+
     if (favorites[checkpointId]) return heart;
     else return heartEmpty;
   };
@@ -146,16 +148,35 @@ class Explore extends Component<Props, State> {
                     return (
                       <IonGrid item-content class="checkpoint-row" key={idx}>
                         <IonCol class="list-checkpoint-col">
-                          <IonItem lines="none">{checkpoint.name}</IonItem>
+                          <IonItem lines="none">
+                            {checkpoint.name &&
+                            Object.entries(this.props.favorites).length !==
+                              0 ? (
+                              checkpoint.name
+                            ) : (
+                              <IonSkeletonText
+                                animated
+                                width="70vw"
+                                class="explore-skeleton-text"
+                              />
+                            )}
+                          </IonItem>
                         </IonCol>
                         <IonCol class="list-favorites-col">
-                          <IonIcon
-                            onClick={() =>
-                              this.props.toggleFavorite(checkpoint.id)
-                            }
-                            class="favorites-icon list-favorites-icon"
-                            icon={this.renderHeart(checkpoint.id)}
-                          />
+                          {Object.entries(this.props.favorites).length === 0 ? (
+                            <IonIcon
+                              class="skeleton-heart list-favorites-icon"
+                              icon={heart}
+                            />
+                          ) : (
+                            <IonIcon
+                              onClick={() =>
+                                this.props.toggleFavorite(checkpoint.id)
+                              }
+                              class="favorites-icon list-favorites-icon"
+                              icon={this.renderHeart(checkpoint.id)}
+                            />
+                          )}
                         </IonCol>
                       </IonGrid>
                     );

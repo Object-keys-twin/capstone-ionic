@@ -114,9 +114,11 @@
 }
 
 .skeleton-text {
-  height: 1.7vh;
+  margin-top: 0.9vh;
+  margin-bottom: 0.9vh;
+  height: 1.8vh;
 }
 
 .skeleton-heart {
-  color: #ebebeb;
+  color: #dfdfdf;
 }

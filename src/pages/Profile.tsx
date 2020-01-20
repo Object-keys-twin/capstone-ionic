@@ -557,8 +557,8 @@ class Profile extends Component<Props, State> {
               My Stringbeans
             </IonCardTitle>
           </IonCard>
-          {this.state.tours.map((tour, i) => (
-            <IonCard className="stringbean-card" key={i}>
+          {this.state.tours.map((tour, idx) => (
+            <IonCard className="stringbean-card" key={idx}>
               <IonItem lines="none" class="stringbean-header-container">
                 <IonGrid class="checkpoint-row stringbean-header">
                   <IonCol class="list-checkpoint-col">
@@ -582,16 +582,16 @@ class Profile extends Component<Props, State> {
               </IonItem>
 
               <IonCardContent class="stringbean-card-content">
-                {tour.checkpoints.map((checkpoint, i) => {
+                {tour.checkpoints.map((checkpoint, idx) => {
                   if (checkpoint.name) {
                     return (
-                      <IonItem lines="none" key={i}>
+                      <IonItem lines="none" key={idx}>
                         {checkpoint.name}
                       </IonItem>
                     );
                   } else {
                     return (
-                      <IonItem lines="none" key={i}>
+                      <IonItem lines="none" key={idx}>
                         <IonSkeletonText
                           animated
                           width="70vw"
