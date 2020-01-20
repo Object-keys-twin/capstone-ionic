@@ -121,7 +121,7 @@ type State = {
   accountData: AccountData;
   showErrorToast: boolean;
   toastMessage: string;
-  removeOnSnapshot: () => void;
+  removePersonalToursListener: () => void;
 };
 
 class Profile extends Component<Props, State> {
@@ -158,7 +158,7 @@ class Profile extends Component<Props, State> {
     },
     showErrorToast: false,
     toastMessage: "",
-    removeOnSnapshot: () => {}
+    removePersonalToursListener: () => {}
   };
 
   componentDidMount() {
@@ -173,7 +173,7 @@ class Profile extends Component<Props, State> {
   }
 
   getUserTours = () => {
-    const removeOnSnapshot = db
+    const removePersonalToursListener = db
       .collection("tours")
       .where("user", "==", this.props.user.displayName || this.props.user.email)
       .onSnapshot(querySnapshot => {
@@ -195,7 +195,7 @@ class Profile extends Component<Props, State> {
           this.getCheckpoints(tour, id);
         });
       });
-    this.setState({ removeOnSnapshot });
+    this.setState({ removePersonalToursListener });
   };
 
   getCheckpoints = async (tour: any, idx: number) => {
@@ -216,7 +216,7 @@ class Profile extends Component<Props, State> {
   };
 
   signOut = () => {
-    this.state.removeOnSnapshot();
+    this.state.removePersonalToursListener();
     firebase
       .auth()
       .signOut()
@@ -746,19 +746,7 @@ class Profile extends Component<Props, State> {
                 this.handleEditAccountField(e.target as HTMLInputElement)
               }
             ></IonInput>
-            <IonItem>EMAIL</IonItem>
-            <IonInput
-              class="login-signup-input-field"
-              clearInput
-              type="email"
-              value={this.state.accountData.email}
-              placeholder="Email"
-              name="email"
-              onIonChange={e =>
-                this.handleEditAccountField(e.target as HTMLInputElement)
-              }
-            ></IonInput>
-            <IonItem>PASSWORD</IonItem>
+            <IonItem>PASSWORD-REQUIRED CHANGES</IonItem>
             <IonItem
               lines="none"
               class="login-signup-input-nestedcontainer login-ionitem"
@@ -796,6 +784,20 @@ class Profile extends Component<Props, State> {
                 />
               ) : null}
             </IonItem>
+            <IonItem>EMAIL</IonItem>
+            <IonInput
+              class="login-signup-input-field"
+              clearInput
+              type="email"
+              value={this.state.accountData.email}
+              placeholder="Email"
+              name="email"
+              onIonChange={e =>
+                this.handleEditAccountField(e.target as HTMLInputElement)
+              }
+            ></IonInput>
+            <IonItem>PASSWORD</IonItem>
+
             <IonItem
               lines="none"
               class="login-signup-input-nestedcontainer login-ionitem"

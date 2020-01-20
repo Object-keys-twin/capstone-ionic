@@ -115,12 +115,17 @@ class App extends Component<{}, State> {
           photoURL: user.photoURL || "",
           password: ""
         };
+
+        this.setState({
+          user: { ...this.state.user, ...userObj },
+          loggedIn: true
+        });
+
         const favorites = await this.fetchFavoritesHashTable(user.uid);
         const favoritesArray = await this.generateFavoritesArray(favorites);
 
         this.setState({
-          user: { ...this.state.user, ...userObj, favorites, favoritesArray },
-          loggedIn: true
+          user: { ...this.state.user, favorites, favoritesArray }
         });
 
         // Storage.set({
@@ -276,9 +281,8 @@ class App extends Component<{}, State> {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .catch(error => {
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          console.log("Log-in error:", errorCode, errorMessage);
+          const errorMessage = error.message;
+          console.log("Log-in error:", errorMessage);
           this.setState({
             logInSignUpError: true,
             toastMessage: "Wrong username and/or password!"
