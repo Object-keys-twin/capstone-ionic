@@ -96,12 +96,24 @@ interface AccountData {
 }
 
 interface DbData {
-  checkpoints: Array<any>;
+  checkpoints: Array<CheckpointData>;
   description: string;
   name: string;
   created: object;
   upvotes: number;
   user: string;
+}
+
+interface CheckpointData {
+  id: string;
+  name: string;
+  location: string;
+  imageUrl: string;
+  categories: Array<object>;
+  rating?: number;
+  latitude: number;
+  longitude: number;
+  price?: string | undefined;
 }
 
 interface UserData {
@@ -198,14 +210,28 @@ class Profile extends Component<Props, State> {
     this.setState({ removePersonalToursListener });
   };
 
-  getCheckpoints = async (tour: any, idx: number) => {
-    let checkpointsWithData: any = [];
+  getCheckpoints = async (tour: DbData, idx: number) => {
+    let checkpointsWithData: Array<CheckpointData> = [];
     for (let i = 0; i < tour.checkpoints.length; i++) {
       const checkpoint = await db
         .collection("checkpoints")
         .doc(`${tour.checkpoints[i]}`)
         .get();
-      checkpointsWithData.push(checkpoint.data());
+      const checkpointData = checkpoint.data();
+      if (checkpointData) {
+        const checkpointObj = {
+          id: checkpointData.id,
+          name: checkpointData.name,
+          location: checkpointData.location,
+          imageUrl: checkpointData.imageUrl,
+          categories: checkpointData.categories,
+          rating: checkpointData.rating,
+          latitude: checkpointData.latitude,
+          longitude: checkpointData.longitude,
+          price: checkpointData.price
+        };
+        checkpointsWithData.push(checkpointObj);
+      }
     }
 
     let tours = this.state.tours;
