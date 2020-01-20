@@ -121,6 +121,7 @@ type State = {
   accountData: AccountData;
   showErrorToast: boolean;
   toastMessage: string;
+  removeOnSnapshot: () => void;
 };
 
 class Profile extends Component<Props, State> {
@@ -156,7 +157,8 @@ class Profile extends Component<Props, State> {
       passwordConfirmVisibility: false
     },
     showErrorToast: false,
-    toastMessage: ""
+    toastMessage: "",
+    removeOnSnapshot: () => {}
   };
 
   componentDidMount() {
@@ -171,7 +173,8 @@ class Profile extends Component<Props, State> {
   }
 
   getUserTours = () => {
-    db.collection("tours")
+    const removeOnSnapshot = db
+      .collection("tours")
       .where("user", "==", this.props.user.displayName || this.props.user.email)
       .onSnapshot(querySnapshot => {
         let tourData = Array<DbData>();
@@ -192,6 +195,7 @@ class Profile extends Component<Props, State> {
           this.getCheckpoints(tour, id);
         });
       });
+    this.setState({ removeOnSnapshot });
   };
 
   getCheckpoints = async (tour: any, idx: number) => {
@@ -212,13 +216,11 @@ class Profile extends Component<Props, State> {
   };
 
   signOut = () => {
+    this.state.removeOnSnapshot();
     firebase
       .auth()
       .signOut()
-      .then(function() {
-        // Sign-out successful.
-      })
-      .catch(function(error) {
+      .catch(error => {
         console.log("Sign-out failed.");
       });
   };

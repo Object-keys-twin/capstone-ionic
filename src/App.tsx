@@ -128,7 +128,7 @@ class App extends Component<{}, State> {
         //   value: JSON.stringify(user)
         // });
       } else {
-        console.log("Not logged in.");
+        console.log("Currently logged out.");
         this.setState({
           user: {
             email: "",
