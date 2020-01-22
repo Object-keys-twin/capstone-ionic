@@ -99,7 +99,7 @@ interface DbData {
   checkpoints: Array<CheckpointData>;
   description: string;
   name: string;
-  created: object;
+  created: Date;
   upvotes: number;
   user: string;
 }
@@ -189,28 +189,28 @@ class Profile extends Component<Props, State> {
       .collection("tours")
       .where("user", "==", this.props.user.displayName || this.props.user.email)
       .onSnapshot(querySnapshot => {
-        let tourData = Array<DbData>();
+        let tours = Array<DbData>();
         querySnapshot.forEach(doc => {
-          tourData.push({
+          tours.push({
             checkpoints: doc.data().checkpoints,
             description: doc.data().description,
             name: doc.data().name,
-            created: doc.data().timestamp,
+            created: doc.data().created,
             upvotes: doc.data().upvotes,
             user: doc.data().user
           });
         });
 
-        this.setState({ tours: tourData });
+        this.setState({ tours });
 
-        this.state.tours.forEach((tour, id) => {
-          this.getCheckpoints(tour, id);
+        tours.forEach((tour, idx) => {
+          this.getCheckpointsData(tour, idx);
         });
       });
     this.setState({ removePersonalToursListener });
   };
 
-  getCheckpoints = async (tour: DbData, idx: number) => {
+  getCheckpointsData = async (tour: DbData, idx: number) => {
     let checkpointsWithData: Array<CheckpointData> = [];
     for (let i = 0; i < tour.checkpoints.length; i++) {
       const checkpoint = await db
@@ -235,9 +235,7 @@ class Profile extends Component<Props, State> {
     }
 
     let tours = this.state.tours;
-    tours.forEach((el, i) => {
-      if (i === idx) el.checkpoints = checkpointsWithData;
-    });
+    tours[idx].checkpoints = checkpointsWithData;
     this.setState({ tours });
   };
 
@@ -394,7 +392,7 @@ class Profile extends Component<Props, State> {
       this.setState({
         showErrorToast: true,
         toastMessage:
-          "Passwords must be at least 6 characters & contain a lowercase, uppercase, and number."
+          "Passwords must contain at least 6 characters, a lowercase, an uppercase, and a number."
       });
       return true;
     }
@@ -503,7 +501,7 @@ class Profile extends Component<Props, State> {
       <IonPage>
         <IonHeader class="tab-header-block">
           <IonTitle size="small" class="tab-header header-font">
-            My Profile
+            Profile
           </IonTitle>
           <IonFab vertical="top" horizontal="end">
             <IonFabButton id="settings-button">
@@ -907,8 +905,8 @@ class Profile extends Component<Props, State> {
               ) : null}
             </IonItem>
             <IonItem>
-              Passwords must be at least 6 characters long and contain an
-              uppercase letter, a lowercase letter, and a number.
+              Passwords must contain at least 6 characters, an uppercase letter,
+              a lowercase letter, and a number.
             </IonItem>
             <IonButton
               class="modal-button modal-button-add"

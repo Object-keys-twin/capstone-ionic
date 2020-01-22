@@ -286,7 +286,7 @@ class Create extends Component<Props, State> {
             </>
           ) : (
             <>
-              {[...Array(20)].map((placeholder, idx) => (
+              {[...Array(6)].map((placeholder, idx) => (
                 <IonCard className="beancard" key={idx}>
                   <IonGrid item-content class="checkpoint-row">
                     <IonCol class="list-checkpoint-col">

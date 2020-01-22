@@ -15,7 +15,7 @@ import {
   IonSkeletonText
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
-import { heartEmpty, heart, arrowDroprightCircle, walk } from "ionicons/icons";
+import { heartEmpty, heart, arrowDroprightCircle } from "ionicons/icons";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import db from "../firebase/firebase";
@@ -26,22 +26,34 @@ type Props = {
   toggleFavorite: (checkpointId: string) => void;
 };
 
+// interface CheckpointData {
+//   id: string;
+//   imageUrl: string;
+//   latitude: number;
+//   location: string;
+//   longitude: number;
+//   name: string;
+//   price: string;
+//   rating: number;
+// }
+
 interface CheckpointData {
   id: string;
-  imageUrl: string;
-  latitude: number;
-  location: string;
-  longitude: number;
   name: string;
-  price: string;
-  rating: number;
+  location: string;
+  imageUrl: string;
+  categories: Array<object>;
+  rating?: number;
+  latitude: number;
+  longitude: number;
+  price?: string | undefined;
 }
 
 interface DbData {
   checkpoints: Array<CheckpointData>;
   description: string;
   name: string;
-  created: object;
+  created: Date;
   upvotes: number;
   user: string;
 }
@@ -49,6 +61,7 @@ interface DbData {
 type State = {
   tours: Array<DbData>;
 };
+
 class Explore extends Component<Props, State> {
   state = { tours: Array<DbData>() };
   componentDidMount() {
@@ -63,12 +76,12 @@ class Explore extends Component<Props, State> {
   };
 
   getTours = () => {
-    let tourData = Array<DbData>();
+    let tours = Array<DbData>();
     db.collection("tours")
       .get()
       .then(docs => {
         docs.forEach(doc => {
-          tourData.push({
+          tours.push({
             checkpoints: doc.data().checkpoints,
             description: doc.data().description,
             name: doc.data().name,
@@ -77,26 +90,41 @@ class Explore extends Component<Props, State> {
             user: doc.data().user
           });
         });
-        this.setState({ tours: tourData });
-        this.state.tours.forEach((tour, id) => {
-          this.getCheckpoints(tour, id);
+
+        this.setState({ tours });
+
+        tours.forEach((tour, idx) => {
+          this.getCheckpointsData(tour, idx);
         });
       });
   };
 
-  getCheckpoints = async (tour: any, idx: number) => {
-    let checkpointsWithData: any = [];
+  getCheckpointsData = async (tour: DbData, idx: number) => {
+    let checkpointsWithData: Array<CheckpointData> = [];
     for (let i = 0; i < tour.checkpoints.length; i++) {
       const checkpoint = await db
         .collection("checkpoints")
         .doc(`${tour.checkpoints[i]}`)
         .get();
-      checkpointsWithData.push(checkpoint.data());
+      const checkpointData = checkpoint.data();
+      if (checkpointData) {
+        const checkpointObj = {
+          id: checkpointData.id,
+          name: checkpointData.name,
+          location: checkpointData.location,
+          imageUrl: checkpointData.imageUrl,
+          categories: checkpointData.categories,
+          rating: checkpointData.rating,
+          latitude: checkpointData.latitude,
+          longitude: checkpointData.longitude,
+          price: checkpointData.price
+        };
+        checkpointsWithData.push(checkpointObj);
+      }
     }
+
     let tours = this.state.tours;
-    tours.forEach((el, i) => {
-      if (i === idx) el.checkpoints = checkpointsWithData;
-    });
+    tours[idx].checkpoints = checkpointsWithData;
     this.setState({ tours });
   };
 

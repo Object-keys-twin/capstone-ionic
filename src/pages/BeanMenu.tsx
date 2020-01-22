@@ -113,7 +113,8 @@ export default class BeanMenu extends Component<Props, State> {
       name,
       description,
       created: firebase.firestore.Timestamp.fromDate(new Date()),
-      user: username
+      user: username,
+      upvotes: 0
     };
 
     await db
