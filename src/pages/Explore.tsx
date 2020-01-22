@@ -26,17 +26,6 @@ type Props = {
   toggleFavorite: (checkpointId: string) => void;
 };
 
-// interface CheckpointData {
-//   id: string;
-//   imageUrl: string;
-//   latitude: number;
-//   location: string;
-//   longitude: number;
-//   name: string;
-//   price: string;
-//   rating: number;
-// }
-
 interface CheckpointData {
   id: string;
   name: string;
@@ -156,10 +145,15 @@ class Explore extends Component<Props, State> {
                   <IonCol class="list-favorites-col">
                     <Link
                       className="stringbean-link"
-                      to={{
-                        pathname: "/map",
-                        state: { checkpoints: tour.checkpoints }
-                      }}
+                      to={
+                        tour.checkpoints[0].name &&
+                        Object.entries(this.props.favorites).length !== 0
+                          ? {
+                              pathname: "/map",
+                              state: { checkpoints: tour.checkpoints }
+                            }
+                          : { pathname: "/explore" }
+                      }
                     >
                       <IonIcon
                         class="list-favorites-icon"

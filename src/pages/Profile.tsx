@@ -565,10 +565,14 @@ class Profile extends Component<Props, State> {
                   <IonCol class="list-favorites-col">
                     <Link
                       className="stringbean-link"
-                      to={{
-                        pathname: "/map",
-                        state: { checkpoints: tour.checkpoints }
-                      }}
+                      to={
+                        tour.checkpoints[tour.checkpoints.length - 1].name
+                          ? {
+                              pathname: "/map",
+                              state: { checkpoints: tour.checkpoints }
+                            }
+                          : { pathname: "/profile" }
+                      }
                     >
                       <IonIcon
                         class="list-favorites-icon"
