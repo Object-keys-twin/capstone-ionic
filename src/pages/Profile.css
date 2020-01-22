@@ -86,9 +86,11 @@
 
 #favorites-modal-button-back {
   width: 98%;
-  font-size: 2.5vh;
-  height: 6vh;
+  font-size: 3vh;
+  height: 7.5vh;
   letter-spacing: 0.3vh;
+  padding: 0.4vh;
+  padding-top: 0;
   --background: #8bceaa;
   --background-hover: #8bceaa;
   --background-focused: #8bceaa;
@@ -127,4 +129,37 @@
   margin-top: 1.8vh;
   margin-bottom: 1.8vh;
   height: 2.2vh;
+}
+
+#edit-modal-button-row {
+  display: flex;
+  justify-content: space-around;
+}
+
+#edit-modal-button-back {
+  display: flex;
+  width: 30%;
+  --background: #8bceaa;
+  --background-hover: #8bceaa;
+  --background-focused: #8bceaa;
+  --background-activated: #8bceaa;
+}
+
+#edit-modal-button-submit {
+  display: flex;
+  letter-spacing: 0.7vh;
+  width: 60%;
+}
+
+.edit-modal-button {
+  font-size: 3vh;
+  letter-spacing: 0.3vh;
+  height: 7.5vh;
+  padding: 0.4vh;
+}
+
+#edit-modal-password-required-container {
+  background: red;
+  display: flex;
+  flex-direction: column;
 }

@@ -24,7 +24,8 @@ import {
   IonSkeletonText,
   IonCol,
   IonInput,
-  IonToast
+  IonToast,
+  IonLabel
 } from "@ionic/react";
 import React, { Component } from "react";
 
@@ -503,6 +504,7 @@ class Profile extends Component<Props, State> {
           <IonTitle size="small" class="tab-header header-font">
             Profile
           </IonTitle>
+          {/* -------------------------OPTIONS TRAY------------------------- */}
           <IonFab vertical="top" horizontal="end">
             <IonFabButton id="settings-button">
               <IonIcon class="settings-tray-icon" icon={settings} />
@@ -539,6 +541,7 @@ class Profile extends Component<Props, State> {
             </IonFabList>
           </IonFab>
         </IonHeader>
+        {/* -----------------------PIC & USERNAME CARD---------------------- */}
         <IonContent className="beancontent">
           <IonCard class="profile-card">
             <IonImg
@@ -555,6 +558,7 @@ class Profile extends Component<Props, State> {
               My Stringbeans
             </IonCardTitle>
           </IonCard>
+          {/* -----------------------STRINGBEAN CARDS------------------------ */}
           {this.state.tours.map((tour, idx) => (
             <IonCard className="stringbean-card" key={idx}>
               <IonItem lines="none" class="stringbean-header-container">
@@ -606,7 +610,7 @@ class Profile extends Component<Props, State> {
               </IonCardContent>
             </IonCard>
           ))}
-
+          {/*------------------------FAVORITES MODAL------------------------*/}
           <IonModal isOpen={this.state.showFavoritesModal}>
             <IonHeader>
               <IonTitle
@@ -759,6 +763,7 @@ class Profile extends Component<Props, State> {
               Back To My Profile
             </IonButton>
           </IonModal>
+          {/* -------------------EDIT ACCOUNT MODAL------------------------ */}
           <IonModal isOpen={this.state.showEditAccountModal}>
             <IonHeader>
               <IonTitle
@@ -769,167 +774,178 @@ class Profile extends Component<Props, State> {
                 Edit Account
               </IonTitle>
             </IonHeader>
-            <IonItem>USERNAME</IonItem>
-            <IonInput
-              class={
-                "login-signup-input-field " +
-                this.state.accountData.displayNameColor
-              }
-              clearInput
-              type="text"
-              value={this.state.accountData.displayName}
-              placeholder="displayName"
-              name="displayName"
-              onIonChange={e =>
-                this.handleEditAccountField(e.target as HTMLInputElement)
-              }
-            ></IonInput>
-            <IonItem>PASSWORD-REQUIRED CHANGES</IonItem>
-            <IonItem
-              lines="none"
-              class="login-signup-input-nestedcontainer login-ionitem"
-            >
-              <IonInput
-                class={
-                  "login-signup-input-field " +
-                  this.state.accountData.currentPasswordColor
-                }
-                clearInput
-                clearOnEdit={false}
-                type={
-                  this.state.accountData.currentPasswordVisibility === false
-                    ? PasswordVisibility.Password
-                    : PasswordVisibility.Text
-                }
-                value={this.state.accountData.currentPassword}
-                placeholder="Current Password"
-                name="currentPassword"
-                onIonChange={e =>
-                  this.handleEditAccountField(e.target as HTMLInputElement)
-                }
-              ></IonInput>
-              {this.state.accountData.currentPassword ? (
-                <IonIcon
-                  class="password-icon"
-                  icon={
-                    this.state.accountData.currentPasswordVisibility
-                      ? eyeOff
-                      : eye
+            <IonGrid>
+              <IonRow>
+                <IonItem>USERNAME</IonItem>
+                <IonInput
+                  class={
+                    "login-signup-input-field " +
+                    this.state.accountData.displayNameColor
                   }
-                  onClick={() =>
-                    this.toggleVisibility(PasswordOrConfirm.CurrentPassword)
+                  clearInput
+                  type="text"
+                  value={this.state.accountData.displayName}
+                  placeholder="displayName"
+                  name="displayName"
+                  onIonChange={e =>
+                    this.handleEditAccountField(e.target as HTMLInputElement)
                   }
-                />
-              ) : null}
-            </IonItem>
-            <IonItem>EMAIL</IonItem>
-            <IonInput
-              class="login-signup-input-field"
-              clearInput
-              type="email"
-              value={this.state.accountData.email}
-              placeholder="Email"
-              name="email"
-              onIonChange={e =>
-                this.handleEditAccountField(e.target as HTMLInputElement)
-              }
-            ></IonInput>
-            <IonItem>PASSWORD</IonItem>
+                ></IonInput>
+              </IonRow>
+              <IonRow id="edit-modal-password-required-container">
+                <IonItem>PASSWORD-REQUIRED CHANGES</IonItem>
+                <IonItem
+                  lines="none"
+                  class="login-signup-input-nestedcontainer login-ionitem"
+                >
+                  <IonInput
+                    class={
+                      "login-signup-input-field " +
+                      this.state.accountData.currentPasswordColor
+                    }
+                    clearInput
+                    clearOnEdit={false}
+                    type={
+                      this.state.accountData.currentPasswordVisibility === false
+                        ? PasswordVisibility.Password
+                        : PasswordVisibility.Text
+                    }
+                    value={this.state.accountData.currentPassword}
+                    placeholder="Current Password"
+                    name="currentPassword"
+                    onIonChange={e =>
+                      this.handleEditAccountField(e.target as HTMLInputElement)
+                    }
+                  ></IonInput>
+                  {this.state.accountData.currentPassword ? (
+                    <IonIcon
+                      class="password-icon"
+                      icon={
+                        this.state.accountData.currentPasswordVisibility
+                          ? eyeOff
+                          : eye
+                      }
+                      onClick={() =>
+                        this.toggleVisibility(PasswordOrConfirm.CurrentPassword)
+                      }
+                    />
+                  ) : null}
+                </IonItem>
+                <IonItem>EMAIL</IonItem>
+                <IonInput
+                  class="login-signup-input-field"
+                  clearInput
+                  type="email"
+                  value={this.state.accountData.email}
+                  placeholder="Email"
+                  name="email"
+                  onIonChange={e =>
+                    this.handleEditAccountField(e.target as HTMLInputElement)
+                  }
+                ></IonInput>
+                <IonItem>PASSWORD</IonItem>
 
-            <IonItem
-              lines="none"
-              class="login-signup-input-nestedcontainer login-ionitem"
-            >
-              <IonInput
-                class={
-                  "login-signup-input-field " +
-                  this.state.accountData.passwordColor
-                }
-                clearInput
-                clearOnEdit={false}
-                type={
-                  this.state.accountData.passwordVisibility === false
-                    ? PasswordVisibility.Password
-                    : PasswordVisibility.Text
-                }
-                value={this.state.accountData.password}
-                placeholder="New Password"
-                name="password"
-                onIonChange={e =>
-                  this.handleEditAccountField(e.target as HTMLInputElement)
-                }
-              ></IonInput>
-              {this.state.accountData.password ? (
-                <IonIcon
-                  class="password-icon"
-                  icon={
-                    this.state.accountData.passwordVisibility ? eyeOff : eye
-                  }
-                  onClick={() =>
-                    this.toggleVisibility(PasswordOrConfirm.Password)
-                  }
-                />
-              ) : null}
-            </IonItem>
-            <IonItem
-              lines="none"
-              class="login-signup-input-nestedcontainer login-ionitem"
-            >
-              <IonInput
-                class={
-                  "login-signup-input-field " +
-                  this.state.accountData.passwordConfirmColor
-                }
-                clearInput
-                clearOnEdit={false}
-                type={
-                  this.state.accountData.passwordConfirmVisibility === false
-                    ? PasswordVisibility.Password
-                    : PasswordVisibility.Text
-                }
-                value={this.state.accountData.passwordConfirm}
-                placeholder="Confirm Password"
-                name="passwordConfirm"
-                onIonChange={e =>
-                  this.handleEditAccountField(e.target as HTMLInputElement)
-                }
-              ></IonInput>
-              {this.state.accountData.passwordConfirm ? (
-                <IonIcon
-                  class="password-icon"
-                  icon={
-                    this.state.accountData.passwordConfirmVisibility
-                      ? eyeOff
-                      : eye
-                  }
-                  onClick={() =>
-                    this.toggleVisibility(PasswordOrConfirm.Confirm)
-                  }
-                />
-              ) : null}
-            </IonItem>
-            <IonItem>
-              Passwords must contain at least 6 characters, an uppercase letter,
-              a lowercase letter, and a number.
-            </IonItem>
-            <IonButton
-              class="modal-button modal-button-add"
-              size="small"
-              onClick={() => {
-                this.updateUserOnFirestore();
-              }}
-            >
-              Submit
-            </IonButton>
-            <IonButton
-              class="modal-button modal-button-add"
-              size="small"
-              onClick={() => {
-                this.setState({ showEditAccountModal: false });
-              }}
-            >
-              Back
-            </IonButton>
+                <IonItem
+                  lines="none"
+                  class="login-signup-input-nestedcontainer login-ionitem"
+                >
+                  <IonInput
+                    class={
+                      "login-signup-input-field " +
+                      this.state.accountData.passwordColor
+                    }
+                    clearInput
+                    clearOnEdit={false}
+                    type={
+                      this.state.accountData.passwordVisibility === false
+                        ? PasswordVisibility.Password
+                        : PasswordVisibility.Text
+                    }
+                    value={this.state.accountData.password}
+                    placeholder="New Password"
+                    name="password"
+                    onIonChange={e =>
+                      this.handleEditAccountField(e.target as HTMLInputElement)
+                    }
+                  ></IonInput>
+                  {this.state.accountData.password ? (
+                    <IonIcon
+                      class="password-icon"
+                      icon={
+                        this.state.accountData.passwordVisibility ? eyeOff : eye
+                      }
+                      onClick={() =>
+                        this.toggleVisibility(PasswordOrConfirm.Password)
+                      }
+                    />
+                  ) : null}
+                </IonItem>
+                <IonItem
+                  lines="none"
+                  class="login-signup-input-nestedcontainer login-ionitem"
+                >
+                  <IonInput
+                    class={
+                      "login-signup-input-field " +
+                      this.state.accountData.passwordConfirmColor
+                    }
+                    clearInput
+                    clearOnEdit={false}
+                    type={
+                      this.state.accountData.passwordConfirmVisibility === false
+                        ? PasswordVisibility.Password
+                        : PasswordVisibility.Text
+                    }
+                    value={this.state.accountData.passwordConfirm}
+                    placeholder="Confirm Password"
+                    name="passwordConfirm"
+                    onIonChange={e =>
+                      this.handleEditAccountField(e.target as HTMLInputElement)
+                    }
+                  ></IonInput>
+                  {this.state.accountData.passwordConfirm ? (
+                    <IonIcon
+                      class="password-icon"
+                      icon={
+                        this.state.accountData.passwordConfirmVisibility
+                          ? eyeOff
+                          : eye
+                      }
+                      onClick={() =>
+                        this.toggleVisibility(PasswordOrConfirm.Confirm)
+                      }
+                    />
+                  ) : null}
+                </IonItem>
+                <IonItem>
+                  Passwords must contain at least 6 characters, an uppercase
+                  letter, a lowercase letter, and a number.
+                </IonItem>
+              </IonRow>
+              <IonRow id="edit-modal-button-row">
+                <IonButton
+                  class="modal-button edit-modal-button"
+                  id="edit-modal-button-back"
+                  size="small"
+                  onClick={() => {
+                    this.setState({ showEditAccountModal: false });
+                  }}
+                >
+                  Back
+                </IonButton>
+                <IonButton
+                  class="modal-button edit-modal-button"
+                  id="edit-modal-button-submit"
+                  size="small"
+                  onClick={() => {
+                    this.updateUserOnFirestore();
+                  }}
+                >
+                  Submit
+                </IonButton>
+              </IonRow>
+            </IonGrid>
+            {/* ------------------------ERROR TOAST-------------------------- */}
             <IonToast
               cssClass="login-signup-toast"
               isOpen={this.state.showErrorToast}
