@@ -24,10 +24,10 @@
 #search-button {
   text-transform: none;
   font-size: 2.5vh;
-  --background: #ffb68e;
-  --background-hover: #ffb68e;
-  --background-focused: #ffb68e;
-  --background-activated: #ffb68e;
+  --background: #ffc58e;
+  --background-hover: #ffc58e;
+  --background-focused: #ffc58e;
+  --background-activated: #ffc58e;
 }
 
 .modal-grid {
