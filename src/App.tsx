@@ -166,6 +166,7 @@ class App extends Component<{}, State> {
   generateFavoritesArray = async (favorites: object) => {
     let favoritesArray = [];
     for (let favorite in favorites) {
+      if (favorite === "initializer") continue;
       const favoriteObj = await this.fetchFavoriteData(favorite);
       if (favoriteObj) {
         favoritesArray.push(favoriteObj);
@@ -258,7 +259,7 @@ class App extends Component<{}, State> {
             let newUser = {
               email,
               displayName: displayName || "",
-              favorites: {},
+              favorites: { initializer: 1 },
               friends: {}
             };
 

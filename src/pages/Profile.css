@@ -123,6 +123,7 @@
 
 .input-error {
   --background: #fababa;
+  background-color: #fababa;
 }
 
 .profile-skeleton-text {
