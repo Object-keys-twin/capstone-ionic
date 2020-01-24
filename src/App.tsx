@@ -107,7 +107,6 @@ class App extends Component<{}, State> {
     firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         console.log("Currently logged in!");
-
         let userObj = {
           email: user.email || "",
           uid: user.uid || "",
@@ -324,7 +323,6 @@ class App extends Component<{}, State> {
 
   toggleFavorite = async (checkpointId: string) => {
     const userRef = db.collection("users").doc(this.state.user.uid);
-
     const userData = await userRef.get();
     const user = userData.data();
     if (user) {

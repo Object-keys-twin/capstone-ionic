@@ -449,7 +449,7 @@ class Profile extends Component<Props, State> {
   //----------------------------------------------------------------
 
   //--------UPDATE FIREBASE AND FIRESTORE--------------------------
-  updateUserOnFirestore = async () => {
+  attemptUpdateUser = async () => {
     let error =
       this.checkPasswordComplexityStatus() ||
       this.checkPasswordMatchStatus() ||
@@ -469,53 +469,73 @@ class Profile extends Component<Props, State> {
     const userRef = db.collection("users").doc(this.props.user.uid);
     const { displayName, email, password } = this.state.accountData;
     if (user) {
-      if (displayName !== user.displayName) {
-        user.updateProfile({
-          displayName
-        });
-        userRef.update({ displayName });
-        this.props.updateDisplayNameOrEmail(displayName, "displayName");
-        //edit tours created by this user, and update the 'user' field in the tours' documents
-        //search tours where user equals the old username, and then update
-      }
-      if (email !== user.email && user.email) {
-        user
-          .reauthenticateWithCredential(
-            firebase.auth.EmailAuthProvider.credential(
-              user.email,
-              this.state.accountData.currentPassword
-            )
-          )
-          .then(() => {
-            user.updateEmail(email);
-          });
+      this.updateDisplayName(user, userRef, displayName);
+      this.updateEmail(user, userRef, email);
+      this.updatePassword(user, password);
+    }
+  };
 
-        userRef.update({ email });
-        this.props.updateDisplayNameOrEmail(email, "email");
-        //edit tours created by this user, and update the 'user' field in the tours' documents
-        //search tours where use equals the old email, and then update. however, if there is now a displayName, update 'user' field to that instead.
-      }
-      if (password && user.email) {
-        user
-          .reauthenticateWithCredential(
-            firebase.auth.EmailAuthProvider.credential(
-              user.email,
-              this.state.accountData.currentPassword
-            )
-          )
-          .then(() => {
-            user.updatePassword(password);
-          });
+  updateDisplayName = (
+    user: firebase.User,
+    userRef: firebase.firestore.DocumentReference,
+    displayName: string
+  ) => {
+    if (displayName !== user.displayName) {
+      user.updateProfile({
+        displayName
+      });
+      userRef.update({ displayName });
+      this.props.updateDisplayNameOrEmail(displayName, "displayName");
+      //edit tours created by this user, and update the 'user' field in the tours' documents
+      //search tours where user equals the old username, and then update
+    }
+  };
 
-        this.setState({
-          accountData: {
-            ...this.state.accountData,
-            currentPassword: "",
-            password: "",
-            passwordConfirm: ""
-          }
+  updateEmail = (
+    user: firebase.User,
+    userRef: firebase.firestore.DocumentReference,
+    email: string
+  ) => {
+    if (email !== user.email && user.email) {
+      user
+        .reauthenticateWithCredential(
+          firebase.auth.EmailAuthProvider.credential(
+            user.email,
+            this.state.accountData.currentPassword
+          )
+        )
+        .then(() => {
+          user.updateEmail(email);
         });
-      }
+
+      userRef.update({ email });
+      this.props.updateDisplayNameOrEmail(email, "email");
+      //edit tours created by this user, and update the 'user' field in the tours' documents
+      //search tours where use equals the old email, and then update. however, if there is now a displayName, update 'user' field to that instead.
+    }
+  };
+
+  updatePassword = (user: firebase.User, password: string) => {
+    if (password && user.email) {
+      user
+        .reauthenticateWithCredential(
+          firebase.auth.EmailAuthProvider.credential(
+            user.email,
+            this.state.accountData.currentPassword
+          )
+        )
+        .then(() => {
+          user.updatePassword(password);
+        });
+
+      this.setState({
+        accountData: {
+          ...this.state.accountData,
+          currentPassword: "",
+          password: "",
+          passwordConfirm: ""
+        }
+      });
     }
   };
 
@@ -555,12 +575,15 @@ class Profile extends Component<Props, State> {
                 id="edit-button"
                 onClick={() => {
                   this.setState({
-                    showEditAccountModal: true,
                     accountData: {
                       ...this.state.accountData,
                       displayName: this.props.user.displayName,
-                      email: this.props.user.email
-                    }
+                      email: this.props.user.email,
+                      currentPassword: "",
+                      password: "",
+                      passwordConfirm: ""
+                    },
+                    showEditAccountModal: true
                   });
                 }}
               >
@@ -992,7 +1015,7 @@ class Profile extends Component<Props, State> {
                 id="edit-modal-button-submit"
                 size="small"
                 onClick={() => {
-                  this.updateUserOnFirestore();
+                  this.attemptUpdateUser();
                 }}
               >
                 Submit
