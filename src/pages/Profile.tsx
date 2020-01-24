@@ -459,7 +459,9 @@ class Profile extends Component<Props, State> {
 
     this.updateFirebaseAndFirestore();
     console.log("Updated user on Firebase and Firestore.");
-    this.setState({ showEditAccountModal: false });
+    this.setState({
+      showEditAccountModal: false
+    });
   };
 
   updateFirebaseAndFirestore = () => {
@@ -552,7 +554,14 @@ class Profile extends Component<Props, State> {
                 class="settings-tray-button"
                 id="edit-button"
                 onClick={() => {
-                  this.setState({ showEditAccountModal: true });
+                  this.setState({
+                    showEditAccountModal: true,
+                    accountData: {
+                      ...this.state.accountData,
+                      displayName: this.props.user.displayName,
+                      email: this.props.user.email
+                    }
+                  });
                 }}
               >
                 <IonIcon class="settings-tray-icon" icon={create} />
@@ -971,7 +980,9 @@ class Profile extends Component<Props, State> {
                 id="edit-modal-button-back"
                 size="small"
                 onClick={() => {
-                  this.setState({ showEditAccountModal: false });
+                  this.setState({
+                    showEditAccountModal: false
+                  });
                 }}
               >
                 Back
