@@ -24,7 +24,8 @@ import {
   IonSkeletonText,
   IonCol,
   IonInput,
-  IonToast
+  IonToast,
+  IonSpinner
 } from "@ionic/react";
 import React, { Component } from "react";
 
@@ -93,6 +94,7 @@ interface AccountData {
   passwordConfirm: string;
   passwordConfirmColor: string;
   passwordConfirmVisibility: boolean;
+  spinnerVisibility: string;
 }
 
 interface DbData {
@@ -166,7 +168,8 @@ class Profile extends Component<Props, State> {
       passwordVisibility: false,
       passwordConfirm: "",
       passwordConfirmColor: "",
-      passwordConfirmVisibility: false
+      passwordConfirmVisibility: false,
+      spinnerVisibility: "hidden"
     },
     showErrorToast: false,
     toastMessage: "",
@@ -296,17 +299,28 @@ class Profile extends Component<Props, State> {
 
   //------TOGGLERS FOR INPUT FIELD ERROR - RED BACKGROUND-------------
   toggleDisplayNameColor = async () => {
+    this.setState({
+      accountData: {
+        ...this.state.accountData,
+        spinnerVisibility: ""
+      }
+    });
     let duplicate = await this.checkForDuplicateDisplayName();
     if (duplicate) {
       this.setState({
         accountData: {
           ...this.state.accountData,
-          displayNameColor: "input-error"
+          displayNameColor: "input-error",
+          spinnerVisibility: "hidden"
         }
       });
     } else {
       this.setState({
-        accountData: { ...this.state.accountData, displayNameColor: "" }
+        accountData: {
+          ...this.state.accountData,
+          displayNameColor: "",
+          spinnerVisibility: "hidden"
+        }
       });
     }
   };
@@ -330,7 +344,7 @@ class Profile extends Component<Props, State> {
     if (
       (this.state.accountData.email !== this.props.user.email ||
         this.state.accountData.password) &&
-      !this.state.accountData.currentPassword
+      !this.state.accountData.currentPassword //can't really verify if the typed password matches the one in firebase auth
     ) {
       this.setState({
         accountData: {
@@ -788,8 +802,16 @@ class Profile extends Component<Props, State> {
             </IonHeader>
 
             <IonCard id="edit-modal-username-container">
-              <IonItem class="edit-modal-headers" lines="none">
+              <IonItem
+                class="edit-modal-headers"
+                lines="none"
+                id="edit-modal-username-header"
+              >
                 Username
+                <IonSpinner
+                  id="username-spinner"
+                  class={this.state.accountData.spinnerVisibility}
+                ></IonSpinner>
               </IonItem>
               <IonItem
                 lines="none"

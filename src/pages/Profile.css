@@ -177,7 +177,7 @@
 }
 
 #edit-modal-password-required-header {
-  --background: #fdd08b;
+  --background: #ffcd82;
 }
 
 #edit-modal-password-rules {
@@ -185,4 +185,21 @@
   --background: #ffeaca;
   color: #9c9c9c;
   font-size: 2.1vh;
+}
+
+#edit-modal-username-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#username-spinner {
+  margin-left: 1vh;
+  --color: #ffffff;
+  display: block;
+  height: 2.5vh;
+  width: 2.5vh;
+}
+
+.hidden {
+  visibility: hidden;
 }
