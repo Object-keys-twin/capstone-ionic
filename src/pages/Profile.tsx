@@ -421,6 +421,17 @@ class Profile extends Component<Props, State> {
     return false;
   };
 
+  checkCurrentPasswordStatus = () => {
+    if (this.state.accountData.currentPasswordColor === "input-error") {
+      this.setState({
+        showErrorToast: true,
+        toastMessage: "Current password required to make these changes."
+      });
+      return true;
+    }
+    return false;
+  };
+
   //----------------------------------------------------------------
 
   //--------UPDATE FIREBASE AND FIRESTORE--------------------------
@@ -428,7 +439,8 @@ class Profile extends Component<Props, State> {
     let error =
       this.checkPasswordComplexityStatus() ||
       this.checkPasswordMatchStatus() ||
-      this.checkDisplayNameStatus();
+      this.checkDisplayNameStatus() ||
+      this.checkCurrentPasswordStatus();
     if (error) return;
 
     this.updateFirebaseAndFirestore();
