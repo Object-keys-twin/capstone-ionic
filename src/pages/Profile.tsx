@@ -533,9 +533,6 @@ class Profile extends Component<Props, State> {
       await this.updateEmailOnTours(email);
 
       this.props.updateDisplayNameOrEmail(email, "email");
-
-      //edit tours created by this user, and update the 'user' field in the tours' documents
-      //search tours where use equals the old email, and then update. however, if there is now a displayName, update 'user' field to that instead.
     }
   };
 
@@ -730,7 +727,7 @@ class Profile extends Component<Props, State> {
                     <IonItemSliding key={favorite.id}>
                       <IonItem
                         class="favorites-list-name"
-                        lines="none"
+                        // lines="none"
                         onClick={() => {
                           this.setState({ addCheckpointModal: favorite.id });
                           this.getBusinessFromFirestore(favorite.id);
