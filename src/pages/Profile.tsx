@@ -464,14 +464,15 @@ class Profile extends Component<Props, State> {
     });
   };
 
-  updateFirebaseAndFirestore = () => {
+  updateFirebaseAndFirestore = async () => {
     const user = firebase.auth().currentUser;
     const userRef = db.collection("users").doc(this.props.user.uid);
     const { displayName, email, password } = this.state.accountData;
     if (user) {
-      this.updateDisplayName(user, userRef, displayName);
-      this.updateEmail(user, userRef, email);
+      await this.updateDisplayName(user, userRef, displayName);
+      await this.updateEmail(user, userRef, email);
       this.updatePassword(user, password);
+      this.getUserTours();
     }
   };
 
@@ -489,24 +490,24 @@ class Profile extends Component<Props, State> {
       await this.updateDisplayNameOnTours(displayName);
 
       this.props.updateDisplayNameOrEmail(displayName, "displayName");
-
-      this.getUserTours();
     }
   };
 
   updateDisplayNameOnTours = async (displayName: string) => {
     await db
       .collection("tours")
-      .where("user", "==", this.props.user.displayName)
+      .where("user", "==", this.props.user.displayName || this.props.user.email)
       .get()
       .then(response => {
         let batch = db.batch();
         response.docs.forEach(doc => {
           const ref = db.collection("tours").doc(doc.id);
-          batch.update(ref, { user: displayName });
+          displayName
+            ? batch.update(ref, { user: displayName })
+            : batch.update(ref, { user: this.state.accountData.email });
         });
         batch.commit().then(() => {
-          console.log(`Updated all associated stringbeans with new username!`);
+          console.log(`Updated all associated stringbeans with new username.`);
         });
       });
   };
@@ -527,15 +528,34 @@ class Profile extends Component<Props, State> {
         .then(() => {
           user.updateEmail(email);
         });
-
       userRef.update({ email });
+
+      await this.updateEmailOnTours(email);
 
       this.props.updateDisplayNameOrEmail(email, "email");
 
-      this.getUserTours();
       //edit tours created by this user, and update the 'user' field in the tours' documents
       //search tours where use equals the old email, and then update. however, if there is now a displayName, update 'user' field to that instead.
     }
+  };
+
+  updateEmailOnTours = async (email: string) => {
+    await db
+      .collection("tours")
+      .where("user", "==", this.props.user.email)
+      .get()
+      .then(response => {
+        let batch = db.batch();
+        response.docs.forEach(doc => {
+          const ref = db.collection("tours").doc(doc.id);
+          batch.update(ref, { user: email });
+        });
+        batch.commit().then(() => {
+          console.log(
+            `Updated all associated stringbeans with new email if no username exists.`
+          );
+        });
+      });
   };
 
   updatePassword = (user: firebase.User, password: string) => {
