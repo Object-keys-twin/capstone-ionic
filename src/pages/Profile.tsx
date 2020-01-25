@@ -475,7 +475,7 @@ class Profile extends Component<Props, State> {
     }
   };
 
-  updateDisplayName = (
+  updateDisplayName = async (
     user: firebase.User,
     userRef: firebase.firestore.DocumentReference,
     displayName: string
@@ -485,13 +485,33 @@ class Profile extends Component<Props, State> {
         displayName
       });
       userRef.update({ displayName });
+
+      await this.updateDisplayNameOnTours(displayName);
+
       this.props.updateDisplayNameOrEmail(displayName, "displayName");
-      //edit tours created by this user, and update the 'user' field in the tours' documents
-      //search tours where user equals the old username, and then update
+
+      this.getUserTours();
     }
   };
 
-  updateEmail = (
+  updateDisplayNameOnTours = async (displayName: string) => {
+    await db
+      .collection("tours")
+      .where("user", "==", this.props.user.displayName)
+      .get()
+      .then(response => {
+        let batch = db.batch();
+        response.docs.forEach(doc => {
+          const ref = db.collection("tours").doc(doc.id);
+          batch.update(ref, { user: displayName });
+        });
+        batch.commit().then(() => {
+          console.log(`Updated all associated stringbeans with new username!`);
+        });
+      });
+  };
+
+  updateEmail = async (
     user: firebase.User,
     userRef: firebase.firestore.DocumentReference,
     email: string
@@ -509,7 +529,10 @@ class Profile extends Component<Props, State> {
         });
 
       userRef.update({ email });
+
       this.props.updateDisplayNameOrEmail(email, "email");
+
+      this.getUserTours();
       //edit tours created by this user, and update the 'user' field in the tours' documents
       //search tours where use equals the old email, and then update. however, if there is now a displayName, update 'user' field to that instead.
     }
