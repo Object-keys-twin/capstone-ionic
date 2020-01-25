@@ -3,3 +3,16 @@
   justify-content: space-around;
   width: 95%;
 }
+
+#login-signup-password-rules-container {
+  background: #fcf5d2;
+  color: #8f8f8f;
+  padding-top: 0.8vh;
+  padding-bottom: 0.8vh;
+}
+
+#login-signup-password-rules {
+  --background: clear;
+  color: #8f8f8f;
+  font-size: 1.8vh;
+}

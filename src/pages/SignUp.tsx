@@ -301,7 +301,6 @@ export default class SignUp extends Component<Props, State> {
         </IonCardContent>
         <IonCardContent class="login-signup-input-container">
           <IonItem
-            lines="none"
             class={
               "login-signup-input-nestedcontainer login-ionitem " +
               this.state.accountData.passwordConfirmColor
@@ -334,6 +333,15 @@ export default class SignUp extends Component<Props, State> {
                 onClick={() => this.toggleVisibility(PasswordOrConfirm.Confirm)}
               />
             ) : null}
+          </IonItem>
+        </IonCardContent>
+        <IonCardContent
+          class="login-signup-input-container"
+          id="login-signup-password-rules-container"
+        >
+          <IonItem id="login-signup-password-rules" lines="none">
+            Passwords must contain at least 6 characters, an uppercase letter, a
+            lowercase letter, and a number.
           </IonItem>
         </IonCardContent>
 
