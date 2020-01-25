@@ -19,12 +19,10 @@ import {
 
 import { list, trash } from "ionicons/icons";
 import { menuController } from "@ionic/core";
-// import { Plugins } from "@capacitor/core";
 import db from "../firebase/firebase";
 import BeanMenuForm from "./BeanMenuForm";
 import firebase from "firebase";
 import "./BeanMenu.css";
-// const { Storage } = Plugins;
 
 interface BusinessData {
   id: string;

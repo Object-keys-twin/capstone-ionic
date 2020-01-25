@@ -22,7 +22,7 @@ import db from "../firebase/firebase";
 import "./Explore.css";
 
 type Props = {
-  favorites: { [key: string]: any };
+  favorites: { [key: string]: number };
   toggleFavorite: (checkpointId: string) => void;
 };
 
@@ -204,6 +204,7 @@ class Explore extends Component<Props, State> {
                       </IonGrid>
                     );
                   }
+                  return <></>;
                 })}
               </IonCardContent>
             </IonCard>

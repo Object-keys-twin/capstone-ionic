@@ -29,7 +29,7 @@ import "./Create.css";
 const { Geolocation } = Plugins;
 
 type Props = {
-  favorites: { [key: string]: any };
+  favorites: { [key: string]: number };
   stringbean: Array<BusinessData>;
   toggleFavorite: (checkpointId: string) => void;
   addToStringBean: (business: object) => void;
@@ -81,7 +81,7 @@ class Create extends Component<Props, State> {
     this.getYelpBusinesses(this.state.latitude, this.state.longitude);
   };
 
-  keyUpHandler = (e: any) => {
+  keyUpHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
       this.getYelpBusinesses(
         this.state.latitude,
@@ -159,7 +159,9 @@ class Create extends Component<Props, State> {
     return (
       <IonPage
         className="beancontent"
-        onKeyUp={(e: any) => this.keyUpHandler(e)}
+        onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) =>
+          this.keyUpHandler(e)
+        }
       >
         <IonHeader class="tab-header-block">
           <IonTitle size="small" class="tab-header header-font">

@@ -391,7 +391,7 @@ class App extends Component<{}, State> {
 
   removeFromStringBean = async (id: string) => {
     let storage: any;
-    let parsedStorage: any;
+    let parsedStorage: Array<BusinessData>;
     storage = await Storage.get({
       key: "stringbean"
     });

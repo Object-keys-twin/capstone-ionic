@@ -13,6 +13,27 @@ import {
 import { navigate } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
 
+interface CheckpointData {
+  id: string;
+  name: string;
+  location: string;
+  imageUrl: string;
+  categories: Array<object>;
+  rating?: number;
+  latitude: number;
+  longitude: number;
+  price?: string | undefined;
+}
+
+interface DbData {
+  checkpoints: Array<CheckpointData>;
+  description: string;
+  name: string;
+  created: Date;
+  upvotes: number;
+  user: string;
+}
+
 type State = {
   latitude: number;
   longitude: number;
@@ -20,7 +41,7 @@ type State = {
 };
 
 type Props = {
-  location: any;
+  location: { state: DbData };
 };
 
 const { Geolocation } = Plugins;

@@ -45,18 +45,6 @@ import db from "../firebase/firebase";
 
 import "./Profile.css";
 
-// interface BusinessData {
-//   id: string;
-//   name: string;
-//   location: string;
-//   imageUrl: string;
-//   categories: Array<object>;
-//   rating?: number;
-//   latitude: number;
-//   longitude: number;
-//   price?: string | undefined;
-// }
-
 type Props = {
   user: UserData;
   toggleFavorite: (checkpointId: string) => void;
@@ -727,7 +715,6 @@ class Profile extends Component<Props, State> {
                     <IonItemSliding key={favorite.id}>
                       <IonItem
                         class="favorites-list-name"
-                        // lines="none"
                         onClick={() => {
                           this.setState({ addCheckpointModal: favorite.id });
                           this.getBusinessFromFirestore(favorite.id);
