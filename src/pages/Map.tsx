@@ -12,6 +12,7 @@ import {
 } from "@ionic/react";
 import { navigate } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
+const { Geolocation } = Plugins;
 
 interface CheckpointData {
   id: string;
@@ -44,8 +45,6 @@ type Props = {
   location: { state: DbData };
 };
 
-const { Geolocation } = Plugins;
-
 class MapPage extends Component<Props, State> {
   state = {
     latitude: 0,
@@ -59,11 +58,18 @@ class MapPage extends Component<Props, State> {
   };
 
   getCurrentPosition = async () => {
-    const coordinates = await Geolocation.getCurrentPosition();
-    this.setState({
-      latitude: coordinates.coords.latitude,
-      longitude: coordinates.coords.longitude
-    });
+    await Geolocation.getCurrentPosition()
+      .then(coordinates => {
+        this.setState({
+          latitude: coordinates.coords.latitude,
+          longitude: coordinates.coords.longitude
+        });
+      })
+      .catch(() => {
+        console.log("Location could not be determined.");
+        (this.props as any).history.goBack();
+      });
+    //maybe include a toast notification to describe the error
   };
 
   launchGoogleMapsNav = () => {
