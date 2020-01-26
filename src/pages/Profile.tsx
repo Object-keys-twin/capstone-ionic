@@ -51,6 +51,8 @@ type Props = {
   favoritesArray: Array<FavoriteObj>;
   addToStringBean: (business: object) => void;
   updateDisplayNameOrEmail: (displayNameOrEmail: string, type: string) => void;
+  mapErrorToastMessage: string;
+  showMapErrorToast: boolean;
 };
 
 enum PasswordOrConfirm {
@@ -1052,8 +1054,10 @@ class Profile extends Component<Props, State> {
             {/* ------------------------ERROR TOAST-------------------------- */}
             <IonToast
               cssClass="login-signup-toast"
-              isOpen={this.state.showErrorToast}
-              message={this.state.toastMessage}
+              isOpen={this.state.showErrorToast || this.props.showMapErrorToast}
+              message={
+                this.state.toastMessage || this.props.mapErrorToastMessage
+              }
               duration={2000}
               onDidDismiss={() => {
                 this.resetErrorToast();

@@ -80,6 +80,7 @@ type State = {
   user: UserData | null;
   loggedIn: boolean;
   logInSignUpError: boolean;
+  showMapErrorToast: boolean;
   toastMessage: string;
   stringbean: Array<BusinessData>;
 };
@@ -97,6 +98,7 @@ class App extends Component<{}, State> {
     },
     loggedIn: false,
     logInSignUpError: false,
+    showMapErrorToast: false,
     toastMessage: "",
     stringbean: Array<BusinessData>()
   };
@@ -426,6 +428,17 @@ class App extends Component<{}, State> {
     }
   };
 
+  showMapErrorToast = () => {
+    this.setState({
+      toastMessage: "Location could not be determined.",
+      showMapErrorToast: true
+    });
+    setTimeout(
+      () => this.setState({ toastMessage: "", showMapErrorToast: false }),
+      2000
+    );
+  };
+
   render() {
     if (this.state.loggedIn) {
       return (
@@ -443,6 +456,8 @@ class App extends Component<{}, State> {
                       toggleFavorite={this.toggleFavorite}
                       addToStringBean={this.addToStringBean}
                       updateDisplayNameOrEmail={this.updateDisplayNameOrEmail}
+                      mapErrorToastMessage={this.state.toastMessage}
+                      showMapErrorToast={this.state.showMapErrorToast}
                     />
                   )}
                   exact={true}
@@ -454,6 +469,8 @@ class App extends Component<{}, State> {
                       {...props}
                       favorites={this.state.user.favorites}
                       toggleFavorite={this.toggleFavorite}
+                      mapErrorToastMessage={this.state.toastMessage}
+                      showMapErrorToast={this.state.showMapErrorToast}
                     />
                   )}
                   exact={true}
@@ -472,7 +489,16 @@ class App extends Component<{}, State> {
                     />
                   )}
                 />
-                <Route path="/map" component={MapPage} exact={true} />
+                <Route
+                  path="/map"
+                  render={props => (
+                    <MapPage
+                      {...props}
+                      showMapErrorToast={this.showMapErrorToast}
+                    />
+                  )}
+                  exact={true}
+                />
                 <Route
                   path="/"
                   render={() => <Redirect to="/explore" />}

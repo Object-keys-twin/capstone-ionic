@@ -43,6 +43,7 @@ type State = {
 
 type Props = {
   location: { state: DbData };
+  showMapErrorToast: () => void;
 };
 
 class MapPage extends Component<Props, State> {
@@ -66,10 +67,10 @@ class MapPage extends Component<Props, State> {
         });
       })
       .catch(() => {
-        console.log("Location could not be determined.");
+        console.log("Current location could not be determined.");
+        this.props.showMapErrorToast();
         (this.props as any).history.goBack();
       });
-    //maybe include a toast notification to describe the error
   };
 
   launchGoogleMapsNav = () => {
@@ -91,6 +92,7 @@ class MapPage extends Component<Props, State> {
       this.setState({ link: googleUrl });
     }
   };
+
   render() {
     if (this.props.location.state) {
       const { checkpoints } = this.props.location.state;
@@ -126,7 +128,8 @@ class MapPage extends Component<Props, State> {
     }
     return (
       <IonPage>
-        <IonContent>Loading...</IonContent>
+        <IonContent>Why are you doing this? Go back.</IonContent>
+        {/* implement redirect to explore page */}
       </IonPage>
     );
   }

@@ -12,7 +12,8 @@ import {
   IonGrid,
   IonCol,
   IonRow,
-  IonSkeletonText
+  IonSkeletonText,
+  IonToast
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
 import { heartEmpty, heart, arrowDroprightCircle } from "ionicons/icons";
@@ -24,6 +25,8 @@ import "./Explore.css";
 type Props = {
   favorites: { [key: string]: number };
   toggleFavorite: (checkpointId: string) => void;
+  mapErrorToastMessage: string;
+  showMapErrorToast: boolean;
 };
 
 interface CheckpointData {
@@ -213,6 +216,14 @@ class Explore extends Component<Props, State> {
           <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
             <IonRefresherContent className="refresher-content"></IonRefresherContent>
           </IonRefresher>
+
+          {/* ------------------------ERROR TOAST-------------------------- */}
+          <IonToast
+            cssClass="login-signup-toast"
+            isOpen={this.props.showMapErrorToast}
+            message={this.props.mapErrorToastMessage}
+            duration={2000}
+          />
         </IonContent>
       </IonPage>
     );
