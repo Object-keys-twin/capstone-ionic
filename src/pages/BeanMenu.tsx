@@ -128,13 +128,7 @@ export default class BeanMenu extends Component<Props, State> {
   render() {
     return (
       <>
-        <IonMenu
-          id="beanmenu"
-          side="end"
-          contentId="main"
-          type="overlay"
-          swipeGesture={true}
-        >
+        <IonMenu side="end" contentId="main" type="overlay" swipeGesture={true}>
           <IonHeader>
             <IonTitle
               size="small"
