@@ -74,6 +74,11 @@ interface BusinessData {
   latitude: number;
   longitude: number;
   price?: string | undefined;
+  timestamp: string;
+}
+
+interface LooseObject {
+  [key: string]: any;
 }
 
 type State = {
@@ -375,14 +380,17 @@ class App extends Component<{}, State> {
     }
   };
 
-  addToStringBean = async (business: object) => {
+  addToStringBean = async (bean: LooseObject) => {
+    //timestamp will be used as unique key value for My Stringbean .map rendering
+    bean["timestamp"] = new Date().toString();
+
     let stringBeanArray = [];
 
     const localStorage = await Storage.get({ key: "stringbean" });
     if (localStorage.value) {
       stringBeanArray = JSON.parse(localStorage.value);
     }
-    stringBeanArray.push(business);
+    stringBeanArray.push(bean);
 
     this.setState({ stringbean: stringBeanArray });
     await Storage.set({

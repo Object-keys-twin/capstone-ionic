@@ -34,6 +34,7 @@ interface BusinessData {
   latitude: number;
   longitude: number;
   price?: string | undefined;
+  timestamp: string;
 }
 
 type State = {
@@ -142,7 +143,7 @@ export default class BeanMenu extends Component<Props, State> {
             <IonList>
               {this.props.stringbean.map((bean, idx) => {
                 return (
-                  <IonItemSliding key={bean.id + idx}>
+                  <IonItemSliding key={bean.timestamp}>
                     <IonItemOptions side="end">
                       <IonItemOption
                         color="danger"

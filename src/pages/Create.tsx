@@ -47,6 +47,7 @@ interface BusinessData {
   latitude: number;
   longitude: number;
   price?: string | undefined;
+  timestamp: string;
 }
 
 type State = {
