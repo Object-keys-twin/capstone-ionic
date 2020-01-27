@@ -43,7 +43,7 @@ type State = {
 
 type Props = {
   location: { state: DbData };
-  showMapErrorToast: () => void;
+  showMapErrorToastFunction: () => void;
 };
 
 class MapPage extends Component<Props, State> {
@@ -68,7 +68,7 @@ class MapPage extends Component<Props, State> {
       })
       .catch(() => {
         console.log("Current location could not be determined.");
-        this.props.showMapErrorToast();
+        this.props.showMapErrorToastFunction();
         (this.props as any).history.goBack();
       });
   };

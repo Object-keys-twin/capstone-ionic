@@ -496,6 +496,9 @@ class App extends Component<{}, State> {
                       addToStringBean={this.addToStringBean}
                       removeFromStringBean={this.removeFromStringBean}
                       clearStorageOnPublish={this.clearStorageOnPublish}
+                      mapErrorToastMessage={this.state.toastMessage}
+                      showMapErrorToast={this.state.showMapErrorToast}
+                      showMapErrorToastFunction={this.showMapErrorToast}
                     />
                   )}
                 />
@@ -504,7 +507,7 @@ class App extends Component<{}, State> {
                   render={props => (
                     <MapPage
                       {...props}
-                      showMapErrorToast={this.showMapErrorToast}
+                      showMapErrorToastFunction={this.showMapErrorToast}
                     />
                   )}
                   exact={true}

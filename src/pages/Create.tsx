@@ -16,7 +16,8 @@ import {
   IonImg,
   IonText,
   IonCol,
-  IonSkeletonText
+  IonSkeletonText,
+  IonToast
 } from "@ionic/react";
 import { heart, heartEmpty, search } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
@@ -35,6 +36,9 @@ type Props = {
   addToStringBean: (business: object) => void;
   removeFromStringBean: (idx: number) => void;
   clearStorageOnPublish: () => void;
+  mapErrorToastMessage: string;
+  showMapErrorToast: boolean;
+  showMapErrorToastFunction: () => void;
 };
 
 interface BusinessData {
@@ -73,12 +77,27 @@ class Create extends Component<Props, State> {
     this.getCurrentPosition();
   }
 
+  // getCurrentPosition = async () => {
+  //   const coordinates = await Geolocation.getCurrentPosition();
+  //   this.setState({
+  //     latitude: coordinates.coords.latitude,
+  //     longitude: coordinates.coords.longitude
+  //   });
+  //   this.getYelpBusinesses(this.state.latitude, this.state.longitude);
+  // };
+
   getCurrentPosition = async () => {
-    const coordinates = await Geolocation.getCurrentPosition();
-    this.setState({
-      latitude: coordinates.coords.latitude,
-      longitude: coordinates.coords.longitude
-    });
+    await Geolocation.getCurrentPosition()
+      .then(coordinates => {
+        this.setState({
+          latitude: coordinates.coords.latitude,
+          longitude: coordinates.coords.longitude
+        });
+      })
+      .catch(() => {
+        console.log("Current location could not be determined.");
+        this.props.showMapErrorToastFunction();
+      });
     this.getYelpBusinesses(this.state.latitude, this.state.longitude);
   };
 
@@ -323,6 +342,13 @@ class Create extends Component<Props, State> {
               ))}
             </>
           )}
+          {/* ------------------------ERROR TOAST-------------------------- */}
+          <IonToast
+            cssClass="login-signup-toast"
+            isOpen={this.props.showMapErrorToast}
+            message={this.props.mapErrorToastMessage}
+            duration={2000}
+          />
         </IonContent>
       </IonPage>
     );
