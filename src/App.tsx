@@ -304,7 +304,7 @@ class App extends Component<{}, State> {
       .auth()
       .signInWithPopup(provider)
       .then(result => {
-        console.log("Google login success");
+        console.log("Google login success.");
         if (result.user) {
           const { uid, displayName, email, photoURL } = result.user;
 
@@ -376,7 +376,7 @@ class App extends Component<{}, State> {
         name: checkpointName
       };
     } else {
-      console.log("Could not find favorite in database checkpoints.");
+      console.log("Could not find favorite in database beans/checkpoints.");
     }
   };
 
@@ -397,26 +397,26 @@ class App extends Component<{}, State> {
       key: "stringbean",
       value: JSON.stringify(stringBeanArray)
     });
+    console.log("Added bean to current stringbean!");
   };
 
   removeFromStringBean = async (idx: number) => {
     let storage: any;
-    let parsedStorage: Array<BusinessData>;
+    let parsedStorageStringbean: Array<BusinessData>;
+
     storage = await Storage.get({
       key: "stringbean"
     });
-    parsedStorage = JSON.parse(storage.value);
-    // const removedBean = parsedStorage.filter(
-    //   (beanPlaceholder, index) => index !== idx
-    // );
-    // console.log(parsedStorage, idx);
-    parsedStorage.splice(idx, 1);
+
+    parsedStorageStringbean = JSON.parse(storage.value);
+    parsedStorageStringbean.splice(idx, 1);
+
     this.setState({
-      stringbean: parsedStorage
+      stringbean: parsedStorageStringbean
     });
     await Storage.set({
       key: "stringbean",
-      value: JSON.stringify(parsedStorage)
+      value: JSON.stringify(parsedStorageStringbean)
     });
   };
 

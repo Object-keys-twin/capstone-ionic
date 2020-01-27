@@ -35,15 +35,11 @@ export default class BeanMenuForm extends Component<Props> {
           {
             text: "Cancel",
             role: "cancel",
-            cssClass: "secondary",
-            handler: () => {
-              console.log("Confirm Cancel");
-            }
+            cssClass: "secondary"
           },
           {
             text: "Publish",
             handler: data => {
-              console.log("Confirm Ok");
               this.props.publishTour(data.name, data.description);
               menuController.close();
             }

@@ -37,16 +37,16 @@ interface BusinessData {
   timestamp: string;
 }
 
-type State = {
-  showAlert: boolean;
-  publishError: boolean;
-  toastMessage: string;
-};
-
 type Props = {
   stringbean: Array<BusinessData>;
   removeFromStringBean: (idx: number) => void;
   clearStorageOnPublish: () => void;
+};
+
+type State = {
+  showAlert: boolean;
+  publishError: boolean;
+  toastMessage: string;
 };
 
 export default class BeanMenu extends Component<Props, State> {
@@ -68,7 +68,7 @@ export default class BeanMenu extends Component<Props, State> {
         bean.price = "not available";
       }
       await beanRef.set(bean);
-      console.log("Created checkpoint in Firestore:", bean.name);
+      console.log("Created bean/checkpoint in Firestore:", bean.name);
     }
     //this only creates. need to add update functionality, so as yelp data update in the future, firestore will also be updated
   };
@@ -120,7 +120,7 @@ export default class BeanMenu extends Component<Props, State> {
       .collection("tours")
       .add(tour)
       .then(ref => {
-        console.log("Added document with ID: ", ref.id);
+        console.log("Added stringbean with ID: ", ref.id);
       });
 
     this.props.clearStorageOnPublish();

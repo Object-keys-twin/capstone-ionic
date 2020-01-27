@@ -29,18 +29,6 @@ import "./Create.css";
 
 const { Geolocation } = Plugins;
 
-type Props = {
-  favorites: { [key: string]: number };
-  stringbean: Array<BusinessData>;
-  toggleFavorite: (checkpointId: string) => void;
-  addToStringBean: (business: object) => void;
-  removeFromStringBean: (idx: number) => void;
-  clearStorageOnPublish: () => void;
-  mapErrorToastMessage: string;
-  showMapErrorToast: boolean;
-  showMapErrorToastFunction: () => void;
-};
-
 interface BusinessData {
   id: string;
   name: string;
@@ -53,6 +41,18 @@ interface BusinessData {
   price?: string | undefined;
   timestamp: string;
 }
+
+type Props = {
+  favorites: { [key: string]: number };
+  stringbean: Array<BusinessData>;
+  toggleFavorite: (checkpointId: string) => void;
+  addToStringBean: (business: object) => void;
+  removeFromStringBean: (idx: number) => void;
+  clearStorageOnPublish: () => void;
+  mapErrorToastMessage: string;
+  showMapErrorToast: boolean;
+  showMapErrorToastFunction: () => void;
+};
 
 type State = {
   latitude: number;
@@ -76,15 +76,6 @@ class Create extends Component<Props, State> {
   componentDidMount() {
     this.getCurrentPosition();
   }
-
-  // getCurrentPosition = async () => {
-  //   const coordinates = await Geolocation.getCurrentPosition();
-  //   this.setState({
-  //     latitude: coordinates.coords.latitude,
-  //     longitude: coordinates.coords.longitude
-  //   });
-  //   this.getYelpBusinesses(this.state.latitude, this.state.longitude);
-  // };
 
   getCurrentPosition = async () => {
     await Geolocation.getCurrentPosition()
@@ -162,7 +153,7 @@ class Create extends Component<Props, State> {
         bean.price = "not available";
       }
       await beanRef.set(bean);
-      console.log("Created checkpoint in Firestore:", bean.name);
+      console.log("Created bean/checkpoint in Firestore:", bean.name);
     }
     //this only creates. need to add update functionality, so as yelp data update in the future, firestore will also be updated
   };

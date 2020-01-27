@@ -45,16 +45,6 @@ import db from "../firebase/firebase";
 
 import "./Profile.css";
 
-type Props = {
-  user: UserData;
-  toggleFavorite: (checkpointId: string) => void;
-  favoritesArray: Array<FavoriteObj>;
-  addToStringBean: (business: object) => void;
-  updateDisplayNameOrEmail: (displayNameOrEmail: string, type: string) => void;
-  mapErrorToastMessage: string;
-  showMapErrorToast: boolean;
-};
-
 enum PasswordOrConfirm {
   CurrentPassword = "currentPasswordVisibility",
   Password = "passwordVisibility",
@@ -114,6 +104,16 @@ interface UserData {
   displayName: string;
   photoURL: string;
 }
+
+type Props = {
+  user: UserData;
+  toggleFavorite: (checkpointId: string) => void;
+  favoritesArray: Array<FavoriteObj>;
+  addToStringBean: (business: object) => void;
+  updateDisplayNameOrEmail: (displayNameOrEmail: string, type: string) => void;
+  mapErrorToastMessage: string;
+  showMapErrorToast: boolean;
+};
 
 type State = {
   tours: Array<DbData>;

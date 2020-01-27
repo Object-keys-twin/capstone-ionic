@@ -22,13 +22,6 @@ import { Link } from "react-router-dom";
 import db from "../firebase/firebase";
 import "./Explore.css";
 
-type Props = {
-  favorites: { [key: string]: number };
-  toggleFavorite: (checkpointId: string) => void;
-  mapErrorToastMessage: string;
-  showMapErrorToast: boolean;
-};
-
 interface CheckpointData {
   id: string;
   name: string;
@@ -49,6 +42,13 @@ interface DbData {
   upvotes: number;
   user: string;
 }
+
+type Props = {
+  favorites: { [key: string]: number };
+  toggleFavorite: (checkpointId: string) => void;
+  mapErrorToastMessage: string;
+  showMapErrorToast: boolean;
+};
 
 type State = {
   tours: Array<DbData>;

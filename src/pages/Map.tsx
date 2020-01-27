@@ -35,15 +35,15 @@ interface DbData {
   user: string;
 }
 
+type Props = {
+  location: { state: DbData };
+  showMapErrorToastFunction: () => void;
+};
+
 type State = {
   latitude: number;
   longitude: number;
   link: string;
-};
-
-type Props = {
-  location: { state: DbData };
-  showMapErrorToastFunction: () => void;
 };
 
 class MapPage extends Component<Props, State> {
