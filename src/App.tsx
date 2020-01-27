@@ -391,22 +391,24 @@ class App extends Component<{}, State> {
     });
   };
 
-  removeFromStringBean = async (id: string) => {
+  removeFromStringBean = async (idx: number) => {
     let storage: any;
     let parsedStorage: Array<BusinessData>;
     storage = await Storage.get({
       key: "stringbean"
     });
     parsedStorage = JSON.parse(storage.value);
-    const removedBean = parsedStorage.filter(
-      (item: BusinessData) => item.id !== id
-    );
+    // const removedBean = parsedStorage.filter(
+    //   (beanPlaceholder, index) => index !== idx
+    // );
+    // console.log(parsedStorage, idx);
+    parsedStorage.splice(idx, 1);
     this.setState({
-      stringbean: removedBean
+      stringbean: parsedStorage
     });
     await Storage.set({
       key: "stringbean",
-      value: JSON.stringify(removedBean)
+      value: JSON.stringify(parsedStorage)
     });
   };
 

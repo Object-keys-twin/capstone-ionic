@@ -44,7 +44,7 @@ type State = {
 
 type Props = {
   stringbean: Array<BusinessData>;
-  removeFromStringBean: (id: string) => void;
+  removeFromStringBean: (idx: number) => void;
   clearStorageOnPublish: () => void;
 };
 
@@ -142,12 +142,12 @@ export default class BeanMenu extends Component<Props, State> {
             <IonList>
               {this.props.stringbean.map((bean, idx) => {
                 return (
-                  <IonItemSliding key={bean.id}>
+                  <IonItemSliding key={bean.id + idx}>
                     <IonItemOptions side="end">
                       <IonItemOption
                         color="danger"
                         onClick={() => {
-                          this.props.removeFromStringBean(bean.id);
+                          this.props.removeFromStringBean(idx);
                         }}
                       >
                         <IonIcon slot="icon-only" icon={trash}></IonIcon>

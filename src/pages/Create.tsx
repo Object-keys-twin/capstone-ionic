@@ -33,7 +33,7 @@ type Props = {
   stringbean: Array<BusinessData>;
   toggleFavorite: (checkpointId: string) => void;
   addToStringBean: (business: object) => void;
-  removeFromStringBean: (id: string) => void;
+  removeFromStringBean: (idx: number) => void;
   clearStorageOnPublish: () => void;
 };
 
