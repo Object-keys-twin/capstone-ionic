@@ -23,24 +23,15 @@ enum PasswordVisibility {
   Text = "text"
 }
 
-interface FavoriteObj {
-  id: string;
-  name: string;
-}
-
-interface UserData {
+interface LogInSignUpData {
   email: string;
-  uid?: string;
   displayName: string;
-  photoURL: string;
   password: string;
-  favorites: object;
-  favoritesArray: Array<FavoriteObj>;
 }
 
 type Props = {
   handleGoogle: () => void;
-  handleSubmit: (user: UserData, type?: string) => void;
+  handleSubmit: (user: LogInSignUpData, type?: string) => void;
   resetLogInSignUpError: () => void;
   logInSignUpError: boolean;
   toastMessage: string;
@@ -48,7 +39,6 @@ type Props = {
 
 type State = {
   passwordVisibility: boolean;
-  displayName: string;
   email: string;
   password: string;
   showSignUp: boolean;
@@ -57,7 +47,6 @@ type State = {
 class Login extends Component<Props, State> {
   state = {
     passwordVisibility: false,
-    displayName: "",
     email: "",
     password: "",
     showSignUp: false
@@ -69,12 +58,8 @@ class Login extends Component<Props, State> {
     });
   };
 
-  handleEmail = (e: string) => {
-    this.setState({ email: e });
-  };
-
-  handlePassword = (e: string) => {
-    this.setState({ password: e });
+  handleLoginField = (event: HTMLInputElement) => {
+    this.setState({ ...this.state, [event.name]: event.value });
   };
 
   showSignUp = () => {
@@ -84,12 +69,8 @@ class Login extends Component<Props, State> {
   logIn = () => {
     let tryLogIn = {
       email: this.state.email,
-      uid: "",
       displayName: "",
-      photoURL: "",
-      password: this.state.password,
-      favorites: {},
-      favoritesArray: Array<FavoriteObj>()
+      password: this.state.password
     };
     this.props.handleSubmit(tryLogIn);
   };
@@ -126,12 +107,12 @@ class Login extends Component<Props, State> {
                         <IonInput
                           class="login-signup-input-field"
                           clearInput
+                          clearOnEdit={false}
                           type="email"
                           placeholder="Email"
+                          name="email"
                           onIonChange={e =>
-                            this.handleEmail(
-                              (e.target as HTMLInputElement).value
-                            )
+                            this.handleLoginField(e.target as HTMLInputElement)
                           }
                         ></IonInput>
                       </IonItem>
@@ -144,10 +125,10 @@ class Login extends Component<Props, State> {
                         <IonInput
                           class="login-signup-input-field"
                           clearInput
+                          clearOnEdit={false}
+                          name="password"
                           onIonChange={e =>
-                            this.handlePassword(
-                              (e.target as HTMLInputElement).value
-                            )
+                            this.handleLoginField(e.target as HTMLInputElement)
                           }
                           type={
                             this.state.passwordVisibility === false

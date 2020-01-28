@@ -1,11 +1,5 @@
 import React, { Component } from "react";
 
-type Props = {
-  lat: number;
-  long: number;
-  checkpoints: Array<BusinessData>;
-};
-
 interface BusinessData {
   id: string;
   name: string;
@@ -24,6 +18,12 @@ interface DirectionsData {
   travelMode: any;
   waypoints: any;
 }
+
+type Props = {
+  lat: number;
+  long: number;
+  checkpoints: Array<BusinessData>;
+};
 
 export default class Map extends Component<Props> {
   mapEle: React.RefObject<HTMLDivElement>;

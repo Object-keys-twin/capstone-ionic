@@ -1,6 +1,6 @@
 #menu-button {
   margin: 1.5vh;
-  background: #ffef5e;
+  background: #ffe677;
   color: #ffffff;
   border-radius: 10vh;
   width: 9vh;
@@ -8,17 +8,17 @@
 }
 
 #menu-button2 {
-  --background-hover: #ffe65e;
-  --background-focused: #ffe65e;
-  --background-activated: #ffe65e;
+  --background-hover: #ffe677;
+  --background-focused: #ffe677;
+  --background-activated: #ffe677;
   --color: white;
 }
 
 #publish-button {
-  --background: #ffb68e;
-  --background-hover: #ffb68e;
-  --background-focused: #ffb68e;
-  --background-activated: #ffb68e;
+  --background: #ffc58e;
+  --background-hover: #ffc58e;
+  --background-focused: #ffc58e;
+  --background-activated: #ffc58e;
   margin: 1.1vh;
   letter-spacing: 0.3vh;
   height: 6vh;
@@ -36,11 +36,6 @@
   font-size: 4vh;
   background: #6ba486;
   padding: 1.5vh;
-  border-radius: 3vh 0 0 0;
-}
-
-#beanmenu {
-  --background: transparent;
 }
 
 #bean-menu-button-container {

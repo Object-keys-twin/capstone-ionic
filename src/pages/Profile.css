@@ -1,0 +1,206 @@
+.profile-card {
+  display: flex;
+  align-items: center;
+  --background: white;
+  padding: 2vh;
+}
+
+.string-bean-title {
+  text-align: center;
+  padding: 2vh;
+  background: #fff5ba;
+  color: #8d8d8d;
+  font-size: 3vh;
+  letter-spacing: 0.3vh;
+}
+
+#logout-button {
+  --background: #fd7070;
+  --background-hover: #fd7070;
+  --background-focused: #fd7070;
+  --background-activated: #fd7070;
+}
+
+#favorites-button {
+  --background: #ffe693;
+  --background-hover: #ffe693;
+  --background-focused: #ffe693;
+  --background-activated: #ffe693;
+  margin-top: 0;
+}
+
+#edit-button {
+  --background: #74c098;
+  --background-hover: #74c098;
+  --background-focused: #74c098;
+  --background-activated: #74c098;
+}
+
+.settings-tray-icon {
+  color: #ffffff;
+  font-size: 5vh;
+}
+.settings-tray-button {
+  height: 9vh;
+  width: 9vh;
+  margin-top: 2vh;
+}
+
+#settings-button {
+  height: 6.4vh;
+  width: 6.4vh;
+  --background: #ffc58e;
+  --background-hover: #ffc58e;
+  --background-focused: #ffc58e;
+  --background-activated: #ffc58e;
+  justify-content: center;
+}
+
+#profile-settings-tray {
+  margin-top: 9.4vh;
+  margin-left: -7vh;
+  background-color: #def1e4;
+  padding: 2vh;
+  border-radius: 50vh;
+}
+
+#profile-photo {
+  width: 30vh;
+}
+
+#profile-text {
+  text-align: center;
+}
+
+.stringbean-card {
+  --background: white;
+}
+
+.favorites-icon {
+  color: #ff7a7a;
+}
+
+#favorites-header {
+  height: 9vh;
+}
+
+#favorites-modal-button-back {
+  width: 98%;
+  font-size: 3vh;
+  height: 7.5vh;
+  letter-spacing: 0.3vh;
+  padding: 0.4vh;
+  padding-top: 0;
+  --background: #8bceaa;
+  --background-hover: #8bceaa;
+  --background-focused: #8bceaa;
+  --background-activated: #8bceaa;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.favorites-list-name {
+  font-size: 2.7vh;
+}
+
+.skeleton-name {
+  height: 6vh;
+}
+
+.skeleton-location {
+  height: 4vh;
+  margin-bottom: 3vh;
+}
+
+.skeleton-image {
+  height: 40vh;
+  margin-bottom: 3vh;
+}
+
+.skeleton-rating-price {
+  height: 4vh;
+}
+
+.input-error {
+  --background: #fababa;
+  background-color: #fababa;
+}
+
+.profile-skeleton-text {
+  margin-top: 1.8vh;
+  margin-bottom: 1.8vh;
+  height: 2.2vh;
+}
+
+#edit-modal-button-row {
+  display: flex;
+  justify-content: space-around;
+}
+
+#edit-modal-button-back {
+  display: flex;
+  width: 30%;
+  --background: #8bceaa;
+  --background-hover: #8bceaa;
+  --background-focused: #8bceaa;
+  --background-activated: #8bceaa;
+}
+
+#edit-modal-button-submit {
+  display: flex;
+  letter-spacing: 0.7vh;
+  width: 60%;
+}
+
+.edit-modal-button {
+  font-size: 3vh;
+  letter-spacing: 0.3vh;
+  height: 7.5vh;
+  padding: 0.4vh;
+}
+
+#edit-modal-password-required-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  --background: #ffeaca;
+}
+
+#edit-modal-username-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-modal-headers {
+  --background: #89c2a3;
+  color: white;
+  font-size: 2.5vh;
+}
+
+#edit-modal-password-required-header {
+  --background: #ffcd82;
+}
+
+#edit-modal-password-rules {
+  --padding-bottom: 1.5vh;
+  --background: #ffeaca;
+  color: #9c9c9c;
+  font-size: 2.1vh;
+}
+
+#edit-modal-username-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#username-spinner {
+  margin-left: 1vh;
+  --color: #ffffff;
+  display: block;
+  height: 2.5vh;
+  width: 2.5vh;
+}
+
+.hidden {
+  visibility: hidden;
+}

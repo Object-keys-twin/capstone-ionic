@@ -11,6 +11,7 @@ import {
   IonCardContent,
   IonToast
 } from "@ionic/react";
+import db from "../firebase/firebase";
 import { eye, eyeOff, arrowRoundBack } from "ionicons/icons";
 import "./SignUp.css";
 
@@ -19,23 +20,19 @@ enum PasswordVisibility {
   Text = "text"
 }
 
-interface FavoriteObj {
-  id: string;
-  name: string;
+enum PasswordOrConfirm {
+  Password = "passwordVisibility",
+  Confirm = "passwordConfirmVisibility"
 }
 
-interface userData {
+interface LogInSignUpData {
   email: string;
-  uid?: string;
   displayName: string;
-  photoURL: string;
   password: string;
-  favorites: object;
-  favoritesArray: Array<FavoriteObj>;
 }
 
 type Props = {
-  handleSubmit: (user: userData, type?: string) => void;
+  handleSubmit: (user: LogInSignUpData, type?: string) => void;
   showSignUp: () => void;
   resetLogInSignUpError: () => void;
   logInSignUpError: boolean;
@@ -43,51 +40,188 @@ type Props = {
 };
 
 type State = {
-  passwordVisibility: boolean;
+  accountData: AccountData;
+  showSignUp: boolean;
+  showErrorToast: boolean;
+  toastMessage: string;
+};
+
+interface AccountData {
   displayName: string;
+  displayNameColor: string;
   email: string;
   password: string;
-  showSignUp: boolean;
-};
+  passwordColor: string;
+  passwordVisibility: boolean;
+  passwordConfirm: string;
+  passwordConfirmColor: string;
+  passwordConfirmVisibility: boolean;
+}
 
 export default class SignUp extends Component<Props, State> {
   state = {
-    passwordVisibility: false,
-    displayName: "",
-    email: "",
-    password: "",
-    showSignUp: false
+    accountData: {
+      displayName: "",
+      displayNameColor: "",
+      email: "",
+      password: "",
+      passwordColor: "",
+      passwordVisibility: false,
+      passwordConfirm: "",
+      passwordConfirmColor: "",
+      passwordConfirmVisibility: false
+    },
+    showSignUp: false,
+    showErrorToast: false,
+    toastMessage: ""
   };
 
-  handleEmail = (e: string) => {
-    this.setState({ email: e });
-  };
-
-  handlePassword = (e: string) => {
-    this.setState({ password: e });
-  };
-
-  handleDisplayName = (e: string) => {
-    this.setState({ displayName: e });
-  };
-
-  togglePassword = () => {
+  handleSignUpField = (event: HTMLInputElement) => {
     this.setState({
-      passwordVisibility: !this.state.passwordVisibility
+      accountData: { ...this.state.accountData, [event.name]: event.value }
+    });
+
+    if (event.name === "password" || event.name === "passwordConfirm") {
+      this.togglePasswordConfirmColor();
+      if (event.name === "password") {
+        this.togglePasswordColor();
+      }
+    } else if (event.name === "displayName") {
+      this.toggleDisplayNameColor();
+    }
+  };
+
+  toggleVisibility = (passwordOrConfirm: PasswordOrConfirm) => {
+    this.setState<never>({
+      accountData: {
+        ...this.state.accountData,
+        [passwordOrConfirm]: !this.state.accountData[passwordOrConfirm]
+      }
     });
   };
 
+  //------TOGGLERS FOR INPUT FIELD ERROR - RED BACKGROUND-------------
+  toggleDisplayNameColor = async () => {
+    let duplicate = await this.checkForDuplicateDisplayName();
+    if (duplicate) {
+      this.setState({
+        accountData: {
+          ...this.state.accountData,
+          displayNameColor: "input-error"
+        }
+      });
+    } else {
+      this.setState({
+        accountData: { ...this.state.accountData, displayNameColor: "" }
+      });
+    }
+  };
+
+  //helper function for toggleDisplayNameColor
+  checkForDuplicateDisplayName = async () => {
+    let displayName = this.state.accountData.displayName;
+    if (!displayName) {
+      return false;
+    }
+
+    const duplicateName = await db
+      .collection("users")
+      .where("displayName", "==", `${displayName}`)
+      .get();
+
+    return duplicateName.empty === false;
+  };
+
+  togglePasswordColor = () => {
+    let password = this.state.accountData.password;
+    //password needs to contain at least one number, one uppercase, one lowercase, and be at least 6 characters
+    if (password && !password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/)) {
+      this.setState({
+        accountData: {
+          ...this.state.accountData,
+          passwordColor: "input-error"
+        }
+      });
+    } else {
+      this.setState({
+        accountData: { ...this.state.accountData, passwordColor: "" }
+      });
+    }
+  };
+
+  togglePasswordConfirmColor = () => {
+    if (
+      this.state.accountData.password !== this.state.accountData.passwordConfirm
+    ) {
+      this.setState({
+        accountData: {
+          ...this.state.accountData,
+          passwordConfirmColor: "input-error"
+        }
+      });
+    } else {
+      this.setState({
+        accountData: {
+          ...this.state.accountData,
+          passwordConfirmColor: ""
+        }
+      });
+    }
+  };
+  //-----------------------------------------------------------------
+
+  //-----FINAL VALIDATIONS BEFORE CREATING ON FIREBASE AND FIRESTORE------
+  checkPasswordComplexityStatus = () => {
+    if (this.state.accountData.passwordColor === "input-error") {
+      this.setState({
+        showErrorToast: true,
+        toastMessage:
+          "Passwords must be at least 6 characters & contain a lowercase, uppercase, and number."
+      });
+      return true;
+    }
+    return false;
+  };
+
+  checkPasswordMatchStatus = () => {
+    if (this.state.accountData.passwordConfirmColor === "input-error") {
+      this.setState({
+        showErrorToast: true,
+        toastMessage: "Passwords don't match!"
+      });
+      return true;
+    }
+    return false;
+  };
+
+  checkDisplayNameStatus = () => {
+    if (this.state.accountData.displayNameColor === "input-error") {
+      this.setState({
+        showErrorToast: true,
+        toastMessage: "Username already taken!"
+      });
+      return true;
+    }
+    return false;
+  };
+  //----------------------------------------------------------------
   createAccount = () => {
+    let error =
+      this.checkPasswordComplexityStatus() ||
+      this.checkPasswordMatchStatus() ||
+      this.checkDisplayNameStatus();
+    if (error) return;
+
     let newUser = {
-      email: this.state.email,
-      uid: "",
-      displayName: this.state.displayName,
-      photoURL: "",
-      password: this.state.password,
-      favorites: {},
-      favoritesArray: Array<FavoriteObj>()
+      email: this.state.accountData.email,
+      displayName: this.state.accountData.displayName,
+      password: this.state.accountData.password
     };
     this.props.handleSubmit(newUser, "signup");
+  };
+
+  resetErrorToast = () => {
+    this.setState({ showErrorToast: false, toastMessage: "" });
   };
 
   render() {
@@ -99,7 +233,12 @@ export default class SignUp extends Component<Props, State> {
           </IonCardTitle>
         </IonCardHeader>
         <IonCardContent class="login-signup-input-container">
-          <IonItem class="login-signup-input-nestedcontainer login-ionitem">
+          <IonItem
+            class={
+              "login-signup-input-nestedcontainer login-ionitem " +
+              this.state.accountData.displayNameColor
+            }
+          >
             <IonInput
               clearInput
               type="text"
@@ -107,7 +246,7 @@ export default class SignUp extends Component<Props, State> {
               name="displayName"
               placeholder="Username (optional)"
               onIonChange={e =>
-                this.handleDisplayName((e.target as HTMLInputElement).value)
+                this.handleSignUpField(e.target as HTMLInputElement)
               }
             ></IonInput>
           </IonItem>
@@ -121,38 +260,88 @@ export default class SignUp extends Component<Props, State> {
               placeholder="Email"
               name="email"
               onIonChange={e =>
-                this.handleEmail((e.target as HTMLInputElement).value)
+                this.handleSignUpField(e.target as HTMLInputElement)
               }
             ></IonInput>
           </IonItem>
         </IonCardContent>
         <IonCardContent class="login-signup-input-container">
           <IonItem
-            lines="none"
-            class="login-signup-input-nestedcontainer login-ionitem"
+            class={
+              "login-signup-input-nestedcontainer login-ionitem " +
+              this.state.accountData.passwordColor
+            }
           >
             <IonInput
               class="login-signup-input-field"
               clearInput
+              clearOnEdit={false}
+              name="password"
+              placeholder="Password"
               onIonChange={e =>
-                this.handlePassword((e.target as HTMLInputElement).value)
+                this.handleSignUpField(e.target as HTMLInputElement)
               }
               type={
-                this.state.passwordVisibility === false
+                this.state.accountData.passwordVisibility === false
                   ? PasswordVisibility.Password
                   : PasswordVisibility.Text
               }
-              placeholder="Password"
-              name="password"
             ></IonInput>
 
-            {this.state.password ? (
+            {this.state.accountData.password ? (
               <IonIcon
                 class="password-icon"
-                icon={this.state.passwordVisibility ? eyeOff : eye}
-                onClick={this.togglePassword}
+                icon={this.state.accountData.passwordVisibility ? eyeOff : eye}
+                onClick={() =>
+                  this.toggleVisibility(PasswordOrConfirm.Password)
+                }
               />
             ) : null}
+          </IonItem>
+        </IonCardContent>
+        <IonCardContent class="login-signup-input-container">
+          <IonItem
+            class={
+              "login-signup-input-nestedcontainer login-ionitem " +
+              this.state.accountData.passwordConfirmColor
+            }
+          >
+            <IonInput
+              class="login-signup-input-field"
+              clearInput
+              clearOnEdit={false}
+              name="passwordConfirm"
+              placeholder="Confirm Password"
+              onIonChange={e =>
+                this.handleSignUpField(e.target as HTMLInputElement)
+              }
+              type={
+                this.state.accountData.passwordConfirmVisibility === false
+                  ? PasswordVisibility.Password
+                  : PasswordVisibility.Text
+              }
+            ></IonInput>
+
+            {this.state.accountData.passwordConfirm ? (
+              <IonIcon
+                class="password-icon"
+                icon={
+                  this.state.accountData.passwordConfirmVisibility
+                    ? eyeOff
+                    : eye
+                }
+                onClick={() => this.toggleVisibility(PasswordOrConfirm.Confirm)}
+              />
+            ) : null}
+          </IonItem>
+        </IonCardContent>
+        <IonCardContent
+          class="login-signup-input-container"
+          id="login-signup-password-rules-container"
+        >
+          <IonItem id="login-signup-password-rules" lines="none">
+            Passwords must contain at least 6 characters, an uppercase letter, a
+            lowercase letter, and a number.
           </IonItem>
         </IonCardContent>
 
@@ -171,11 +360,12 @@ export default class SignUp extends Component<Props, State> {
         </IonGrid>
         <IonToast
           cssClass="login-signup-toast"
-          isOpen={this.props.logInSignUpError}
-          message={this.props.toastMessage}
+          isOpen={this.props.logInSignUpError || this.state.showErrorToast}
+          message={this.props.toastMessage || this.state.toastMessage}
           duration={2000}
           onDidDismiss={() => {
             this.props.resetLogInSignUpError();
+            this.resetErrorToast();
           }}
         />
       </>

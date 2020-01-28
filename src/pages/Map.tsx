@@ -12,18 +12,39 @@ import {
 } from "@ionic/react";
 import { navigate } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
+const { Geolocation } = Plugins;
+
+interface CheckpointData {
+  id: string;
+  name: string;
+  location: string;
+  imageUrl: string;
+  categories: Array<object>;
+  rating?: number;
+  latitude: number;
+  longitude: number;
+  price?: string | undefined;
+}
+
+interface DbData {
+  checkpoints: Array<CheckpointData>;
+  description: string;
+  name: string;
+  created: Date;
+  upvotes: number;
+  user: string;
+}
+
+type Props = {
+  location: { state: DbData };
+  showMapErrorToastFunction: () => void;
+};
 
 type State = {
   latitude: number;
   longitude: number;
   link: string;
 };
-
-type Props = {
-  location: any;
-};
-
-const { Geolocation } = Plugins;
 
 class MapPage extends Component<Props, State> {
   state = {
@@ -38,11 +59,18 @@ class MapPage extends Component<Props, State> {
   };
 
   getCurrentPosition = async () => {
-    const coordinates = await Geolocation.getCurrentPosition();
-    this.setState({
-      latitude: coordinates.coords.latitude,
-      longitude: coordinates.coords.longitude
-    });
+    await Geolocation.getCurrentPosition()
+      .then(coordinates => {
+        this.setState({
+          latitude: coordinates.coords.latitude,
+          longitude: coordinates.coords.longitude
+        });
+      })
+      .catch(() => {
+        console.log("Current location could not be determined.");
+        this.props.showMapErrorToastFunction();
+        (this.props as any).history.goBack();
+      });
   };
 
   launchGoogleMapsNav = () => {
@@ -64,6 +92,7 @@ class MapPage extends Component<Props, State> {
       this.setState({ link: googleUrl });
     }
   };
+
   render() {
     if (this.props.location.state) {
       const { checkpoints } = this.props.location.state;
@@ -99,7 +128,8 @@ class MapPage extends Component<Props, State> {
     }
     return (
       <IonPage>
-        <IonContent>Loading...</IonContent>
+        <IonContent>Why are you doing this? Go back.</IonContent>
+        {/* implement redirect to explore page */}
       </IonPage>
     );
   }

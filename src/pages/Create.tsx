@@ -16,7 +16,8 @@ import {
   IonImg,
   IonText,
   IonCol,
-  IonSkeletonText
+  IonSkeletonText,
+  IonToast
 } from "@ionic/react";
 import { heart, heartEmpty, search } from "ionicons/icons";
 import { Plugins } from "@capacitor/core";
@@ -24,18 +25,9 @@ import axios from "axios";
 import BeanMenu from "./BeanMenu";
 import { yelpApiKey } from "../secrets";
 import db from "../firebase/firebase";
-import "./Tab3.css";
+import "./Create.css";
 
 const { Geolocation } = Plugins;
-
-type Props = {
-  favorites: { [key: string]: any };
-  stringbean: Array<BusinessData>;
-  toggleFavorite: (checkpointId: string) => void;
-  addToStringBean: (business: object) => void;
-  removeFromStringBean: (id: string) => void;
-  clearStorageOnPublish: () => void;
-};
 
 interface BusinessData {
   id: string;
@@ -47,7 +39,20 @@ interface BusinessData {
   latitude: number;
   longitude: number;
   price?: string | undefined;
+  timestamp: string;
 }
+
+type Props = {
+  favorites: { [key: string]: number };
+  stringbean: Array<BusinessData>;
+  toggleFavorite: (checkpointId: string) => void;
+  addToStringBean: (business: object) => void;
+  removeFromStringBean: (idx: number) => void;
+  clearStorageOnPublish: () => void;
+  mapErrorToastMessage: string;
+  showMapErrorToast: boolean;
+  showMapErrorToastFunction: () => void;
+};
 
 type State = {
   latitude: number;
@@ -58,7 +63,7 @@ type State = {
   searchSpinner: boolean;
 };
 
-class CreateStory extends Component<Props, State> {
+class Create extends Component<Props, State> {
   state = {
     latitude: 0,
     longitude: 0,
@@ -73,15 +78,21 @@ class CreateStory extends Component<Props, State> {
   }
 
   getCurrentPosition = async () => {
-    const coordinates = await Geolocation.getCurrentPosition();
-    this.setState({
-      latitude: coordinates.coords.latitude,
-      longitude: coordinates.coords.longitude
-    });
+    await Geolocation.getCurrentPosition()
+      .then(coordinates => {
+        this.setState({
+          latitude: coordinates.coords.latitude,
+          longitude: coordinates.coords.longitude
+        });
+      })
+      .catch(() => {
+        console.log("Current location could not be determined.");
+        this.props.showMapErrorToastFunction();
+      });
     this.getYelpBusinesses(this.state.latitude, this.state.longitude);
   };
 
-  keyUpHandler = (e: any) => {
+  keyUpHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
       this.getYelpBusinesses(
         this.state.latitude,
@@ -142,7 +153,7 @@ class CreateStory extends Component<Props, State> {
         bean.price = "not available";
       }
       await beanRef.set(bean);
-      console.log("Created checkpoint in Firestore:", bean.name);
+      console.log("Created bean/checkpoint in Firestore:", bean.name);
     }
     //this only creates. need to add update functionality, so as yelp data update in the future, firestore will also be updated
   };
@@ -159,7 +170,9 @@ class CreateStory extends Component<Props, State> {
     return (
       <IonPage
         className="beancontent"
-        onKeyUp={(e: any) => this.keyUpHandler(e)}
+        onKeyUp={(e: React.KeyboardEvent<HTMLDivElement>) =>
+          this.keyUpHandler(e)
+        }
       >
         <IonHeader class="tab-header-block">
           <IonTitle size="small" class="tab-header header-font">
@@ -200,7 +213,8 @@ class CreateStory extends Component<Props, State> {
           </IonButton>
         </IonCard>
         <IonContent className="beancontent">
-          {businesses.length ? (
+          {businesses.length &&
+          Object.entries(this.props.favorites).length !== 0 ? (
             <>
               {businesses.map((business, idx) => (
                 <IonCard className="beancard" key={idx}>
@@ -285,7 +299,7 @@ class CreateStory extends Component<Props, State> {
             </>
           ) : (
             <>
-              {[...Array(20)].map((placeholder, idx) => (
+              {[...Array(6)].map((placeholder, idx) => (
                 <IonCard className="beancard" key={idx}>
                   <IonGrid item-content class="checkpoint-row">
                     <IonCol class="list-checkpoint-col">
@@ -319,10 +333,17 @@ class CreateStory extends Component<Props, State> {
               ))}
             </>
           )}
+          {/* ------------------------ERROR TOAST-------------------------- */}
+          <IonToast
+            cssClass="login-signup-toast"
+            isOpen={this.props.showMapErrorToast}
+            message={this.props.mapErrorToastMessage}
+            duration={2000}
+          />
         </IonContent>
       </IonPage>
     );
   }
 }
 
-export default CreateStory;
+export default Create;

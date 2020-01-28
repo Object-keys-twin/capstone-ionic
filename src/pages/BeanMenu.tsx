@@ -19,12 +19,10 @@ import {
 
 import { list, trash } from "ionicons/icons";
 import { menuController } from "@ionic/core";
-import { Plugins } from "@capacitor/core";
 import db from "../firebase/firebase";
 import BeanMenuForm from "./BeanMenuForm";
 import firebase from "firebase";
 import "./BeanMenu.css";
-const { Storage } = Plugins;
 
 interface BusinessData {
   id: string;
@@ -36,18 +34,19 @@ interface BusinessData {
   latitude: number;
   longitude: number;
   price?: string | undefined;
+  timestamp: string;
 }
+
+type Props = {
+  stringbean: Array<BusinessData>;
+  removeFromStringBean: (idx: number) => void;
+  clearStorageOnPublish: () => void;
+};
 
 type State = {
   showAlert: boolean;
   publishError: boolean;
   toastMessage: string;
-};
-
-type Props = {
-  stringbean: Array<BusinessData>;
-  removeFromStringBean: (id: string) => void;
-  clearStorageOnPublish: () => void;
 };
 
 export default class BeanMenu extends Component<Props, State> {
@@ -69,7 +68,7 @@ export default class BeanMenu extends Component<Props, State> {
         bean.price = "not available";
       }
       await beanRef.set(bean);
-      console.log("Created checkpoint in Firestore:", bean.name);
+      console.log("Created bean/checkpoint in Firestore:", bean.name);
     }
     //this only creates. need to add update functionality, so as yelp data update in the future, firestore will also be updated
   };
@@ -113,14 +112,15 @@ export default class BeanMenu extends Component<Props, State> {
       name,
       description,
       created: firebase.firestore.Timestamp.fromDate(new Date()),
-      user: username
+      user: username,
+      upvotes: 0
     };
 
     await db
       .collection("tours")
       .add(tour)
       .then(ref => {
-        console.log("Added document with ID: ", ref.id);
+        console.log("Added stringbean with ID: ", ref.id);
       });
 
     this.props.clearStorageOnPublish();
@@ -129,13 +129,7 @@ export default class BeanMenu extends Component<Props, State> {
   render() {
     return (
       <>
-        <IonMenu
-          id="beanmenu"
-          side="end"
-          contentId="main"
-          type="overlay"
-          swipeGesture={true}
-        >
+        <IonMenu side="end" contentId="main" type="overlay" swipeGesture={true}>
           <IonHeader>
             <IonTitle
               size="small"
@@ -149,12 +143,12 @@ export default class BeanMenu extends Component<Props, State> {
             <IonList>
               {this.props.stringbean.map((bean, idx) => {
                 return (
-                  <IonItemSliding key={bean.id}>
+                  <IonItemSliding key={bean.timestamp}>
                     <IonItemOptions side="end">
                       <IonItemOption
                         color="danger"
                         onClick={() => {
-                          this.props.removeFromStringBean(bean.id);
+                          this.props.removeFromStringBean(idx);
                         }}
                       >
                         <IonIcon slot="icon-only" icon={trash}></IonIcon>

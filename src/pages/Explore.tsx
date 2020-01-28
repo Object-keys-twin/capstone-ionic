@@ -11,44 +11,50 @@ import {
   IonIcon,
   IonGrid,
   IonCol,
-  IonRow
+  IonRow,
+  IonSkeletonText,
+  IonToast
 } from "@ionic/react";
 import { RefresherEventDetail } from "@ionic/core";
 import { heartEmpty, heart, arrowDroprightCircle } from "ionicons/icons";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import db from "../firebase/firebase";
-import "./Tab2.css";
-
-type Props = {
-  favorites: { [key: string]: any };
-  toggleFavorite: (checkpointId: string) => void;
-};
+import "./Explore.css";
 
 interface CheckpointData {
   id: string;
-  imageUrl: string;
-  latitude: number;
-  location: string;
-  longitude: number;
   name: string;
-  price: string;
-  rating: number;
+  location: string;
+  imageUrl: string;
+  categories: Array<object>;
+  rating?: number;
+  latitude: number;
+  longitude: number;
+  price?: string | undefined;
 }
 
 interface DbData {
   checkpoints: Array<CheckpointData>;
   description: string;
   name: string;
-  created: object;
+  created: Date;
   upvotes: number;
   user: string;
 }
 
+type Props = {
+  favorites: { [key: string]: number };
+  toggleFavorite: (checkpointId: string) => void;
+  mapErrorToastMessage: string;
+  showMapErrorToast: boolean;
+};
+
 type State = {
   tours: Array<DbData>;
 };
-class PublicTours extends Component<Props, State> {
+
+class Explore extends Component<Props, State> {
   state = { tours: Array<DbData>() };
   componentDidMount() {
     this.getTours();
@@ -62,12 +68,12 @@ class PublicTours extends Component<Props, State> {
   };
 
   getTours = () => {
-    let tourData = Array<DbData>();
+    let tours = Array<DbData>();
     db.collection("tours")
       .get()
       .then(docs => {
         docs.forEach(doc => {
-          tourData.push({
+          tours.push({
             checkpoints: doc.data().checkpoints,
             description: doc.data().description,
             name: doc.data().name,
@@ -76,31 +82,47 @@ class PublicTours extends Component<Props, State> {
             user: doc.data().user
           });
         });
-        this.setState({ tours: tourData });
-        this.state.tours.forEach((tour, id) => {
-          this.getCheckpoints(tour, id);
+
+        this.setState({ tours });
+
+        tours.forEach((tour, idx) => {
+          this.getCheckpointsData(tour, idx);
         });
       });
   };
 
-  getCheckpoints = async (tour: any, idx: number) => {
-    let checkpointsWithData: any = [];
+  getCheckpointsData = async (tour: DbData, idx: number) => {
+    let checkpointsWithData: Array<CheckpointData> = [];
     for (let i = 0; i < tour.checkpoints.length; i++) {
       const checkpoint = await db
         .collection("checkpoints")
         .doc(`${tour.checkpoints[i]}`)
         .get();
-      checkpointsWithData.push(checkpoint.data());
+      const checkpointData = checkpoint.data();
+      if (checkpointData) {
+        const checkpointObj = {
+          id: checkpointData.id,
+          name: checkpointData.name,
+          location: checkpointData.location,
+          imageUrl: checkpointData.imageUrl,
+          categories: checkpointData.categories,
+          rating: checkpointData.rating,
+          latitude: checkpointData.latitude,
+          longitude: checkpointData.longitude,
+          price: checkpointData.price
+        };
+        checkpointsWithData.push(checkpointObj);
+      }
     }
+
     let tours = this.state.tours;
-    tours.forEach((el, i) => {
-      if (i === idx) el.checkpoints = checkpointsWithData;
-    });
+    tours[idx].checkpoints = checkpointsWithData;
     this.setState({ tours });
   };
 
   renderHeart = (checkpointId: string) => {
     let favorites = this.props.favorites;
+
     if (favorites[checkpointId]) return heart;
     else return heartEmpty;
   };
@@ -126,10 +148,15 @@ class PublicTours extends Component<Props, State> {
                   <IonCol class="list-favorites-col">
                     <Link
                       className="stringbean-link"
-                      to={{
-                        pathname: "/map",
-                        state: { checkpoints: tour.checkpoints }
-                      }}
+                      to={
+                        tour.checkpoints[0].name &&
+                        Object.entries(this.props.favorites).length !== 0
+                          ? {
+                              pathname: "/map",
+                              state: { checkpoints: tour.checkpoints }
+                            }
+                          : { pathname: "/explore" }
+                      }
                     >
                       <IonIcon
                         class="list-favorites-icon"
@@ -146,20 +173,41 @@ class PublicTours extends Component<Props, State> {
                     return (
                       <IonGrid item-content class="checkpoint-row" key={idx}>
                         <IonCol class="list-checkpoint-col">
-                          <IonItem lines="none">{checkpoint.name}</IonItem>
+                          <IonItem lines="none">
+                            {checkpoint.name &&
+                            Object.entries(this.props.favorites).length !==
+                              0 ? (
+                              checkpoint.name
+                            ) : (
+                              <IonSkeletonText
+                                animated
+                                width="70vw"
+                                class="explore-skeleton-text"
+                              />
+                            )}
+                          </IonItem>
                         </IonCol>
                         <IonCol class="list-favorites-col">
-                          <IonIcon
-                            onClick={() =>
-                              this.props.toggleFavorite(checkpoint.id)
-                            }
-                            class="favorites-icon list-favorites-icon"
-                            icon={this.renderHeart(checkpoint.id)}
-                          />
+                          {checkpoint.name &&
+                          Object.entries(this.props.favorites).length !== 0 ? (
+                            <IonIcon
+                              onClick={() =>
+                                this.props.toggleFavorite(checkpoint.id)
+                              }
+                              class="favorites-icon list-favorites-icon"
+                              icon={this.renderHeart(checkpoint.id)}
+                            />
+                          ) : (
+                            <IonIcon
+                              class="skeleton-heart list-favorites-icon"
+                              icon={heart}
+                            />
+                          )}
                         </IonCol>
                       </IonGrid>
                     );
                   }
+                  return <></>;
                 })}
               </IonCardContent>
             </IonCard>
@@ -168,9 +216,17 @@ class PublicTours extends Component<Props, State> {
           <IonRefresher slot="fixed" onIonRefresh={this.refresh}>
             <IonRefresherContent className="refresher-content"></IonRefresherContent>
           </IonRefresher>
+
+          {/* ------------------------ERROR TOAST-------------------------- */}
+          <IonToast
+            cssClass="login-signup-toast"
+            isOpen={this.props.showMapErrorToast}
+            message={this.props.mapErrorToastMessage}
+            duration={2000}
+          />
         </IonContent>
       </IonPage>
     );
   }
 }
-export default PublicTours;
+export default Explore;

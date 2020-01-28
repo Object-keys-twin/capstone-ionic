@@ -13,9 +13,9 @@ import { Plugins } from "@capacitor/core";
 import { IonReactRouter } from "@ionic/react-router";
 import { apps, person, add } from "ionicons/icons";
 import firebase from "firebase";
-import Profile from "./pages/Tab1";
-import Home from "./pages/Tab2";
-import CreateStory from "./pages/Tab3";
+import Profile from "./pages/Profile";
+import Explore from "./pages/Explore";
+import Create from "./pages/Create";
 import MapPage from "./pages/Map";
 import Login from "./pages/Login";
 import db from "./firebase/firebase";
@@ -48,6 +48,12 @@ interface FavoriteObj {
   name: string;
 }
 
+interface LogInSignUpData {
+  email: string;
+  displayName: string;
+  password: string;
+}
+
 interface UserData {
   email: string;
   uid?: string;
@@ -68,12 +74,18 @@ interface BusinessData {
   latitude: number;
   longitude: number;
   price?: string | undefined;
+  timestamp: string;
+}
+
+interface LooseObject {
+  [key: string]: any;
 }
 
 type State = {
   user: UserData | null;
   loggedIn: boolean;
   logInSignUpError: boolean;
+  showMapErrorToast: boolean;
   toastMessage: string;
   stringbean: Array<BusinessData>;
 };
@@ -91,6 +103,7 @@ class App extends Component<{}, State> {
     },
     loggedIn: false,
     logInSignUpError: false,
+    showMapErrorToast: false,
     toastMessage: "",
     stringbean: Array<BusinessData>()
   };
@@ -109,41 +122,64 @@ class App extends Component<{}, State> {
           password: ""
         };
 
-        let favorites = {};
-        const getUser = await db
-          .collection("users")
-          .doc(user.uid)
-          .get();
-        const userData = getUser.data();
-        if (userData) {
-          favorites = userData.favorites;
-        }
-
-        let favoritesArray = [];
-        for (let favorite in favorites) {
-          const favoriteObj = await this.fetchFavoriteData(favorite);
-          if (favoriteObj) {
-            favoritesArray.push(favoriteObj);
-          }
-        }
-
         this.setState({
-          user: { ...this.state.user, ...userObj, favorites, favoritesArray },
+          user: { ...this.state.user, ...userObj },
           loggedIn: true
         });
+
+        const favorites = await this.fetchFavoritesHashTable(user.uid);
+        const favoritesArray = await this.generateFavoritesArray(favorites);
+
+        this.setState({
+          user: { ...this.state.user, favorites, favoritesArray }
+        });
+
         // Storage.set({
         //   key: "user",
         //   value: JSON.stringify(user)
         // });
-        console.log("Logged in firebase user:", user);
       } else {
-        console.log("Not logged in.");
-        this.setState({ loggedIn: false });
+        console.log("Currently logged out.");
+        this.setState({
+          user: {
+            email: "",
+            uid: "",
+            displayName: "",
+            photoURL: "",
+            password: "",
+            favorites: {},
+            favoritesArray: Array<FavoriteObj>()
+          },
+          loggedIn: false
+        });
         // Storage.remove({
         //   key: "user"
         // });
       }
     });
+  };
+
+  fetchFavoritesHashTable = async (userId: string) => {
+    const getUser = await db
+      .collection("users")
+      .doc(userId)
+      .get();
+    const userData = getUser.data();
+    if (userData) {
+      return userData.favorites;
+    }
+  };
+
+  generateFavoritesArray = async (favorites: object) => {
+    let favoritesArray = [];
+    for (let favorite in favorites) {
+      if (favorite === "initializer") continue;
+      const favoriteObj = await this.fetchFavoriteData(favorite);
+      if (favoriteObj) {
+        favoritesArray.push(favoriteObj);
+      }
+    }
+    return favoritesArray;
   };
 
   getStringBeanOnMount = async () => {
@@ -170,7 +206,7 @@ class App extends Component<{}, State> {
   //   }
   // };
 
-  handleSubmit = (user: UserData, type?: string) => {
+  handleSubmit = (user: LogInSignUpData, type?: string) => {
     if (!user.email) {
       this.setState({
         logInSignUpError: true,
@@ -181,7 +217,6 @@ class App extends Component<{}, State> {
         logInSignUpError: true,
         toastMessage: "Please enter a password."
       });
-      //do a lookup in firebase to make sure the displayName isn't already taken, and maybe email too? or is that builtin
     } else {
       if (type === "signup") {
         this.createUserOnFirestore(user.email, user.password, user.displayName);
@@ -204,7 +239,6 @@ class App extends Component<{}, State> {
       firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
-
         .catch(error => {
           const errorCode = error.code;
           const errorMessage = error.message;
@@ -212,13 +246,14 @@ class App extends Component<{}, State> {
           this.setState({
             logInSignUpError: true,
             toastMessage:
-              "Invalid email and/or password! Passwords must be at least 6 characters."
+              "Invalid email and/or password! Passwords must be at least 6 characters and contain a lowercase, uppercase, and number."
           });
         })
         .then(async () => {
+          console.log("Created new user on Firebase.");
           let user = firebase.auth().currentUser;
           if (user) {
-            //updateProfile takes longer than setState and the onAuthStateChanged listener reaction, so in onAuthStateChanged, need to grab the displayName from state instead of the firebase user data when updating state
+            //updateProfile takes longer than setState and the onAuthStateChanged listener reaction, so in onAuthStateChanged, when updating state, need to grab the displayName from state instead of the firebase user data
             if (displayName) {
               user.updateProfile({
                 displayName: displayName
@@ -230,7 +265,8 @@ class App extends Component<{}, State> {
 
             let newUser = {
               email,
-              favorites: {},
+              displayName: displayName || "",
+              favorites: { initializer: 1 },
               friends: {}
             };
 
@@ -239,7 +275,7 @@ class App extends Component<{}, State> {
               .doc(user.uid)
               .set(newUser)
               .then(() => {
-                console.log("Added new user.");
+                console.log("Added new user to Firestore.");
               });
           }
         });
@@ -252,9 +288,8 @@ class App extends Component<{}, State> {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .catch(error => {
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          console.log("Log-in error:", errorCode, errorMessage);
+          const errorMessage = error.message;
+          console.log("Log-in error:", errorMessage);
           this.setState({
             logInSignUpError: true,
             toastMessage: "Wrong username and/or password!"
@@ -269,7 +304,7 @@ class App extends Component<{}, State> {
       .auth()
       .signInWithPopup(provider)
       .then(result => {
-        console.log("Google login success");
+        console.log("Google login success.");
         if (result.user) {
           const { uid, displayName, email, photoURL } = result.user;
 
@@ -296,7 +331,6 @@ class App extends Component<{}, State> {
 
   toggleFavorite = async (checkpointId: string) => {
     const userRef = db.collection("users").doc(this.state.user.uid);
-
     const userData = await userRef.get();
     const user = userData.data();
     if (user) {
@@ -342,48 +376,77 @@ class App extends Component<{}, State> {
         name: checkpointName
       };
     } else {
-      console.log("Could not find favorite in database checkpoints.");
+      console.log("Could not find favorite in database beans/checkpoints.");
     }
   };
 
-  addToStringBean = async (business: object) => {
+  addToStringBean = async (bean: LooseObject) => {
+    //timestamp will be used as unique key value for My Stringbean .map rendering
+    bean["timestamp"] = new Date().toString();
+
     let stringBeanArray = [];
 
     const localStorage = await Storage.get({ key: "stringbean" });
     if (localStorage.value) {
       stringBeanArray = JSON.parse(localStorage.value);
     }
-    stringBeanArray.push(business);
+    stringBeanArray.push(bean);
 
     this.setState({ stringbean: stringBeanArray });
     await Storage.set({
       key: "stringbean",
       value: JSON.stringify(stringBeanArray)
     });
+    console.log("Added bean to current stringbean!");
   };
 
-  removeFromStringBean = async (id: string) => {
+  removeFromStringBean = async (idx: number) => {
     let storage: any;
-    let parsedStorage: any;
+    let parsedStorageStringbean: Array<BusinessData>;
+
     storage = await Storage.get({
       key: "stringbean"
     });
-    parsedStorage = JSON.parse(storage.value);
-    const removedBean = parsedStorage.filter(
-      (item: BusinessData) => item.id !== id
-    );
+
+    parsedStorageStringbean = JSON.parse(storage.value);
+    parsedStorageStringbean.splice(idx, 1);
+
     this.setState({
-      stringbean: removedBean
+      stringbean: parsedStorageStringbean
     });
     await Storage.set({
       key: "stringbean",
-      value: JSON.stringify(removedBean)
+      value: JSON.stringify(parsedStorageStringbean)
     });
   };
 
   clearStorageOnPublish = async () => {
     await Storage.remove({ key: "stringbean" });
     this.setState({ stringbean: Array<BusinessData>() });
+  };
+
+  updateDisplayNameOrEmail = (displayNameOrEmail: string, type: string) => {
+    if (type === "displayName") {
+      this.setState({
+        user: { ...this.state.user, displayName: displayNameOrEmail }
+      });
+    }
+    if (type === "email") {
+      this.setState({
+        user: { ...this.state.user, email: displayNameOrEmail }
+      });
+    }
+  };
+
+  showMapErrorToast = () => {
+    this.setState({
+      toastMessage: "Location could not be determined.",
+      showMapErrorToast: true
+    });
+    setTimeout(
+      () => this.setState({ toastMessage: "", showMapErrorToast: false }),
+      2000
+    );
   };
 
   render() {
@@ -402,6 +465,9 @@ class App extends Component<{}, State> {
                       favoritesArray={this.state.user.favoritesArray}
                       toggleFavorite={this.toggleFavorite}
                       addToStringBean={this.addToStringBean}
+                      updateDisplayNameOrEmail={this.updateDisplayNameOrEmail}
+                      mapErrorToastMessage={this.state.toastMessage}
+                      showMapErrorToast={this.state.showMapErrorToast}
                     />
                   )}
                   exact={true}
@@ -409,10 +475,12 @@ class App extends Component<{}, State> {
                 <Route
                   path="/explore"
                   render={props => (
-                    <Home
+                    <Explore
                       {...props}
                       favorites={this.state.user.favorites}
                       toggleFavorite={this.toggleFavorite}
+                      mapErrorToastMessage={this.state.toastMessage}
+                      showMapErrorToast={this.state.showMapErrorToast}
                     />
                   )}
                   exact={true}
@@ -420,7 +488,7 @@ class App extends Component<{}, State> {
                 <Route
                   path="/create"
                   render={props => (
-                    <CreateStory
+                    <Create
                       {...props}
                       favorites={this.state.user.favorites}
                       stringbean={this.state.stringbean}
@@ -428,10 +496,22 @@ class App extends Component<{}, State> {
                       addToStringBean={this.addToStringBean}
                       removeFromStringBean={this.removeFromStringBean}
                       clearStorageOnPublish={this.clearStorageOnPublish}
+                      mapErrorToastMessage={this.state.toastMessage}
+                      showMapErrorToast={this.state.showMapErrorToast}
+                      showMapErrorToastFunction={this.showMapErrorToast}
                     />
                   )}
                 />
-                <Route path="/map" component={MapPage} exact={true} />
+                <Route
+                  path="/map"
+                  render={props => (
+                    <MapPage
+                      {...props}
+                      showMapErrorToastFunction={this.showMapErrorToast}
+                    />
+                  )}
+                  exact={true}
+                />
                 <Route
                   path="/"
                   render={() => <Redirect to="/explore" />}
